@@ -31,6 +31,7 @@ import org.apache.lucene.search.Sort;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
+import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.lucene.engine.LuceneSearchEngineInternalSearch;
 import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
 import org.compass.core.lucene.engine.manager.LuceneIndexHolder;
@@ -53,6 +54,8 @@ public abstract class AbstractTransactionProcessor implements TransactionProcess
 
     protected final LuceneSearchEngine searchEngine;
 
+    protected final LuceneSearchEngineFactory searchEngineFactory;
+
     protected final LuceneSearchEngineIndexManager indexManager;
 
     protected final CompassMapping mapping;
@@ -60,7 +63,8 @@ public abstract class AbstractTransactionProcessor implements TransactionProcess
     protected AbstractTransactionProcessor(Log logger, LuceneSearchEngine searchEngine) {
         this.logger = logger;
         this.searchEngine = searchEngine;
-        this.indexManager = searchEngine.getSearchEngineFactory().getLuceneIndexManager();
+        this.searchEngineFactory = searchEngine.getSearchEngineFactory();
+        this.indexManager = searchEngineFactory.getLuceneIndexManager();
         this.mapping = searchEngine.getSearchEngineFactory().getMapping();
     }
 

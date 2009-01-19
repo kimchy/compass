@@ -19,14 +19,10 @@ package org.compass.core.lucene.engine.transaction.readcommitted;
 import java.io.IOException;
 import java.util.Random;
 
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.KeepOnlyLastCommitDeletionPolicy;
-import org.apache.lucene.index.Term;
 import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.NoLockFactory;
@@ -37,7 +33,7 @@ import org.compass.core.config.CompassSettings;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
-import org.compass.core.spi.ResourceKey;
+import org.compass.core.lucene.engine.transaction.support.job.TransactionJob;
 
 /**
  * A transactional index holding a complete lucene index as the transactional index.
@@ -105,23 +101,8 @@ public class TransIndex implements CompassConfigurable {
         }
     }
 
-    public void create(Document document, Analyzer analyzer) throws IOException {
-        indexWriter.addDocument(document, analyzer);
-        flushRequired = true;
-    }
-
-    public void update(Document document, ResourceKey resourceKey, Analyzer analyzer) throws IOException {
-        indexWriter.updateDocument(new Term(resourceKey.getUIDPath(), resourceKey.buildUID()), document, analyzer);
-        flushRequired = true;
-    }
-
-    public void delete(ResourceKey resourceKey) throws IOException {
-        indexWriter.deleteDocuments(new Term(resourceKey.getUIDPath(), resourceKey.buildUID()));
-        flushRequired = true;
-    }
-
-    public void delete(Query query) throws IOException {
-        indexWriter.deleteDocuments(query);
+    public void processJob(TransactionJob job) throws Exception {
+        job.execute(indexWriter, searchEngineFactory);
         flushRequired = true;
     }
 

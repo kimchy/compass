@@ -49,9 +49,8 @@ import org.compass.core.lucene.engine.transaction.TransactionProcessorFactory;
 import org.compass.core.lucene.engine.transaction.support.CommitCallable;
 import org.compass.core.lucene.engine.transaction.support.PrepareCommitCallable;
 import org.compass.core.lucene.engine.transaction.support.ResourceHashing;
-import org.compass.core.lucene.engine.transaction.support.TransactionJob;
-import org.compass.core.lucene.engine.transaction.support.TransactionJobs;
-import org.compass.core.lucene.engine.transaction.support.WriterHelper;
+import org.compass.core.lucene.engine.transaction.support.job.TransactionJob;
+import org.compass.core.lucene.engine.transaction.support.job.TransactionJobs;
 import org.compass.core.transaction.context.TransactionalCallable;
 
 /**
@@ -210,7 +209,7 @@ public class AsyncTransactionProcessorFactory implements TransactionProcessorFac
     }
 
     /**
-     * Removed (if still pending) the given {@link org.compass.core.lucene.engine.transaction.support.TransactionJobs}
+     * Removed (if still pending) the given {@link org.compass.core.lucene.engine.transaction.support.job.TransactionJobs}
      * from being processed.
      */
     public boolean remove(TransactionJobs jobs) throws SearchEngineException {
@@ -218,11 +217,11 @@ public class AsyncTransactionProcessorFactory implements TransactionProcessorFac
     }
 
     /**
-     * Adds the {@link org.compass.core.lucene.engine.transaction.support.TransactionJobs} to be processed
+     * Adds the {@link org.compass.core.lucene.engine.transaction.support.job.TransactionJobs} to be processed
      * asynchronously. If a procesing threads has not started, will start it (it is started lazily so if the
      * async transaction processor is not used, it won't incur any overhead).
      *
-     * <p>The addition of {@link org.compass.core.lucene.engine.transaction.support.TransactionJobs} is "offered"
+     * <p>The addition of {@link org.compass.core.lucene.engine.transaction.support.job.TransactionJobs} is "offered"
      * to a blocking queue, waiting until the queue if cleared in case it is full. This will cause a transaction
      * commit to block if the backlog is full. The time to wait can be controlled using
      * {@link org.compass.core.lucene.LuceneEnvironment.Transaction.Processor.Async#ADD_TIMEOUT} and defaults to
@@ -475,7 +474,7 @@ public class AsyncTransactionProcessorFactory implements TransactionProcessorFac
         public Object call() throws Exception {
             for (TransactionJob job : jobsToProcess) {
                 IndexWriter writer = writers.get(job.getSubIndex());
-                WriterHelper.processJob(writer, job);
+                job.execute(writer, searchEngineFactory);
             }
             return null;
         }

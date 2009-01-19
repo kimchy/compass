@@ -16,6 +16,7 @@
 
 package org.compass.core.lucene.engine.transaction.support;
 
+import org.compass.core.lucene.engine.transaction.support.job.TransactionJob;
 import org.compass.core.spi.ResourceKey;
 import org.compass.core.util.CollectionUtils;
 

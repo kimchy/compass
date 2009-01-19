@@ -23,13 +23,17 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
-import org.apache.lucene.search.Query;
 import org.compass.core.Resource;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
 import org.compass.core.lucene.engine.LuceneSearchEngineHits;
 import org.compass.core.lucene.engine.LuceneSearchEngineInternalSearch;
 import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
+import org.compass.core.lucene.engine.transaction.support.job.CreateTransactionJob;
+import org.compass.core.lucene.engine.transaction.support.job.DeleteByQueryTransactionJob;
+import org.compass.core.lucene.engine.transaction.support.job.DeleteTransactionJob;
+import org.compass.core.lucene.engine.transaction.support.job.TransactionJob;
+import org.compass.core.lucene.engine.transaction.support.job.UpdateTransactionJob;
 import org.compass.core.spi.InternalResource;
 import org.compass.core.spi.ResourceKey;
 
@@ -144,69 +148,51 @@ public abstract class AbstractConcurrentTransactionProcessor extends AbstractSea
     }
 
     public void create(InternalResource resource) throws SearchEngineException {
+        TransactionJob job = new CreateTransactionJob(resource);
         if (concurrentOperations) {
-            TransactionJob job = new TransactionJob(TransactionJob.Type.CREATE, resource);
             prepareBeforeAsyncDirtyOperation(job);
             getProcessor(job).addJob(job);
         } else {
-            doCreate(resource);
+            doProcessJob(job);
         }
     }
-
-    /**
-     * Base classes should implement this. Behaviour should be the same as {@link #create(org.compass.core.spi.InternalResource)}.
-     */
-    protected abstract void doCreate(InternalResource resource) throws SearchEngineException;
 
     public void update(InternalResource resource) throws SearchEngineException {
+        TransactionJob job = new UpdateTransactionJob(resource);
         if (concurrentOperations) {
-            TransactionJob job = new TransactionJob(TransactionJob.Type.UPDATE, resource);
             prepareBeforeAsyncDirtyOperation(job);
             getProcessor(job).addJob(job);
         } else {
-            doUpdate(resource);
+            doProcessJob(job);
         }
     }
-
-    /**
-     * Base classes should implement this. Behaviour should be the same as {@link #update(org.compass.core.spi.InternalResource)}.
-     */
-    protected abstract void doUpdate(InternalResource resource) throws SearchEngineException;
 
     public void delete(ResourceKey resourceKey) throws SearchEngineException {
+        TransactionJob job = new DeleteTransactionJob(resourceKey);
         if (concurrentOperations) {
-            TransactionJob job = new TransactionJob(TransactionJob.Type.DELETE, resourceKey);
             prepareBeforeAsyncDirtyOperation(job);
             getProcessor(job).addJob(job);
         } else {
-            doDelete(resourceKey);
+            doProcessJob(job);
         }
     }
-
-    /**
-     * Base classes should implement this. Behaviour should be the same as {@link #delete(org.compass.core.spi.ResourceKey)}.
-     */
-    protected abstract void doDelete(ResourceKey resourceKey) throws SearchEngineException;
 
     public void delete(LuceneSearchEngineQuery query) throws SearchEngineException {
         // we flush everything here so we maintain order
         flush();
         String[] calcSubIndexes = indexManager.getStore().calcSubIndexes(query.getSubIndexes(), query.getAliases());
         for (String subIndex : calcSubIndexes) {
+            TransactionJob job = new DeleteByQueryTransactionJob(query.getQuery(), subIndex);
             if (concurrentOperations) {
-                TransactionJob job = new TransactionJob(TransactionJob.Type.DELETE_BY_QUERY, query.getQuery(), subIndex);
                 prepareBeforeAsyncDirtyOperation(job);
                 getProcessor(job).addJob(job);
             } else {
-                doDelete(query.getQuery(), subIndex);
+                doProcessJob(job);
             }
         }
     }
 
-    /**
-     * Base classes should implement this. Behaviour should be similar to {@link #delete(org.compass.core.lucene.engine.LuceneSearchEngineQuery)}.
-     */
-    protected abstract void doDelete(Query query, String subIndex) throws SearchEngineException;
+    protected abstract void doProcessJob(TransactionJob job) throws SearchEngineException;
 
     /**
      * Called by a single thread (the calling thread) before a dirty transaction job is added to the
@@ -335,7 +321,7 @@ public abstract class AbstractConcurrentTransactionProcessor extends AbstractSea
     }
 
     /**
-     * Returns the processor that should handle the specific {@link org.compass.core.lucene.engine.transaction.support.TransactionJob}.
+     * Returns the processor that should handle the specific {@link org.compass.core.lucene.engine.transaction.support.job.TransactionJob}.
      * If the processor has not been created, it will be lazily created. If the processor has not been scheduled yet
      * to a thread, it will also be scheduled to one.
      */
@@ -544,20 +530,7 @@ public abstract class AbstractConcurrentTransactionProcessor extends AbstractSea
             if (logger.isTraceEnabled()) {
                 logger.trace("Processor [" + id + "]: Processing Job  [" + job + "]");
             }
-            switch (job.getType()) {
-                case CREATE:
-                    doCreate(job.getResource());
-                    break;
-                case UPDATE:
-                    doUpdate(job.getResource());
-                    break;
-                case DELETE:
-                    doDelete(job.getResourceKey());
-                    break;
-                case DELETE_BY_QUERY:
-                    doDelete(job.getQuery(), job.getSubIndex());
-                    break;
-            }
+            doProcessJob(job);
         }
     }
 }

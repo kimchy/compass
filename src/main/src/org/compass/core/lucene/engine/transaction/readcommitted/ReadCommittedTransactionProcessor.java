@@ -48,12 +48,13 @@ import org.compass.core.lucene.engine.LuceneSearchEngineInternalSearch;
 import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
 import org.compass.core.lucene.engine.manager.LuceneIndexHolder;
 import org.compass.core.lucene.engine.transaction.support.AbstractConcurrentTransactionProcessor;
-import org.compass.core.lucene.engine.transaction.support.ResourceEnhancer;
-import org.compass.core.lucene.engine.transaction.support.TransactionJob;
+import org.compass.core.lucene.engine.transaction.support.job.DeleteByQueryTransactionJob;
+import org.compass.core.lucene.engine.transaction.support.job.DeleteTransactionJob;
+import org.compass.core.lucene.engine.transaction.support.job.TransactionJob;
+import org.compass.core.lucene.engine.transaction.support.job.UpdateTransactionJob;
 import org.compass.core.lucene.search.CacheableMultiReader;
 import org.compass.core.lucene.support.ChainedFilter;
 import org.compass.core.lucene.support.ResourceHelper;
-import org.compass.core.spi.InternalResource;
 import org.compass.core.spi.ResourceKey;
 import org.compass.core.transaction.context.TransactionalCallable;
 import org.compass.core.util.StringUtils;
@@ -312,61 +313,26 @@ public class ReadCommittedTransactionProcessor extends AbstractConcurrentTransac
         }
     }
 
-    protected void doCreate(InternalResource resource) throws SearchEngineException {
+    protected void doProcessJob(TransactionJob job) throws SearchEngineException {
         try {
-            openIndexWriterIfNeeded(resource.getSubIndex());
-            ResourceEnhancer.Result result = ResourceEnhancer.enahanceResource(resource);
-            transIndexManager.create(result.getDocument(), resource.getResourceKey(), result.getAnalyzer());
-        } catch (IOException e) {
-            throw new SearchEngineException("Failed to create resource for alias [" + resource.getAlias()
-                    + "] and resource " + resource, e);
-        }
-    }
-
-    protected void doDelete(ResourceKey resourceKey) throws SearchEngineException {
-        try {
-            openIndexWriterIfNeeded(resourceKey.getSubIndex());
-
-            Term deleteTerm = markDeleted(resourceKey);
-            // delete from the original index (autoCommit is false, so won't be committed
-            indexWriterBySubIndex.get(resourceKey.getSubIndex()).deleteDocuments(deleteTerm);
-            // and delete it (if there) from the transactional index
-            transIndexManager.delete(resourceKey);
-        } catch (IOException e) {
-            throw new SearchEngineException("Failed to delete alias [" + resourceKey.getAlias() + "] and ids ["
-                    + StringUtils.arrayToCommaDelimitedString(resourceKey.getIds()) + "]", e);
-        }
-    }
-
-    protected void doDelete(Query query, String subIndex) throws SearchEngineException {
-        try {
-            openIndexWriterIfNeeded(subIndex);
-
-            // We do not mark them as deleted, waste time and mostly not needed
-            //Term deleteTerm = markDeleted(resourceKey);
-
-            // delete from the original index (autoCommit is false, so won't be committed
-            indexWriterBySubIndex.get(subIndex).deleteDocuments(query);
-            // and delete it (if there) from the transactional index
-            transIndexManager.delete(query, subIndex);
-        } catch (IOException e) {
-            throw new SearchEngineException("Failed to delete query [" + query + "] from sub index [" + subIndex + "]", e);
-        }
-    }
-
-    protected void doUpdate(InternalResource resource) throws SearchEngineException {
-        try {
-            openIndexWriterIfNeeded(resource.getSubIndex());
-
-            Term deleteTerm = markDeleted(resource.getResourceKey());
-            // delete from the original index (autoCommit is false, so won't be committed
-            indexWriterBySubIndex.get(resource.getResourceKey().getSubIndex()).deleteDocuments(deleteTerm);
-            // and update it in the transactional index
-            ResourceEnhancer.Result result = ResourceEnhancer.enahanceResource(resource);
-            transIndexManager.update(result.getDocument(), resource.getResourceKey(), result.getAnalyzer());
-        } catch (IOException e) {
-            throw new SearchEngineException("Failed to update resource for alias [" + resource.getAlias()
-                    + "] and resource " + resource, e);
+            IndexWriter indexWriter = openIndexWriterIfNeeded(job.getSubIndex());
+            if (job instanceof DeleteTransactionJob) {
+                DeleteTransactionJob deleteJob = (DeleteTransactionJob) job;
+                markDeleted(deleteJob.getResourceKey());
+                // delete from the original index (autoCommit is false, so won't be committed)
+                job.execute(indexWriter, searchEngineFactory);
+            } else if (job instanceof DeleteByQueryTransactionJob) {
+                DeleteByQueryTransactionJob deleteByQueryJob = (DeleteByQueryTransactionJob) job;
+                job.execute(indexWriter, searchEngineFactory);
+            } else if (job instanceof UpdateTransactionJob) {
+                UpdateTransactionJob updateJob = (UpdateTransactionJob) job;
+                Term deleteTerm = markDeleted(updateJob.getResource().getResourceKey());
+                // delete from the original index (autoCommit is false, so won't be committed
+                indexWriter.deleteDocuments(deleteTerm);
+            }
+            transIndexManager.processJob(job);
+        } catch (Exception e) {
+            throw new SearchEngineException("Failed to process job [" + job + "]", e);
         }
     }
 
@@ -415,12 +381,14 @@ public class ReadCommittedTransactionProcessor extends AbstractConcurrentTransac
         return deleteTerm;
     }
 
-    protected void openIndexWriterIfNeeded(String subIndex) throws IOException {
-        if (indexWriterBySubIndex.containsKey(subIndex)) {
-            return;
+    protected IndexWriter openIndexWriterIfNeeded(String subIndex) throws IOException {
+        IndexWriter indexWriter = indexWriterBySubIndex.get(subIndex);
+        if (indexWriter != null) {
+            return indexWriter;
         }
-        IndexWriter indexWriter = indexManager.openIndexWriter(searchEngine.getSettings(), subIndex, false);
+        indexWriter = indexManager.openIndexWriter(searchEngine.getSettings(), subIndex, false);
         indexWriterBySubIndex.put(subIndex, indexWriter);
+        return indexWriter;
     }
 
     private void releaseHolders() {

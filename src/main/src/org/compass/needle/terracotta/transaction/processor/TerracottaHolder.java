@@ -6,7 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.compass.core.lucene.engine.transaction.support.TransactionJobs;
+import org.compass.core.lucene.engine.transaction.support.job.TransactionJobs;
 
 /**
  * @author kimchy

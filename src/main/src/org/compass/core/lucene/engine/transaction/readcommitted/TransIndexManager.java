@@ -21,17 +21,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
 import org.apache.lucene.store.Directory;
 import org.compass.core.CompassException;
 import org.compass.core.config.CompassConfigurable;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
-import org.compass.core.spi.ResourceKey;
+import org.compass.core.lucene.engine.transaction.support.job.DeleteByQueryTransactionJob;
+import org.compass.core.lucene.engine.transaction.support.job.DeleteTransactionJob;
+import org.compass.core.lucene.engine.transaction.support.job.TransactionJob;
 
 /**
  * @author kimchy
@@ -60,28 +59,14 @@ public class TransIndexManager implements CompassConfigurable {
         this.settings = settings;
     }
 
-    public void create(Document document, ResourceKey resourceKey, Analyzer analyzer) throws IOException {
-        getTransIndex(resourceKey.getSubIndex()).create(document, analyzer);
-    }
-
-    public void update(Document document, ResourceKey resourceKey, Analyzer analyzer) throws IOException {
-        getTransIndex(resourceKey.getSubIndex()).update(document, resourceKey, analyzer);
-    }
-
-    public void delete(ResourceKey resourceKey) throws IOException {
-        // no need to delete anything if we don't have a transactional index
-        if (!transIndexMap.containsKey(resourceKey.getSubIndex())) {
-            return;
+    public void processJob(TransactionJob job) throws Exception {
+        if ((job instanceof DeleteTransactionJob) || (job instanceof DeleteByQueryTransactionJob)) {
+            // no need to delete anything if we don't have a transactional index
+            if (!transIndexMap.containsKey(job.getSubIndex())) {
+                return;
+            }
         }
-        getTransIndex(resourceKey.getSubIndex()).delete(resourceKey);
-    }
-
-    public void delete(Query query, String subIndex) throws IOException {
-        // no need to delete anything if we don't have a transactional index
-        if (!transIndexMap.containsKey(subIndex)) {
-            return;
-        }
-        getTransIndex(subIndex).delete(query);
+        getTransIndex(job.getSubIndex()).processJob(job);
     }
 
     public IndexReader getReader(String subIndex) throws IOException {

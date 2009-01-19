@@ -22,7 +22,7 @@ import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
 import org.compass.core.lucene.engine.transaction.support.AbstractJobBasedTransactionProcessor;
-import org.compass.core.lucene.engine.transaction.support.TransactionJobs;
+import org.compass.core.lucene.engine.transaction.support.job.TransactionJobs;
 
 /**
  * Processes transaction asynchronously. For more information see {@link org.compass.core.lucene.engine.transaction.async.AsyncTransactionProcessorFactory}.
@@ -41,7 +41,7 @@ public class AsyncTransactionProcessor extends AbstractJobBasedTransactionProces
     /**
      * Constructs a new processor (for a given transaction) with a back reference to the
      * {@link AsyncTransactionProcessorFactory} in order to add (at commit) the
-     * {@link org.compass.core.lucene.engine.transaction.support.TransactionJobs}.
+     * {@link org.compass.core.lucene.engine.transaction.support.job.TransactionJobs}.
      */
     public AsyncTransactionProcessor(LuceneSearchEngine searchEngine, AsyncTransactionProcessorFactory processorFactory) {
         super(logger, searchEngine, true);

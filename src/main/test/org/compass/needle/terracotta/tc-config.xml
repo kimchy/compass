@@ -24,11 +24,7 @@
                     <honor-transient>true</honor-transient>
                 </include>
                 <include>
-                    <class-expression>org.compass.core.lucene.engine.transaction.support.TransactionJobs</class-expression>
-                    <honor-transient>true</honor-transient>
-                </include>
-                <include>
-                    <class-expression>org.compass.core.lucene.engine.transaction.support.TransactionJob</class-expression>
+                    <class-expression>org.compass.core.lucene.engine.transaction.support.job.*</class-expression>
                     <honor-transient>true</honor-transient>
                 </include>
                 <include>

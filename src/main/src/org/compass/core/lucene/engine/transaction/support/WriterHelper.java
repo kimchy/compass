@@ -26,7 +26,7 @@ import org.compass.core.spi.ResourceKey;
 
 /**
  * Provides helper method to process add/update/delete opeations from a Resource to
- * an IndexWriter. Also provides helper for {@link org.compass.core.lucene.engine.transaction.support.TransactionJob}
+ * an IndexWriter. Also provides helper for {@link org.compass.core.lucene.engine.transaction.support.job.TransactionJob}
  * processing against a writer.
  *
  * @author kimchy
@@ -36,7 +36,7 @@ public abstract class WriterHelper {
     /**
      * Adds the given resource to the writer.
      */
-    public static void processAdd(IndexWriter writer, InternalResource resource) throws IOException {
+    public static void processCreate(IndexWriter writer, InternalResource resource) throws IOException {
         ResourceEnhancer.Result result = ResourceEnhancer.enahanceResource(resource);
         writer.addDocument(result.getDocument(), result.getAnalyzer());
     }
@@ -62,25 +62,5 @@ public abstract class WriterHelper {
      */
     public static void processDelete(IndexWriter writer, Query query) throws IOException {
         writer.deleteDocuments(query);
-    }
-
-    /**
-     * Process the transaction job against the writer.
-     */
-    public static void processJob(IndexWriter writer, TransactionJob job) throws IOException {
-        switch (job.getType()) {
-            case CREATE:
-                processAdd(writer, job.getResource());
-                break;
-            case UPDATE:
-                processUpdate(writer, job.getResource());
-                break;
-            case DELETE:
-                writer.deleteDocuments(job.getUIDTerm());
-                break;
-            case DELETE_BY_QUERY:
-                writer.deleteDocuments(job.getQuery());
-                break;
-        }
     }
 }

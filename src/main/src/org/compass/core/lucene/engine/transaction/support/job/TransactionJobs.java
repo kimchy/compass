@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.compass.core.lucene.engine.transaction.support;
+package org.compass.core.lucene.engine.transaction.support.job;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -23,8 +23,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.compass.core.engine.SearchEngineFactory;
 
 /**
  * A holds for a list of jobs (usually, represent a transaction which holds several dirty operations).
@@ -59,15 +57,9 @@ public class TransactionJobs implements Serializable {
         return this.subIndexes;
     }
 
-    public void attach(SearchEngineFactory searchEngineFactory) {
-        for (TransactionJob job : jobs) {
-            job.attach(searchEngineFactory);
-        }
-    }
-
     /**
      * Takes all the jobs within this transaction and breaks it into one or more
-     * {@link org.compass.core.lucene.engine.transaction.support.TransactionJobs} per
+     * {@link TransactionJobs} per
      * sub index.
      */
     public Map<String, TransactionJobs> buildJobsPerSubIndex() {
@@ -87,20 +79,7 @@ public class TransactionJobs implements Serializable {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         for (TransactionJob job : jobs) {
-            switch (job.getType()) {
-                case CREATE:
-                    sb.append("CREATE[").append(job.getResourceUID()).append(']');
-                    break;
-                case UPDATE:
-                    sb.append("UPDATE[").append(job.getResourceUID()).append(']');
-                    break;
-                case DELETE:
-                    sb.append("DELETE[").append(job.getResourceUID()).append(']');
-                    break;
-                case DELETE_BY_QUERY:
-                    sb.append("DELETE[").append(job.getQuery().toString()).append(']');
-            }
-            sb.append(',');
+            sb.append(job).append(", ");
         }
         return sb.toString();
     }

@@ -23,11 +23,11 @@ import org.apache.commons.logging.LogFactory;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
 import org.compass.core.lucene.engine.transaction.support.AbstractJobBasedTransactionProcessor;
-import org.compass.core.lucene.engine.transaction.support.TransactionJobs;
+import org.compass.core.lucene.engine.transaction.support.job.TransactionJobs;
 
 /**
  * The actual terracotta transaction processor that simply delegates the commit point to
- * {@link org.compass.needle.terracotta.transaction.processor.TerracottaTransactionProcessorFactory#add(org.compass.core.lucene.engine.transaction.support.TransactionJobs)}.
+ * {@link org.compass.needle.terracotta.transaction.processor.TerracottaTransactionProcessorFactory#add(org.compass.core.lucene.engine.transaction.support.job.TransactionJobs)}.
  *
  * @author kimchy
  * @see TerracottaTransactionProcessorFactory

@@ -28,12 +28,17 @@ import org.compass.core.lucene.engine.LuceneSearchEngine;
 import org.compass.core.lucene.engine.LuceneSearchEngineHits;
 import org.compass.core.lucene.engine.LuceneSearchEngineInternalSearch;
 import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
+import org.compass.core.lucene.engine.transaction.support.job.CreateTransactionJob;
+import org.compass.core.lucene.engine.transaction.support.job.DeleteByQueryTransactionJob;
+import org.compass.core.lucene.engine.transaction.support.job.DeleteTransactionJob;
+import org.compass.core.lucene.engine.transaction.support.job.TransactionJobs;
+import org.compass.core.lucene.engine.transaction.support.job.UpdateTransactionJob;
 import org.compass.core.spi.InternalResource;
 import org.compass.core.spi.ResourceKey;
 
 /**
- * Base class for jobs based ({@link org.compass.core.lucene.engine.transaction.support.TransactionJobs})
- * transaction processor. Mainly used for simple accumelating of {@link org.compass.core.lucene.engine.transaction.support.TransactionJob}s
+ * Base class for jobs based ({@link org.compass.core.lucene.engine.transaction.support.job.TransactionJobs})
+ * transaction processor. Mainly used for simple accumelating of {@link org.compass.core.lucene.engine.transaction.support.job.TransactionJob}s
  * and then processing them during commit/rollback time.
  *
  * <p>Allows for optionl ordering guarantees of transaction operations across several concurrent transactions from the
@@ -111,17 +116,17 @@ public abstract class AbstractJobBasedTransactionProcessor extends AbstractSearc
 
     public void create(InternalResource resource) throws SearchEngineException {
         obtainOrderLockIfNeeded(resource.getSubIndex());
-        getTransactionJobs().add(new TransactionJob(TransactionJob.Type.CREATE, resource));
+        getTransactionJobs().add(new CreateTransactionJob(resource));
     }
 
     public void update(InternalResource resource) throws SearchEngineException {
         obtainOrderLockIfNeeded(resource.getSubIndex());
-        getTransactionJobs().add(new TransactionJob(TransactionJob.Type.UPDATE, resource));
+        getTransactionJobs().add(new UpdateTransactionJob(resource));
     }
 
     public void delete(ResourceKey resourceKey) throws SearchEngineException {
         obtainOrderLockIfNeeded(resourceKey.getSubIndex());
-        getTransactionJobs().add(new TransactionJob(TransactionJob.Type.DELETE, resourceKey));
+        getTransactionJobs().add(new DeleteTransactionJob(resourceKey));
     }
 
     public void delete(LuceneSearchEngineQuery query) throws SearchEngineException {
@@ -129,7 +134,7 @@ public abstract class AbstractJobBasedTransactionProcessor extends AbstractSearc
         String[] calcSubIndexes = indexManager.getStore().calcSubIndexes(query.getSubIndexes(), query.getAliases());
         for (String subIndex : calcSubIndexes) {
             obtainOrderLockIfNeeded(subIndex);
-            getTransactionJobs().add(new TransactionJob(TransactionJob.Type.DELETE_BY_QUERY, query.getQuery(), subIndex));
+            getTransactionJobs().add(new DeleteByQueryTransactionJob(query.getQuery(), subIndex));
         }
     }
 

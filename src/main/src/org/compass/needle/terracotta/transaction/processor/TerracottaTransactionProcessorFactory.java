@@ -41,13 +41,12 @@ import org.compass.core.lucene.engine.LuceneSearchEngine;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.lucene.engine.transaction.TransactionProcessor;
 import org.compass.core.lucene.engine.transaction.TransactionProcessorFactory;
-import org.compass.core.lucene.engine.transaction.support.TransactionJob;
-import org.compass.core.lucene.engine.transaction.support.TransactionJobs;
-import org.compass.core.lucene.engine.transaction.support.WriterHelper;
+import org.compass.core.lucene.engine.transaction.support.job.TransactionJob;
+import org.compass.core.lucene.engine.transaction.support.job.TransactionJobs;
 import org.compass.core.util.StringUtils;
 
 /**
- * The terracotta transaction processor factory allows to add {@link org.compass.core.lucene.engine.transaction.support.TransactionJobs TransactionJobs}
+ * The terracotta transaction processor factory allows to add {@link org.compass.core.lucene.engine.transaction.support.job.TransactionJobs TransactionJobs}
  * to a shared work queue (partitioned by sub index) to be processed later by worker processors.
  *
  * <p>By default, the transaction processor factory acts as a worker processor as well. In order to disable it (and make
@@ -216,9 +215,6 @@ public class TerracottaTransactionProcessorFactory implements TransactionProcess
                         }
                         logger.debug("Processor [" + subIndex + "] procesing [" + jobsList.size() + "] transactions with [" + totalJobs + "] jobs");
                     }
-                    for (TransactionJobs xJobs : jobsList) {
-                        xJobs.attach(searchEngineFactory);
-                    }
 
                     IndexWriter writer;
                     try {
@@ -234,7 +230,7 @@ public class TerracottaTransactionProcessorFactory implements TransactionProcess
                     try {
                         for (TransactionJobs xJobs : jobsList) {
                             for (TransactionJob job : xJobs.getJobs()) {
-                                WriterHelper.processJob(writer, job);
+                                job.execute(writer, searchEngineFactory);
                             }
                         }
                         writer.commit();
