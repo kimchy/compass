@@ -160,11 +160,7 @@
               <file url="file://$PROJECT_DIR$/src/sandbox/test/org/compass/gps/device/hibernate/scrollable/hibernate3.cfg.xml" />
             </files>
           </module>
-          <module name="compass-main">
-            <files>
-              <file url="file://$PROJECT_DIR$/src/main/test/org/compass/gps/device/hibernate/simple/embedded/hibernate.cfg.xml" />
-            </files>
-          </module>
+          <module name="compass-main" />
         </modules>
       </facet-type>
       <facet-type id="Spring">

@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping 
+    package="org.compass.gps.device.hibernate.onetoone">
+
+    <class name="Address" table="ADDRESS" lazy="true">
+        <id name="id">
+            <generator class="foreign">
+              <param name="property">user</param>
+            </generator>
+        </id>
+        <property name="zipcode" />
+        <one-to-one name="user" lazy="proxy" class="org.compass.gps.device.hibernate.onetoone.User" constrained="true" />
+    </class>
+
+</hibernate-mapping>

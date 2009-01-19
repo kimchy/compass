@@ -1,0 +1,24 @@
+<!DOCTYPE compass-core-mapping PUBLIC
+        "-//Compass/Compass Core Mapping DTD 2.0//EN"
+        "http://www.compass-project.org/dtd/compass-core-mapping-2.2.dtd">
+
+<compass-core-mapping package="org.compass.gps.device.hibernate.onetoone">
+
+    <class name="User" alias="user">
+        <id name="id"/>
+        <property name="username">
+            <meta-data>value</meta-data>
+        </property>
+        <reference name="shippingaddress" ref-alias="address" />
+    </class>
+
+    <class name="Address" alias="address">
+        <id name="id"/>
+        <property name="zipcode">
+            <meta-data>zipcode</meta-data>
+        </property>
+        <reference name="user" ref-alias="user" />
+    </class>
+
+</compass-core-mapping>
+
