@@ -25,6 +25,7 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.Query;
 import org.apache.lucene.store.Directory;
 import org.compass.core.CompassException;
 import org.compass.core.config.CompassConfigurable;
@@ -73,6 +74,14 @@ public class TransIndexManager implements CompassConfigurable {
             return;
         }
         getTransIndex(resourceKey.getSubIndex()).delete(resourceKey);
+    }
+
+    public void delete(Query query, String subIndex) throws IOException {
+        // no need to delete anything if we don't have a transactional index
+        if (!transIndexMap.containsKey(subIndex)) {
+            return;
+        }
+        getTransIndex(subIndex).delete(query);
     }
 
     public IndexReader getReader(String subIndex) throws IOException {

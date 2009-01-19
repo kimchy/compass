@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.compass.core.Compass;
 import org.compass.core.CompassException;
+import org.compass.core.CompassQuery;
 import org.compass.core.Resource;
 import org.compass.core.config.CompassAware;
 import org.compass.core.config.CompassConfigurable;
@@ -41,7 +42,8 @@ public class CompassEventManager implements CompassConfigurable,
         PreCreateEventListener, PreDeleteEventListener, PreSaveEventListener,
         PostCreateEventListener, PostDeleteEventListener, PostSaveEventListener,
         PreCreateResourceEventListener, PreSaveResourceEventListener, PreDeleteResourceEventListener,
-        PostCreateResourceEventListener, PostSaveResourceEventListener, PostDeleteResourceEventListener {
+        PostCreateResourceEventListener, PostSaveResourceEventListener, PostDeleteResourceEventListener,
+        PreDeleteQueryEventListener, PostDeleteQueryEventListener {
 
     private CompassMapping mapping;
 
@@ -71,6 +73,10 @@ public class CompassEventManager implements CompassConfigurable,
 
     private PostDeleteResourceEventListener[] postDeleteResourceEventListeners;
 
+    private PreDeleteQueryEventListener[] preDeleteQueryEventListeners;
+
+    private PostDeleteQueryEventListener[] postDeleteQueryEventListeners;
+
     public CompassEventManager(Compass compass, CompassMapping mapping) {
         this.compass = compass;
         this.mapping = mapping;
@@ -85,6 +91,8 @@ public class CompassEventManager implements CompassConfigurable,
         preDeleteResourceEventListeners = configureListener(settings, CompassEnvironment.Event.PREFIX_PRE_DELETE_RESOURCE, PreDeleteResourceEventListener.class);
         preSaveResourceEventListeners = configureListener(settings, CompassEnvironment.Event.PREFIX_PRE_SAVE_RESOURCE, PreSaveResourceEventListener.class);
 
+        preDeleteQueryEventListeners = configureListener(settings, CompassEnvironment.Event.PREFIX_PRE_DELETE_QUERY, PreDeleteQueryEventListener.class);
+
         postCreateEventListeners = configureListener(settings, CompassEnvironment.Event.PREFIX_POST_CREATE, PostCreateEventListener.class);
         postDeleteEventListeners = configureListener(settings, CompassEnvironment.Event.PREFIX_POST_DELETE, PostDeleteEventListener.class);
         postSaveEventListeners = configureListener(settings, CompassEnvironment.Event.PREFIX_POST_SAVE, PostSaveEventListener.class);
@@ -92,6 +100,8 @@ public class CompassEventManager implements CompassConfigurable,
         postCreateResourceEventListeners = configureListener(settings, CompassEnvironment.Event.PREFIX_POST_CREATE_RESOURCE, PostCreateResourceEventListener.class);
         postDeleteResourceEventListeners = configureListener(settings, CompassEnvironment.Event.PREFIX_POST_DELETE_RESOURCE, PostDeleteResourceEventListener.class);
         postSaveResourceEventListeners = configureListener(settings, CompassEnvironment.Event.PREFIX_POST_SAVE_RESOURCE, PostSaveResourceEventListener.class);
+
+        postDeleteQueryEventListeners = configureListener(settings, CompassEnvironment.Event.PREFIX_POST_DELETE_QUERY, PostDeleteQueryEventListener.class);
     }
 
     private <T> T[] configureListener(CompassSettings settings, String settingPrefix, Class<T> type) {
@@ -180,6 +190,18 @@ public class CompassEventManager implements CompassConfigurable,
         return FilterOperation.NO;
     }
 
+    public FilterOperation onPreDelete(CompassQuery query) {
+        if (preDeleteQueryEventListeners == null) {
+            return FilterOperation.NO;
+        }
+        for (PreDeleteQueryEventListener listener : preDeleteQueryEventListeners) {
+            if (listener.onPreDelete(query) == FilterOperation.YES) {
+                return FilterOperation.YES;
+            }
+        }
+        return FilterOperation.NO;
+    }
+
     public FilterOperation onPreSave(String alias, Object obj) {
         if (preSaveEventListeners == null) {
             return FilterOperation.NO;
@@ -250,6 +272,15 @@ public class CompassEventManager implements CompassConfigurable,
         }
         for (PostDeleteResourceEventListener listener : postDeleteResourceEventListeners) {
             listener.onPostDelete(resource);
+        }
+    }
+
+    public void onPostDelete(CompassQuery query) {
+        if (postDeleteQueryEventListeners == null) {
+            return;
+        }
+        for (PostDeleteQueryEventListener listener : postDeleteQueryEventListeners) {
+            listener.onPostDelete(query);
         }
     }
 

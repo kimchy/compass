@@ -76,6 +76,11 @@ public class CompassEnvironment {
         public static final String PREFIX_PRE_DELETE_RESOURCE = "compass.event.preDeleteResource";
 
         /**
+         * Allows to configure {@link org.compass.core.events.PreDeleteQueryEventListener}.
+         */
+        public static final String PREFIX_PRE_DELETE_QUERY = "compass.event.preDeleteQuery";
+
+        /**
          * Allows to configure {@link org.compass.core.events.PreSaveEventListener}.
          */
         public static final String PREFIX_PRE_SAVE = "compass.event.preSave";
@@ -104,6 +109,11 @@ public class CompassEnvironment {
          * Allows to configure {@link org.compass.core.events.PostDeleteResourceEventListener}.
          */
         public static final String PREFIX_POST_DELETE_RESOURCE = "compass.event.postDeleteResource";
+
+        /**
+         * Allows to configure {@link org.compass.core.events.PostDeleteQueryEventListener}.
+         */
+        public static final String PREFIX_POST_DELETE_QUERY = "compass.event.postDeleteQuery";
 
         /**
          * Allows to configure {@link org.compass.core.events.PostSaveEventListener}.

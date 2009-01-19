@@ -474,7 +474,7 @@ public class AsyncTransactionProcessorFactory implements TransactionProcessorFac
 
         public Object call() throws Exception {
             for (TransactionJob job : jobsToProcess) {
-                IndexWriter writer = writers.get(job.getResourceKey().getSubIndex());
+                IndexWriter writer = writers.get(job.getSubIndex());
                 WriterHelper.processJob(writer, job);
             }
             return null;

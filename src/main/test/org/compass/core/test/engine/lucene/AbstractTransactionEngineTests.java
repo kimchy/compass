@@ -314,6 +314,56 @@ public abstract class AbstractTransactionEngineTests extends AbstractLuceneEngin
         getSearchEngine().commit(true);
     }
 
+    public void testDeleteQueryWithCommit() {
+        getSearchEngine().begin();
+        assertSingleIdResourceNotExists(getSearchEngine());
+        assertMulitIdResourceNotExists(getSearchEngine());
+
+        Resource singleId = createSingleIdResource(getSearchEngine());
+        getSearchEngine().create(singleId);
+        Resource multiId = createMultiIdResource(getSearchEngine());
+        getSearchEngine().create(multiId);
+        getSearchEngine().commit(true);
+
+        sleepForChangesToOccur();
+
+        getSearchEngine().begin();
+        assertSingleIdResourceExists(getSearchEngine());
+        assertMulitIdResourceExists(getSearchEngine());
+        getSearchEngine().delete(createSinlgeResourceDeleteQuery(getSearchEngine()));
+        getSearchEngine().commit(true);
+
+        sleepForChangesToOccur();
+
+        getSearchEngine().begin();
+        assertSingleIdResourceNotExists(getSearchEngine());
+        assertMulitIdResourceExists(getSearchEngine());
+        getSearchEngine().commit(true);
+
+        sleepForChangesToOccur();
+
+        getSearchEngine().begin();
+        assertSingleIdResourceNotExists(getSearchEngine());
+        assertMulitIdResourceExists(getSearchEngine());
+        getSearchEngine().commit(true);
+
+        getSearchEngine().begin();
+        getSearchEngine().delete(createMultiResourceDeteteQuery(getSearchEngine()));
+        getSearchEngine().commit(true);
+
+        sleepForChangesToOccur();
+
+        getSearchEngine().begin();
+        assertSingleIdResourceNotExists(getSearchEngine());
+        assertMulitIdResourceNotExists(getSearchEngine());
+        getSearchEngine().commit(true);
+
+        getSearchEngine().begin();
+        assertSingleIdResourceNotExists(getSearchEngine());
+        assertMulitIdResourceNotExists(getSearchEngine());
+        getSearchEngine().commit(true);
+    }
+
     public void testDoubleDeletes() throws Exception {
         getSearchEngine().begin();
         assertSingleIdResourceNotExists(getSearchEngine());
@@ -424,6 +474,53 @@ public abstract class AbstractTransactionEngineTests extends AbstractLuceneEngin
 
         getSearchEngine().begin();
         getSearchEngine().delete(multiId);
+        getSearchEngine().rollback();
+
+        sleepForChangesToOccur();
+
+        getSearchEngine().begin();
+        assertSingleIdResourceNotExists(getSearchEngine());
+        assertMulitIdResourceExists(getSearchEngine());
+        getSearchEngine().commit(true);
+    }
+
+    public void testDeleteQueryWithRollback() {
+        getSearchEngine().begin();
+        assertSingleIdResourceNotExists(getSearchEngine());
+        assertMulitIdResourceNotExists(getSearchEngine());
+
+        Resource singleId = createSingleIdResource(getSearchEngine());
+        getSearchEngine().create(singleId);
+        Resource multiId = createMultiIdResource(getSearchEngine());
+        getSearchEngine().create(multiId);
+        getSearchEngine().commit(true);
+
+        sleepForChangesToOccur();
+
+        getSearchEngine().begin();
+        assertSingleIdResourceExists(getSearchEngine());
+        assertMulitIdResourceExists(getSearchEngine());
+        getSearchEngine().delete(createSinlgeResourceDeleteQuery(getSearchEngine()));
+        getSearchEngine().commit(true);
+
+        sleepForChangesToOccur();
+
+        getSearchEngine().begin();
+        assertSingleIdResourceNotExists(getSearchEngine());
+        assertMulitIdResourceExists(getSearchEngine());
+        getSearchEngine().commit(true);
+
+        sleepForChangesToOccur();
+
+        getSearchEngine().begin();
+        assertSingleIdResourceNotExists(getSearchEngine());
+        assertMulitIdResourceExists(getSearchEngine());
+        getSearchEngine().commit(true);
+
+        sleepForChangesToOccur();
+
+        getSearchEngine().begin();
+        getSearchEngine().delete(createMultiResourceDeteteQuery(getSearchEngine()));
         getSearchEngine().rollback();
 
         sleepForChangesToOccur();

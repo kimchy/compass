@@ -304,4 +304,12 @@ public abstract class AbstractEngineTests extends TestCase {
                 Property.Index.ANALYZED));
         return resource;
     }
+
+    protected SearchEngineQuery createSinlgeResourceDeleteQuery(SearchEngine searchEngine) {
+        return searchEngine.queryBuilder().queryString(PROPERTY_ID1 + ":" + VALUE_ID1).toQuery();
+    }
+
+    protected SearchEngineQuery createMultiResourceDeteteQuery(SearchEngine searchEngine) {
+        return searchEngine.queryBuilder().queryString("+" + PROPERTY_ID2 + ":" + VALUE_ID2 + " +" + PROPERTY_ID3 + ":" + VALUE_ID3).toQuery();
+    }
 }

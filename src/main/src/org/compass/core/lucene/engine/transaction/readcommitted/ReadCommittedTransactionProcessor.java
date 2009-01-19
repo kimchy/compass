@@ -338,6 +338,22 @@ public class ReadCommittedTransactionProcessor extends AbstractConcurrentTransac
         }
     }
 
+    protected void doDelete(Query query, String subIndex) throws SearchEngineException {
+        try {
+            openIndexWriterIfNeeded(subIndex);
+
+            // We do not mark them as deleted, waste time and mostly not needed
+            //Term deleteTerm = markDeleted(resourceKey);
+
+            // delete from the original index (autoCommit is false, so won't be committed
+            indexWriterBySubIndex.get(subIndex).deleteDocuments(query);
+            // and delete it (if there) from the transactional index
+            transIndexManager.delete(query, subIndex);
+        } catch (IOException e) {
+            throw new SearchEngineException("Failed to delete query [" + query + "] from sub index [" + subIndex + "]", e);
+        }
+    }
+
     protected void doUpdate(InternalResource resource) throws SearchEngineException {
         try {
             openIndexWriterIfNeeded(resource.getSubIndex());

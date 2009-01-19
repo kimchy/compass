@@ -23,6 +23,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
+import org.apache.lucene.search.Query;
 import org.compass.core.Resource;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
@@ -186,6 +187,26 @@ public abstract class AbstractConcurrentTransactionProcessor extends AbstractSea
      * Base classes should implement this. Behaviour should be the same as {@link #delete(org.compass.core.spi.ResourceKey)}.
      */
     protected abstract void doDelete(ResourceKey resourceKey) throws SearchEngineException;
+
+    public void delete(LuceneSearchEngineQuery query) throws SearchEngineException {
+        // we flush everything here so we maintain order
+        flush();
+        String[] calcSubIndexes = indexManager.getStore().calcSubIndexes(query.getSubIndexes(), query.getAliases());
+        for (String subIndex : calcSubIndexes) {
+            if (concurrentOperations) {
+                TransactionJob job = new TransactionJob(TransactionJob.Type.DELETE_BY_QUERY, query.getQuery(), subIndex);
+                prepareBeforeAsyncDirtyOperation(job);
+                getProcessor(job).addJob(job);
+            } else {
+                doDelete(query.getQuery(), subIndex);
+            }
+        }
+    }
+
+    /**
+     * Base classes should implement this. Behaviour should be similar to {@link #delete(org.compass.core.lucene.engine.LuceneSearchEngineQuery)}.
+     */
+    protected abstract void doDelete(Query query, String subIndex) throws SearchEngineException;
 
     /**
      * Called by a single thread (the calling thread) before a dirty transaction job is added to the
@@ -532,6 +553,9 @@ public abstract class AbstractConcurrentTransactionProcessor extends AbstractSea
                     break;
                 case DELETE:
                     doDelete(job.getResourceKey());
+                    break;
+                case DELETE_BY_QUERY:
+                    doDelete(job.getQuery(), job.getSubIndex());
                     break;
             }
         }

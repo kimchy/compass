@@ -150,6 +150,11 @@ public interface SearchEngine {
     void delete(Resource resource) throws SearchEngineException;
 
     /**
+     * Deletes all the resources that match the provided query.
+     */
+    void delete(SearchEngineQuery query) throws SearchEngineException;
+
+    /**
      * Loads a resource for the given resource that holds the properties AND the
      * alias, under the specified alias. Throws an exception if the resource if
      * not found.

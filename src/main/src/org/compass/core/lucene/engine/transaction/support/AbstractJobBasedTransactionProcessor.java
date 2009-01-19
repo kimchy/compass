@@ -124,6 +124,15 @@ public abstract class AbstractJobBasedTransactionProcessor extends AbstractSearc
         getTransactionJobs().add(new TransactionJob(TransactionJob.Type.DELETE, resourceKey));
     }
 
+    public void delete(LuceneSearchEngineQuery query) throws SearchEngineException {
+        flush();
+        String[] calcSubIndexes = indexManager.getStore().calcSubIndexes(query.getSubIndexes(), query.getAliases());
+        for (String subIndex : calcSubIndexes) {
+            obtainOrderLockIfNeeded(subIndex);
+            getTransactionJobs().add(new TransactionJob(TransactionJob.Type.DELETE_BY_QUERY, query.getQuery(), subIndex));
+        }
+    }
+
     public LuceneSearchEngineHits find(LuceneSearchEngineQuery query) throws SearchEngineException {
         return performFind(query);
     }

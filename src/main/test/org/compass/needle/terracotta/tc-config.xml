@@ -51,6 +51,10 @@
                     <class-expression>org.apache.lucene.document.AbstractField</class-expression>
                     <honor-transient>true</honor-transient>
                 </include>
+                <include>
+                    <class-expression>org.apache.lucene.search.*</class-expression>
+                    <honor-transient>true</honor-transient>
+                </include>
             </instrumented-classes>
 
             <locks>

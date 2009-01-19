@@ -239,6 +239,16 @@ public class LuceneSearchEngine implements SearchEngine {
         }
     }
 
+    public void delete(SearchEngineQuery query) throws SearchEngineException {
+        verifyWithinTransaction();
+        verifyNotReadOnly();
+        onlyReadOnlyOperations = false;
+        transactionProcessor.delete((LuceneSearchEngineQuery) query);
+        if (log.isTraceEnabled()) {
+            log.trace("QUERY DELETE [" + query + "]");
+        }
+    }
+
     public void save(Resource resource) throws SearchEngineException {
         onlyReadOnlyOperations = false;
         createOrUpdate(resource, true);

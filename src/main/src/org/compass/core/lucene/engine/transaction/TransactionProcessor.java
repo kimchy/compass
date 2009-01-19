@@ -81,6 +81,11 @@ public interface TransactionProcessor {
     void delete(final ResourceKey resourceKey) throws SearchEngineException;
 
     /**
+     * Delets everything that match the given query.
+     */
+    void delete(LuceneSearchEngineQuery query) throws SearchEngineException;
+
+    /**
      * Perform a search for the given query and returns the hits for it.
      */
     LuceneSearchEngineHits find(LuceneSearchEngineQuery query) throws SearchEngineException;

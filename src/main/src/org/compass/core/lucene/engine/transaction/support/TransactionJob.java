@@ -19,6 +19,7 @@ package org.compass.core.lucene.engine.transaction.support;
 import java.io.Serializable;
 
 import org.apache.lucene.index.Term;
+import org.apache.lucene.search.Query;
 import org.compass.core.engine.SearchEngineFactory;
 import org.compass.core.spi.InternalResource;
 import org.compass.core.spi.ResourceKey;
@@ -36,6 +37,7 @@ public class TransactionJob implements Serializable {
     public static enum Type {
         CREATE,
         DELETE,
+        DELETE_BY_QUERY,
         UPDATE
     }
 
@@ -47,11 +49,17 @@ public class TransactionJob implements Serializable {
 
     private final String resourceUID;
 
+    private final String subIndex;
+
+    private final Query query;
+
     public TransactionJob(Type type, InternalResource resource) {
         this.type = type;
         this.resource = resource;
         this.resourceKey = resource.getResourceKey();
         this.resourceUID = resourceKey.buildUID();
+        this.query = null;
+        this.subIndex = null;
     }
 
     public TransactionJob(Type type, ResourceKey resourceKey) {
@@ -59,6 +67,17 @@ public class TransactionJob implements Serializable {
         this.resourceKey = resourceKey;
         this.resource = null;
         this.resourceUID = resourceKey.buildUID();
+        this.query = null;
+        this.subIndex = null;
+    }
+
+    public TransactionJob(Type type, Query query, String subIndex) {
+        this.type = type;
+        this.query = query;
+        this.subIndex = subIndex;
+        this.resourceKey = null;
+        this.resource = null;
+        this.resourceUID = null;
     }
 
     public Type getType() {
@@ -76,11 +95,18 @@ public class TransactionJob implements Serializable {
         return resource;
     }
 
+    public Query getQuery() {
+        return query;
+    }
+
     public String getResourceUID() {
         return resourceUID;
     }
 
     public String getSubIndex() {
+        if (subIndex != null) {
+            return subIndex;
+        }
         return resourceKey.getSubIndex();
     }
 
@@ -92,11 +118,14 @@ public class TransactionJob implements Serializable {
         if (resource != null) {
             resource.attach(searchEngineFactory);
         }
-        resourceKey.attach(searchEngineFactory);
+        if (resourceKey != null) {
+            resourceKey.attach(searchEngineFactory);
+        }
     }
 
     @Override
     public String toString() {
+        if (query != null) return "Operation [" + type + "], Query [" + query + "]";
         if (resource == null) return "Operation [" + type + "] Key [" + resourceKey + "]";
         return "Operation [" + type + "] Key [" + resourceKey + "] Resource [" + resource + "]";
     }

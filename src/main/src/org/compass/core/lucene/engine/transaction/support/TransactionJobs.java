@@ -97,6 +97,8 @@ public class TransactionJobs implements Serializable {
                 case DELETE:
                     sb.append("DELETE[").append(job.getResourceUID()).append(']');
                     break;
+                case DELETE_BY_QUERY:
+                    sb.append("DELETE[").append(job.getQuery().toString()).append(']');
             }
             sb.append(',');
         }

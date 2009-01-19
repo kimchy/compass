@@ -319,6 +319,11 @@ public interface CompassQuery {
     CompassHits hits() throws CompassException;
 
     /**
+     * Deletes all the matching hits from the index.
+     */
+    void delete();
+
+    /**
      * Returns the count of hits that match this query. Note, this will be faster than
      * {@link CompassHitsOperations#length()}.
      *

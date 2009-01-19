@@ -26,6 +26,7 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.KeepOnlyLastCommitDeletionPolicy;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.Query;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.NoLockFactory;
@@ -116,6 +117,11 @@ public class TransIndex implements CompassConfigurable {
 
     public void delete(ResourceKey resourceKey) throws IOException {
         indexWriter.deleteDocuments(new Term(resourceKey.getUIDPath(), resourceKey.buildUID()));
+        flushRequired = true;
+    }
+
+    public void delete(Query query) throws IOException {
+        indexWriter.deleteDocuments(query);
         flushRequired = true;
     }
 

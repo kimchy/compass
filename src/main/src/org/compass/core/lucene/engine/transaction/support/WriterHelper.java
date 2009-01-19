@@ -20,6 +20,7 @@ import java.io.IOException;
 
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
+import org.apache.lucene.search.Query;
 import org.compass.core.spi.InternalResource;
 import org.compass.core.spi.ResourceKey;
 
@@ -57,6 +58,13 @@ public abstract class WriterHelper {
     }
 
     /**
+     * Deletes all the resources that match the given query.
+     */
+    public static void processDelete(IndexWriter writer, Query query) throws IOException {
+        writer.deleteDocuments(query);
+    }
+
+    /**
      * Process the transaction job against the writer.
      */
     public static void processJob(IndexWriter writer, TransactionJob job) throws IOException {
@@ -69,6 +77,9 @@ public abstract class WriterHelper {
                 break;
             case DELETE:
                 writer.deleteDocuments(job.getUIDTerm());
+                break;
+            case DELETE_BY_QUERY:
+                writer.deleteDocuments(job.getQuery());
                 break;
         }
     }

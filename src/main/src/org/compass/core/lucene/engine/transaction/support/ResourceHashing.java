@@ -39,6 +39,10 @@ public enum ResourceHashing {
     }
 
     public int hash(TransactionJob job) {
+        if (job.getResourceUID() == null) {
+            // in such cases, we always do it by sub index
+            return CollectionUtils.absHash(job.getSubIndex());
+        }
         switch (this) {
             case UID:
                 return CollectionUtils.absHash(job.getResourceUID());

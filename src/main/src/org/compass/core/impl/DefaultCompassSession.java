@@ -621,11 +621,7 @@ public class DefaultCompassSession implements InternalCompassSession {
 
     public void delete(CompassQuery query) throws CompassException {
         checkClosed();
-        // TODO since we don't marshall to objects, we won't get cascading
-        CompassHits hits = query.hits();
-        for (int i = 0; i < hits.length(); i++) {
-            delete(hits.resource(i));
-        }
+        query.delete();
     }
 
     public void evict(Object obj) {

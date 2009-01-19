@@ -26,6 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.search.Query;
 import org.apache.lucene.store.AlreadyClosedException;
 import org.apache.lucene.store.Directory;
 import org.compass.core.Resource;
@@ -184,6 +185,15 @@ public class LuceneTransactionProcessor extends AbstractConcurrentTransactionPro
         } catch (IOException e) {
             throw new SearchEngineException("Failed to delete alias [" + resourceKey.getAlias() + "] and ids ["
                     + StringUtils.arrayToCommaDelimitedString(resourceKey.getIds()) + "]", e);
+        }
+    }
+
+    protected void doDelete(Query query, String subIndex) throws SearchEngineException {
+        try {
+            IndexWriter indexWriter = getOrCreateIndexWriter(subIndex);
+            WriterHelper.processDelete(indexWriter, query);
+        } catch (IOException e) {
+            throw new SearchEngineException("Failed to delete query [" + query + "] from sub index [" + subIndex + "]", e);
         }
     }
 

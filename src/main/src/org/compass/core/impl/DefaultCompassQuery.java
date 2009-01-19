@@ -25,6 +25,7 @@ import org.compass.core.CompassQueryFilter;
 import org.compass.core.engine.SearchEngineHits;
 import org.compass.core.engine.SearchEngineQuery;
 import org.compass.core.engine.SearchEngineQuery.SearchEngineSpanQuery;
+import org.compass.core.events.FilterOperation;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.ResourcePropertyLookup;
 import org.compass.core.spi.InternalCompassSession;
@@ -169,6 +170,15 @@ public class DefaultCompassQuery implements CompassQuery, Cloneable {
     public CompassHits hits() throws CompassException {
         SearchEngineHits searchEngineHits = searchEngineQuery.hits();
         return new DefaultCompassHits(searchEngineHits, session, this);
+    }
+
+    public void delete() throws CompassException {
+        session.getFirstLevelCache().evictAll();
+        if (session.getCompass().getEventManager().onPreDelete(this) == FilterOperation.YES) {
+            return;
+        }
+        session.getSearchEngine().delete(searchEngineQuery);
+        session.getCompass().getEventManager().onPostDelete(this);
     }
 
     public SearchEngineQuery getSearchEngineQuery() {
