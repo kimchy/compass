@@ -16,12 +16,11 @@
 
 package org.compass.core.converter.dynamic;
 
-import java.io.StringWriter;
-
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.compass.core.converter.ConversionException;
 import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.util.StringBuilderWriter;
 
 /**
  * @author kimchy
@@ -43,7 +42,7 @@ public class VelocityDynamicConverter extends AbstractDynamicConverter {
         VelocityContext ctx = new VelocityContext();
         ctx.put(DATA_CONTEXT_KEY, o);
 
-        StringWriter sw = new StringWriter();
+        StringBuilderWriter sw = StringBuilderWriter.Cached.cached();
         try {
             Velocity.evaluate(ctx, sw, "", vtl);
         } catch (Exception e) {

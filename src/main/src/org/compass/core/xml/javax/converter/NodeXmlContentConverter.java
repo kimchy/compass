@@ -17,7 +17,6 @@
 package org.compass.core.xml.javax.converter;
 
 import java.io.Reader;
-import java.io.StringWriter;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -39,6 +38,7 @@ import org.compass.core.config.ConfigurationException;
 import org.compass.core.converter.ConversionException;
 import org.compass.core.converter.xsem.SupportsXmlContentWrapper;
 import org.compass.core.converter.xsem.XmlContentConverter;
+import org.compass.core.util.StringBuilderWriter;
 import org.compass.core.xml.AliasedXmlObject;
 import org.compass.core.xml.XmlObject;
 import org.compass.core.xml.javax.NodeAliasedXmlObject;
@@ -131,7 +131,7 @@ public class NodeXmlContentConverter implements XmlContentConverter, CompassConf
     public String toXml(XmlObject xmlObject) throws ConversionException {
         NodeXmlObject nodeXmlObject = (NodeXmlObject) xmlObject;
         Source source = new DOMSource(nodeXmlObject.getNode());
-        StringWriter sw = new StringWriter();
+        StringBuilderWriter sw = StringBuilderWriter.Cached.cached();
         Result result = new StreamResult(sw);
         try {
             transformer.transform(source, result);

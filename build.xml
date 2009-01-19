@@ -622,6 +622,7 @@
                 <include name="lib/ibatis/**"/>
                 <include name="lib/jboss/**"/>
                 <include name="lib/j2ee/**"/>
+                <include name="lib/jackson/**"/>
                 <include name="lib/jakarta-commons/**"/>
                 <include name="lib/jakarta-taglibs/**"/>
                 <include name="lib/jaxen/**"/>

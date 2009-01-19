@@ -17,7 +17,6 @@
 package org.compass.core.xml.dom4j.converter;
 
 import java.io.Reader;
-import java.io.StringWriter;
 import javax.xml.stream.XMLStreamException;
 
 import org.compass.core.CompassException;
@@ -26,6 +25,7 @@ import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.converter.ConversionException;
 import org.compass.core.converter.xsem.SupportsXmlContentWrapper;
+import org.compass.core.util.StringBuilderWriter;
 import org.compass.core.xml.AliasedXmlObject;
 import org.compass.core.xml.XmlObject;
 import org.compass.core.xml.dom4j.Dom4jAliasedXmlObject;
@@ -83,7 +83,7 @@ public class STAXReaderXmlContentConverter extends AbstractXmlWriterXmlContentCo
     public String toXml1(XmlObject xmlObject) throws ConversionException {
         //TODO for some reason, this does not marshall at all, and also, will it be faster than dom4j XMLWriter?
         Dom4jXmlObject dom4jXmlObject = (Dom4jXmlObject) xmlObject;
-        StringWriter stringWriter = new StringWriter();
+        StringBuilderWriter stringWriter = StringBuilderWriter.Cached.cached();
         try {
             STAXEventWriter xmlWriter = new STAXEventWriter(stringWriter);
             xmlWriter.writeNode(dom4jXmlObject.getNode());

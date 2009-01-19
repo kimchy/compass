@@ -53,6 +53,7 @@
     <orderEntry type="library" name="jettison" level="project" />
     <orderEntry type="library" name="mvel" level="project" />
     <orderEntry type="library" name="commonj" level="project" />
+    <orderEntry type="library" name="jackson" level="project" />
   </component>
 </module>
 

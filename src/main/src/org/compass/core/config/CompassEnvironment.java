@@ -391,7 +391,7 @@ public class CompassEnvironment {
 
         public abstract class JsonContent {
 
-            public static final String TYPE = "jsonContentConverter.type";
+            public static final String TYPE = "compass.jsonContentConverter.type";
         }
 
         /**

@@ -27,7 +27,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
-import java.io.StringWriter;
 import java.io.Writer;
 
 import org.apache.commons.logging.Log;
@@ -249,7 +248,7 @@ public abstract class CopyUtils {
      * @throws IOException in case of I/O errors
      */
     public static String copyToString(Reader in) throws IOException {
-        StringWriter out = new StringWriter();
+        StringBuilderWriter out = new StringBuilderWriter();
         copy(in, out);
         return out.toString();
     }

@@ -143,7 +143,7 @@ jsonObject = (JsonObject) hits.data(0);
     <title>JSON API Abstraction</title>
     
     <para>
-      Since there is no single object based API when working with JSON Compass has an interface based abstraction that can be used with any JSON implementation available. The APIs can be found under <literal>org.compass.core.json</literal> and include <classname>JsonObject</classname>, <classname>AliasedJsonObject</classname>, and <classname>JsonArray</classname>. Compass comes with several built in implementations. The first is taken from <literal>json.org</literal> site and is bundled with Compass under <literal>org.compass.core.json.impl</literal>. The second supports Grails JSON objects and has wrapper implementations around it under <literal>org.compass.core.json.grails</literal>. The last supports Jettison JSON objects and has a wrapper implementation around it under <literal>org.compass.core.json.jettison</literal>.
+      Since there is no single object based API when working with JSON Compass has an interface based abstraction that can be used with any JSON implementation available. The APIs can be found under <literal>org.compass.core.json</literal> and include <classname>JsonObject</classname>, <classname>AliasedJsonObject</classname>, and <classname>JsonArray</classname>. Compass comes with several built in implementations. The first is taken from <literal>json.org</literal> site and is bundled with Compass under <literal>org.compass.core.json.impl</literal>. The second supports Grails JSON objects and has wrapper implementations around it under <literal>org.compass.core.json.grails</literal>. Another supports Jettison JSON objects and has a wrapper implementation around it under <literal>org.compass.core.json.jettison</literal>. The last (and probably the fastest) support jackson based JSON objects and is implemented under <literal>org.compass.core.json.jackson</literal>.
     </para>
     
     <para>
@@ -155,7 +155,7 @@ jsonObject = (JsonObject) hits.data(0);
     <title>Content Mapping</title>
     
     <para>
-      By default, when mapping JSON using Compass, the JSON content itself is not stored in the search engine. If the JSON content itself is not store, then when searching and getting back results from the search engine only <classname>Resource</classname> can be used. Within the mapping definition, the actual JSON content can be store. This allows to get the JSON itself from the search engine using the <classname>Resource</classname> API, as well as converting back the search results into the actual JSON object (jettison, grails, the default, or a custom one).
+      By default, when mapping JSON using Compass, the JSON content itself is not stored in the search engine. If the JSON content itself is not store, then when searching and getting back results from the search engine only <classname>Resource</classname> can be used. Within the mapping definition, the actual JSON content can be store. This allows to get the JSON itself from the search engine using the <classname>Resource</classname> API, as well as converting back the search results into the actual JSON object (jackson, jettison, grails, the default, or a custom one).
     </para>
     
     <para>
@@ -177,7 +177,7 @@ resource.getValue("content"); // will get actual json string
     </para>
     
     <para>
-      In order to convert back to the actual JSON object, a converter instructing Compass how to convert the JSON string back to your favorite JSON object model should be registered with Compass. For example, to register the jettison based converter, the setting named <literal>compass.jsonContentConverter.type</literal> should be set to <literal>org.compass.core.json.jettison.converter.JettisonContentConverter</literal>. In order to register the grails converter the setting should be set to <literal>org.compass.core.json.grails.converter.GrailsContentConverter</literal>. And, in order to use the default build in Compass implementation the setting should be set to <literal>org.compass.core.json.impl.converter.DefaultJSONContentConverterImpl</literal>.
+      In order to convert back to the actual JSON object, a converter instructing Compass how to convert the JSON string back to your favorite JSON object model should be registered with Compass. For example, to register the jettison based converter, the setting named <literal>compass.jsonContentConverter.type</literal> should be set to <literal>org.compass.core.json.jettison.converter.JettisonContentConverter</literal>. In order to register the grails converter the setting should be set to <literal>org.compass.core.json.grails.converter.GrailsContentConverter</literal>. In order to register the jackson converter the setting should be set to <literal>org.compass.core.json.jackson.converter.JacksonContentConverter</literal>. And, in order to use the default build in Compass implementation the setting should be set to <literal>org.compass.core.json.impl.converter.DefaultJSONContentConverterImpl</literal>.
     </para>
     
     <para>

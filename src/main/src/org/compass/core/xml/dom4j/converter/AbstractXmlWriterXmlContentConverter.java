@@ -17,10 +17,10 @@
 package org.compass.core.xml.dom4j.converter;
 
 import java.io.IOException;
-import java.io.StringWriter;
 
 import org.compass.core.converter.ConversionException;
 import org.compass.core.converter.xsem.XmlContentConverter;
+import org.compass.core.util.StringBuilderWriter;
 import org.compass.core.xml.XmlObject;
 import org.compass.core.xml.dom4j.Dom4jXmlObject;
 import org.dom4j.io.OutputFormat;
@@ -45,7 +45,7 @@ public abstract class AbstractXmlWriterXmlContentConverter implements XmlContent
      */
     public String toXml(XmlObject xmlObject) throws ConversionException {
         Dom4jXmlObject dom4jXmlObject = (Dom4jXmlObject) xmlObject;
-        StringWriter stringWriter = new StringWriter();
+        StringBuilderWriter stringWriter = StringBuilderWriter.Cached.cached();
         OutputFormat outputFormat = OutputFormat.createCompactFormat();
         XMLWriter xmlWriter = new XMLWriter(stringWriter, outputFormat);
         try {

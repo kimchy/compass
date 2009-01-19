@@ -17,10 +17,10 @@
 package org.compass.core.xml.jdom.converter;
 
 import java.io.IOException;
-import java.io.StringWriter;
 
 import org.compass.core.converter.ConversionException;
 import org.compass.core.converter.xsem.XmlContentConverter;
+import org.compass.core.util.StringBuilderWriter;
 import org.compass.core.xml.XmlObject;
 import org.compass.core.xml.jdom.JDomXmlObject;
 import org.jdom.output.Format;
@@ -48,7 +48,7 @@ public abstract class AbstractXmlOutputterXmlContentConverter implements XmlCont
         JDomXmlObject jDomXmlObject = (JDomXmlObject) xmlObject;
         XMLOutputter outp = new XMLOutputter();
         outp.setFormat(Format.getCompactFormat());
-        StringWriter stringWriter = new StringWriter();
+        StringBuilderWriter stringWriter = StringBuilderWriter.Cached.cached();
         try {
             outp.output(jDomXmlObject.getElement(), stringWriter);
         } catch (IOException e) {
