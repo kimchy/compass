@@ -23,12 +23,12 @@ import java.io.Writer;
  */
 public class StringBuilderWriter extends Writer {
 
-    public static class Cached extends StringBuilderWriter {
+    public static class Cached {
 
-        private static final ThreadLocal<Cached> cache = new ThreadLocal<Cached>() {
+        private static final ThreadLocal<StringBuilderWriter> cache = new ThreadLocal<StringBuilderWriter>() {
             @Override
-            protected Cached initialValue() {
-                return new Cached();
+            protected StringBuilderWriter initialValue() {
+                return new StringBuilderWriter();
             }
         };
 
