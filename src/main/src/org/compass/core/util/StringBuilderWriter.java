@@ -19,6 +19,11 @@ package org.compass.core.util;
 import java.io.Writer;
 
 /**
+ * A Writer based on {@link StringBuilder}. Also alows for thread local reuse of {@link StringBuilder}
+ * by using: <code>StringBuilderWriter.Cached.cached()</code> in order to obtain the cached writer. Note,
+ * in such cases, the {@link #getBuilder()} should be called and used (usually <code>toString</code> it)
+ * before another usage of the writer.
+ *
  * @author kimchy
  */
 public class StringBuilderWriter extends Writer {
