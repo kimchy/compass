@@ -22,6 +22,8 @@ import org.compass.core.lucene.engine.transaction.support.WriterHelper;
 import org.compass.core.spi.InternalResource;
 
 /**
+ * A transaction job that creates a new {@link org.compass.core.Resource}.
+ *
  * @author kimchy
  */
 public class CreateTransactionJob implements TransactionJob {

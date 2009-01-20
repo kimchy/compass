@@ -25,9 +25,8 @@ import org.compass.core.spi.InternalResource;
 import org.compass.core.spi.ResourceKey;
 
 /**
- * Provides helper method to process add/update/delete opeations from a Resource to
- * an IndexWriter. Also provides helper for {@link org.compass.core.lucene.engine.transaction.support.job.TransactionJob}
- * processing against a writer.
+ * Provides helper method to process create/update/delete opeations from a Resource to
+ * an IndexWriter.
  *
  * @author kimchy
  */

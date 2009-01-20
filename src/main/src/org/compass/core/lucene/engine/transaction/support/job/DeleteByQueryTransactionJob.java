@@ -22,6 +22,9 @@ import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.lucene.engine.transaction.support.WriterHelper;
 
 /**
+ * A transaction job that deletes all matching {@link org.apache.lucene.search.Query} hits
+ * from the sub index.
+ *
  * @author kimchy
  */
 public class DeleteByQueryTransactionJob implements TransactionJob {

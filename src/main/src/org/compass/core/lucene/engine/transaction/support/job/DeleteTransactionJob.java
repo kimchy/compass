@@ -22,6 +22,8 @@ import org.compass.core.lucene.engine.transaction.support.WriterHelper;
 import org.compass.core.spi.ResourceKey;
 
 /**
+ * A transaction job that deletes a resource based on its {@link org.compass.core.spi.ResourceKey}.
+ *
  * @author kimchy
  */
 public class DeleteTransactionJob implements TransactionJob {

@@ -28,9 +28,18 @@ import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
  */
 public interface TransactionJob extends Serializable {
 
+    /**
+     * Returns the sub index the transaction job will work against.
+     */
     String getSubIndex();
 
+    /**
+     * Retruns the resource UID (if available) that transaction job will work on.
+     */
     String getResourceUID();
 
+    /**
+     * Executes the job against Lucene {@link org.apache.lucene.index.IndexWriter}.
+     */
     void execute(IndexWriter writer, LuceneSearchEngineFactory sessionFactory) throws Exception;
 }
