@@ -16,7 +16,6 @@
 
 package org.compass.core.util;
 
-import java.io.IOException;
 import java.io.Writer;
 
 /**
@@ -40,181 +39,120 @@ public class StringBuilderWriter extends Writer {
         }
     }
 
-    private StringBuilder buf;
-
-    public StringBuilderWriter(StringBuilder sb) {
-        this.buf = sb;
-        lock = buf;
-    }
+    private final StringBuilder builder;
 
     /**
-     * Create a new string writer, using the default initial string-buffer
-     * size.
+     * Construct a new {@link StringBuilder} instance with default capacity.
      */
     public StringBuilderWriter() {
-        buf = new StringBuilder();
-        lock = buf;
+        this.builder = new StringBuilder();
     }
 
     /**
-     * Create a new string writer, using the specified initial string-buffer
-     * size.
+     * Construct a new {@link StringBuilder} instance with the specified capacity.
      *
-     * @param initialSize an int specifying the initial size of the buffer.
+     * @param capacity The initial capacity of the underlying {@link StringBuilder}
      */
-    public StringBuilderWriter(int initialSize) {
-        if (initialSize < 0) {
-            throw new IllegalArgumentException("Negative buffer size");
-        }
-        buf = new StringBuilder(initialSize);
-        lock = buf;
+    public StringBuilderWriter(int capacity) {
+        this.builder = new StringBuilder(capacity);
     }
 
     /**
-     * Write a single character.
+     * Construct a new instance with the specified {@link StringBuilder}.
+     *
+     * @param builder The String builder
      */
-    public void write(int c) {
-        buf.append((char) c);
+    public StringBuilderWriter(StringBuilder builder) {
+        this.builder = (builder != null ? builder : new StringBuilder());
     }
 
     /**
-     * Write a portion of an array of characters.
+     * Append a single character to this Writer.
      *
-     * @param cbuf Array of characters
-     * @param off  Offset from which to start writing characters
-     * @param len  Number of characters to write
+     * @param value The character to append
+     * @return This writer instance
      */
-    public void write(char cbuf[], int off, int len) {
-        if ((off < 0) || (off > cbuf.length) || (len < 0) ||
-                ((off + len) > cbuf.length) || ((off + len) < 0)) {
-            throw new IndexOutOfBoundsException();
-        } else if (len == 0) {
-            return;
-        }
-        buf.append(cbuf, off, len);
-    }
-
-    /**
-     * Write a string.
-     */
-    public void write(String str) {
-        buf.append(str);
-    }
-
-    /**
-     * Write a portion of a string.
-     *
-     * @param str String to be written
-     * @param off Offset from which to start writing characters
-     * @param len Number of characters to write
-     */
-    public void write(String str, int off, int len) {
-        buf.append(str.substring(off, off + len));
-    }
-
-    /**
-     * Appends the specified character sequence to this writer.
-     *
-     * <p> An invocation of this method of the form <tt>out.append(csq)</tt>
-     * behaves in exactly the same way as the invocation
-     *
-     * <pre>
-     *     out.write(csq.toString()) </pre>
-     *
-     * <p> Depending on the specification of <tt>toString</tt> for the
-     * character sequence <tt>csq</tt>, the entire sequence may not be
-     * appended. For instance, invoking the <tt>toString</tt> method of a
-     * character buffer will return a subsequence whose content depends upon
-     * the buffer's position and limit.
-     *
-     * @param csq The character sequence to append.  If <tt>csq</tt> is
-     *            <tt>null</tt>, then the four characters <tt>"null"</tt> are
-     *            appended to this writer.
-     * @return This writer
-     * @since 1.5
-     */
-    public StringBuilderWriter append(CharSequence csq) {
-        if (csq == null)
-            write("null");
-        else
-            write(csq.toString());
+    public Writer append(char value) {
+        builder.append(value);
         return this;
     }
 
     /**
-     * Appends a subsequence of the specified character sequence to this writer.
+     * Append a character sequence to this Writer.
      *
-     * <p> An invocation of this method of the form <tt>out.append(csq, start,
-     * end)</tt> when <tt>csq</tt> is not <tt>null</tt>, behaves in
-     * exactly the same way as the invocation
-     *
-     * <pre>
-     *     out.write(csq.subSequence(start, end).toString()) </pre>
-     *
-     * @param csq   The character sequence from which a subsequence will be
-     *              appended.  If <tt>csq</tt> is <tt>null</tt>, then characters
-     *              will be appended as if <tt>csq</tt> contained the four
-     *              characters <tt>"null"</tt>.
-     * @param start The index of the first character in the subsequence
-     * @param end   The index of the character following the last character in the
-     *              subsequence
-     * @return This writer
-     * @throws IndexOutOfBoundsException If <tt>start</tt> or <tt>end</tt> are negative, <tt>start</tt>
-     *                                   is greater than <tt>end</tt>, or <tt>end</tt> is greater than
-     *                                   <tt>csq.length()</tt>
-     * @since 1.5
+     * @param value The character to append
+     * @return This writer instance
      */
-    public StringBuilderWriter append(CharSequence csq, int start, int end) {
-        CharSequence cs = (csq == null ? "null" : csq);
-        write(cs.subSequence(start, end).toString());
+    public Writer append(CharSequence value) {
+        builder.append(value);
         return this;
     }
 
     /**
-     * Appends the specified character to this writer.
+     * Append a portion of a character sequence to the {@link StringBuilder}.
      *
-     * <p> An invocation of this method of the form <tt>out.append(c)</tt>
-     * behaves in exactly the same way as the invocation
-     *
-     * <pre>
-     *     out.write(c) </pre>
-     *
-     * @param c The 16-bit character to append
-     * @return This writer
-     * @since 1.5
+     * @param value The character to append
+     * @param start The index of the first character
+     * @param end   The index of the last character + 1
+     * @return This writer instance
      */
-    public StringBuilderWriter append(char c) {
-        write(c);
+    public Writer append(CharSequence value, int start, int end) {
+        builder.append(value, start, end);
         return this;
     }
 
     /**
-     * Return the buffer's current value as a string.
+     * Closing this writer has no effect.
      */
-    public String toString() {
-        return buf.toString();
+    public void close() {
     }
 
     /**
-     * Return the string buffer itself.
-     *
-     * @return StringBuffer holding the current buffer value.
-     */
-    public StringBuilder getBuilder() {
-        return buf;
-    }
-
-    /**
-     * Flush the stream.
+     * Flushing this writer has no effect.
      */
     public void flush() {
     }
 
+
     /**
-     * Closing a <tt>StringWriter</tt> has no effect. The methods in this
-     * class can be called after the stream has been closed without generating
-     * an <tt>IOException</tt>.
+     * Write a String to the {@link StringBuilder}.
+     *
+     * @param value The value to write
      */
-    public void close() throws IOException {
+    public void write(String value) {
+        if (value != null) {
+            builder.append(value);
+        }
+    }
+
+    /**
+     * Write a portion of a character array to the {@link StringBuilder}.
+     *
+     * @param value  The value to write
+     * @param offset The index of the first character
+     * @param length The number of characters to write
+     */
+    public void write(char[] value, int offset, int length) {
+        if (value != null) {
+            builder.append(value, offset, length);
+        }
+    }
+
+    /**
+     * Return the underlying builder.
+     *
+     * @return The underlying builder
+     */
+    public StringBuilder getBuilder() {
+        return builder;
+    }
+
+    /**
+     * Returns {@link StringBuilder#toString()}.
+     *
+     * @return The contents of the String builder.
+     */
+    public String toString() {
+        return builder.toString();
     }
 }
