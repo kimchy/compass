@@ -28,6 +28,7 @@ import org.apache.commons.logging.LogFactory;
 import org.compass.core.config.CompassConfiguration;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.ConfigurationException;
+import org.compass.core.util.StringUtils;
 
 /**
  * @author kimchy
@@ -37,9 +38,28 @@ public abstract class AbstractInputStreamConfigurationBuilder implements Configu
     protected Log log = LogFactory.getLog(getClass());
 
     public void configure(String resource, CompassConfiguration config) throws ConfigurationException {
-        InputStream stream = CompassEnvironment.class.getResourceAsStream(resource);
+        resource = StringUtils.cleanPath(resource);
+        InputStream stream = null;
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        if (classLoader != null) {
+            stream = classLoader.getResourceAsStream(resource);
+            if (stream == null) {
+                String pathToUse = resource;
+                if (pathToUse.startsWith("/")) {
+                    pathToUse = pathToUse.substring(1);
+                }
+                stream = classLoader.getResourceAsStream(pathToUse);
+            }
+        }
         if (stream == null) {
-            stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(resource);
+            stream = CompassEnvironment.class.getResourceAsStream(resource);
+            if (stream == null) {
+                String pathToUse = resource;
+                if (pathToUse.startsWith("/")) {
+                    pathToUse = pathToUse.substring(1);
+                }
+                stream = CompassEnvironment.class.getResourceAsStream(pathToUse);
+            }
         }
         if (stream == null) {
             throw new ConfigurationException("Resource [" + resource + "] not found in class path");
