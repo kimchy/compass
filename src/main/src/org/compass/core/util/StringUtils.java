@@ -459,6 +459,12 @@ public abstract class StringUtils {
         return (obj instanceof String ? quote((String) obj) : obj);
     }
 
+    public static String qualify(String prefix, String name) {
+        if (name == null)
+            throw new NullPointerException();
+        return new StringBuilder(prefix.length() + name.length() + 1).append(prefix).append('.').append(name).toString();
+    }
+
     /**
      * Unqualify a string qualified by a '.' dot character. For example,
      * "this.name.is.qualified", returns "qualified".
@@ -1129,7 +1135,29 @@ public abstract class StringUtils {
         if (ObjectUtils.isEmpty(arr)) {
             return "";
         }
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < arr.length; i++) {
+            if (i > 0) {
+                sb.append(delim);
+            }
+            sb.append(arr[i]);
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Convenience method to return a String array as a delimited (e.g. CSV)
+     * String. E.g. useful for <code>toString()</code> implementations.
+     *
+     * @param arr   the array to display
+     * @param delim the delimiter to use (probably a ",")
+     * @return the delimited String
+     */
+    public static String arrayToDelimitedString(Object[] arr, char delim) {
+        if (ObjectUtils.isEmpty(arr)) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
         for (int i = 0; i < arr.length; i++) {
             if (i > 0) {
                 sb.append(delim);
@@ -1148,5 +1176,20 @@ public abstract class StringUtils {
      */
     public static String arrayToCommaDelimitedString(Object[] arr) {
         return arrayToDelimitedString(arr, ",");
+    }
+
+    /**
+     * Reverses a string.
+     *
+     * @param str The String to reverse
+     * @return The reversed string
+     */
+    public static String reverse(String str) {
+        int length = str.length();
+        StringBuilder sb = new StringBuilder(length);
+        for (int i = length - 1; i > -1; i--) {
+            sb.append(str.charAt(i));
+        }
+        return sb.toString();
     }
 }
