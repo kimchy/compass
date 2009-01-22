@@ -23,6 +23,8 @@ import org.compass.core.config.CompassConfiguration;
 import org.compass.core.config.ConfigurationException;
 
 /**
+ * Provides the ability to configrue Compass using different means.
+ *
  * @author kimchy
  */
 public interface ConfigurationBuilder {
