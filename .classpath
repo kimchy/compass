@@ -96,5 +96,7 @@
 	<classpathentry kind="lib" path="lib/mvel/mvel2-2.0.jar"/>
 	<classpathentry kind="lib" path="lib/commonj/commonj-twm.jar"/>
 	<classpathentry kind="lib" path="lib/ibatis/ibatis-2.3.4.726.jar"/>
+	<classpathentry kind="lib" path="lib/jackson/jackson-core-asl-0.9.6.jar"/>
+	<classpathentry kind="lib" path="lib/jackson/jackson-mapper-asl-0.9.6.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

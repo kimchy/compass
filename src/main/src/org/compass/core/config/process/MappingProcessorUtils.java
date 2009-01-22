@@ -103,11 +103,8 @@ public abstract class MappingProcessorUtils {
             index = Property.Index.NOT_ANALYZED;
         } else {
             index = classPropertyMapping.getManagedIdIndex();
-            if (index == null) {
-                String indexSetting = settings.getSetting(CompassEnvironment.Osem.MANAGED_ID_INDEX, "analyzed");
-                index = Property.Index.fromString(indexSetting);
-            }
         }
+        // note, index might be null, but it will be resolved later in applyResourcePropertySettings
         internalIdMapping.setIndex(index);
         internalIdMapping.setBoost(1.0f);
         internalIdMapping.setGetter(classPropertyMapping.getGetter());
@@ -178,7 +175,11 @@ public abstract class MappingProcessorUtils {
                 intMapping.setIndex(converter.suggestIndex());
             }
             if (intMapping.getIndex() == null) {
-                intMapping.setIndex(Property.Index.fromString(settings.getSetting(CompassEnvironment.Mapping.GLOBAL_INDEX, Property.Index.ANALYZED.toString())));
+                if (intMapping.isInternal()) {
+                    intMapping.setIndex(Property.Index.fromString(settings.getSetting(CompassEnvironment.Osem.MANAGED_ID_INDEX, "analyzed")));
+                } else {
+                    intMapping.setIndex(Property.Index.fromString(settings.getSetting(CompassEnvironment.Mapping.GLOBAL_INDEX, Property.Index.ANALYZED.toString())));
+                }
             }
         }
         if (intMapping.getStore() == null) {
