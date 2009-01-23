@@ -1,0 +1,27 @@
+<!DOCTYPE compass-core-mapping PUBLIC
+        "-//Compass/Compass Core Mapping DTD 2.2//EN"
+        "http://www.compass-project.org/dtd/compass-core-mapping-2.2.dtd">
+
+<compass-core-mapping package="org.compass.core.test.concurrent.multi">
+
+    <class name="A" alias="a">
+
+        <id name="id" accessor="field" />
+
+        <property name="data1" accessor="field">
+            <meta-data>mvalue</meta-data>
+            <meta-data>mdata1</meta-data>
+        </property>
+
+        <property name="data2" accessor="field">
+            <meta-data>mvalue</meta-data>
+            <meta-data>mdata2</meta-data>
+        </property>
+
+        <property name="indexTime" accessor="field">
+            <meta-data>mindexTime</meta-data>
+        </property>
+
+    </class>
+
+</compass-core-mapping>
