@@ -29,7 +29,6 @@ import org.compass.core.CompassHits;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTemplate;
 import org.compass.core.config.CompassConfiguration;
-import org.compass.core.load.multi.A;
 
 /**
  * Base class for simple concurrency tests for Compass. Starts several threads, each reads and writes data.
@@ -179,9 +178,9 @@ public abstract class AbstractMultiLoadTests extends AbstractAnnotationsTestCase
                                 }
 
                                 a = new A();
-                                a.setId(lastIdWritten);
-                                a.setData1("" + lastIdWritten);
-                                a.setIndexTime(new Date());
+                                a.id = lastIdWritten;
+                                a.data1 = "" + lastIdWritten;
+                                a.indexTime = new Date();
                                 session.save(a);
 
                                 check(session, cycle, lastIdWritten);
