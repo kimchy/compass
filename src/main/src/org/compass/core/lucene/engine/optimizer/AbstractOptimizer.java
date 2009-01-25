@@ -102,7 +102,7 @@ public abstract class AbstractOptimizer implements LuceneSearchEngineOptimizer {
         searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Object>() {
             public Object doInTransaction() throws CompassException {
                 doOptimize(subIndex);
-                searchEngineFactory.getIndexManager().refreshCache(subIndex);
+                searchEngineFactory.getLuceneIndexManager().getIndexHoldersCache().refreshCache(subIndex);
                 return null;
             }
         });
@@ -120,7 +120,7 @@ public abstract class AbstractOptimizer implements LuceneSearchEngineOptimizer {
         searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Object>() {
             public Object doInTransaction() throws CompassException {
                 doForceOptimize(subIndex);
-                searchEngineFactory.getIndexManager().refreshCache(subIndex);
+                searchEngineFactory.getLuceneIndexManager().getIndexHoldersCache().refreshCache(subIndex);
                 return null;
             }
         });

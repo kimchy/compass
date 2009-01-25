@@ -83,7 +83,7 @@ public abstract class AbstractTransactionProcessor implements TransactionProcess
                 ArrayList<IndexReader> readers = new ArrayList<IndexReader>(calcSubIndexes.length);
                 LuceneIndexHolder lastNonEmptyIndexHolder = null;
                 for (String subIndex : calcSubIndexes) {
-                    LuceneIndexHolder indexHolder = indexManager.openIndexHolderBySubIndex(subIndex);
+                    LuceneIndexHolder indexHolder = indexManager.getIndexHoldersCache().getHolder(subIndex);
                     indexHoldersToClose.add(indexHolder);
                     if (indexHolder.getIndexReader().numDocs() > 0) {
                         readers.add(indexHolder.getIndexReader());
@@ -104,7 +104,7 @@ public abstract class AbstractTransactionProcessor implements TransactionProcess
                 ArrayList<IndexSearcher> searchers = new ArrayList<IndexSearcher>(calcSubIndexes.length);
                 LuceneIndexHolder lastNonEmptyIndexHolder = null;
                 for (String subIndex : calcSubIndexes) {
-                    LuceneIndexHolder indexHolder = indexManager.openIndexHolderBySubIndex(subIndex);
+                    LuceneIndexHolder indexHolder = indexManager.getIndexHoldersCache().getHolder(subIndex);
                     indexHoldersToClose.add(indexHolder);
                     if (indexHolder.getIndexReader().numDocs() > 0) {
                         searchers.add(indexHolder.getIndexSearcher());

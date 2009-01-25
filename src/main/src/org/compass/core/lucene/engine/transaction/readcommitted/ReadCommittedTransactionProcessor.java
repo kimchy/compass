@@ -195,7 +195,7 @@ public class ReadCommittedTransactionProcessor extends AbstractConcurrentTransac
             for (String subIndex : calcSubIndexes) {
                 LuceneIndexHolder indexHolder = indexHoldersBySubIndex.get(subIndex);
                 if (indexHolder == null) {
-                    indexHolder = indexManager.openIndexHolderBySubIndex(subIndex);
+                    indexHolder = indexManager.getIndexHoldersCache().getHolder(subIndex);
                     indexHoldersToClose.add(indexHolder);
                 }
                 if (indexHolder.getIndexReader().numDocs() > 0) {
@@ -249,7 +249,7 @@ public class ReadCommittedTransactionProcessor extends AbstractConcurrentTransac
             String subIndex = resourceKey.getSubIndex();
             indexHolder = indexHoldersBySubIndex.get(subIndex);
             if (indexHolder == null) {
-                indexHolder = indexManager.openIndexHolderBySubIndex(subIndex);
+                indexHolder = indexManager.getIndexHoldersCache().getHolder(subIndex);
                 releaseHolder = true;
             } else {
                 releaseHolder = false;
@@ -347,8 +347,9 @@ public class ReadCommittedTransactionProcessor extends AbstractConcurrentTransac
     private Term markDeleted(ResourceKey resourceKey) {
         LuceneIndexHolder indexHolder = indexHoldersBySubIndex.get(resourceKey.getSubIndex());
         if (indexHolder == null) {
-            indexManager.refreshCache(resourceKey.getSubIndex());
-            indexHolder = indexManager.openIndexHolderBySubIndex(resourceKey.getSubIndex());
+            // make sure we have a clean cache...
+            indexManager.getIndexHoldersCache().refreshCache(resourceKey.getSubIndex());
+            indexHolder = indexManager.getIndexHoldersCache().getHolder(resourceKey.getSubIndex());
             indexHoldersBySubIndex.put(resourceKey.getSubIndex(), indexHolder);
         }
 

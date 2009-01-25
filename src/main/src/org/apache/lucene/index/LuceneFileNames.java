@@ -35,11 +35,11 @@ package org.apache.lucene.index;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.compass.core.lucene.engine.manager.DefaultLuceneSearchEngineIndexManager;
+import org.compass.core.lucene.engine.manager.IndexHoldersCache;
 import org.compass.core.lucene.engine.spellcheck.DefaultLuceneSpellCheckManager;
 
 /**
- * A set of utility methods for index file names. 
+ * A set of utility methods for index file names.
  *
  * @author kimchy
  */
@@ -50,7 +50,7 @@ public class LuceneFileNames {
     static {
         staticFiles = new HashSet<String>();
         staticFiles.add("segments.gen");
-        staticFiles.add(DefaultLuceneSearchEngineIndexManager.CLEAR_CACHE_NAME);
+        staticFiles.add(IndexHoldersCache.CLEAR_CACHE_NAME);
         staticFiles.add(DefaultLuceneSpellCheckManager.SPELL_CHECK_VERSION_FILENAME);
     }
 

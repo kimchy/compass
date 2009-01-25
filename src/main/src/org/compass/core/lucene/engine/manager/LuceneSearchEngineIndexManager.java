@@ -45,6 +45,8 @@ public interface LuceneSearchEngineIndexManager extends SearchEngineIndexManager
 
     LuceneSearchEngineStore getStore();
 
+    IndexHoldersCache getIndexHoldersCache();
+
     IndexWriter openIndexWriter(CompassSettings settings, String subIndex) throws IOException;
 
     IndexWriter openIndexWriter(CompassSettings settings, String subIndex, boolean autoCommit) throws IOException;
@@ -63,9 +65,7 @@ public interface LuceneSearchEngineIndexManager extends SearchEngineIndexManager
 
     MultiSearcher openMultiSearcher(Searchable[] searchers) throws IOException;
 
-    LuceneIndexHolder openIndexHolderBySubIndex(String subIndex) throws SearchEngineException;
-
-    void refreshCache(String subIndex, IndexSearcher indexSearcher) throws SearchEngineException;
+    Directory getDirectory(String subIndex) throws SearchEngineException;
 
     /**
      * Since there might be several instances of Compass running against the same index, they
