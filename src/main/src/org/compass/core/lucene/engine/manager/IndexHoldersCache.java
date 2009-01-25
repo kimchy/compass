@@ -143,7 +143,7 @@ public class IndexHoldersCache {
     public void invalidateCache(String subIndex) throws SearchEngineException {
         LuceneIndexHolder indexHolder = indexHolders.get(subIndex);
         if (indexHolder != null) {
-            indexHolder.invalidate();
+            indexHolder.setInvalidated(true);
         }
     }
 
@@ -278,6 +278,7 @@ public class IndexHoldersCache {
                 origHolder.markForClose();
             } else {
                 // index did not change, we checked it now, so mark it...
+                indexHolder.setInvalidated(false);
                 indexHolder.markLastCacheInvalidation();
             }
         } else {

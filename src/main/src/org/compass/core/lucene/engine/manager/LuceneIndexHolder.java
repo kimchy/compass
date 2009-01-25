@@ -80,8 +80,8 @@ public class LuceneIndexHolder {
         return invalidated;
     }
 
-    public void invalidate() {
-        this.invalidated = true;
+    public void setInvalidated(boolean invalidated) {
+        this.invalidated = invalidated;
     }
 
     private void checkIfCanClose() {
