@@ -1,0 +1,17 @@
+<!DOCTYPE compass-core-mapping PUBLIC
+        "-//Compass/Compass Core Mapping DTD 2.1//EN"
+        "http://www.compass-project.org/dtd/compass-core-mapping-2.1.dtd">
+
+<compass-core-mapping package="org.compass.core.test.concurrent.singlewritermultireader">
+
+    <class name="A" alias="a">
+
+        <id name="id" accessor="field"/>
+
+        <property name="data1" accessor="field">
+            <meta-data>data1</meta-data>
+        </property>
+
+    </class>
+
+</compass-core-mapping>

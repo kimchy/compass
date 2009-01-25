@@ -346,9 +346,11 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
     }
 
     public void clearCache(String subIndex) throws SearchEngineException {
-        LuceneIndexHolder indexHolder = indexHolders.remove(subIndex);
-        if (indexHolder != null) {
-            indexHolder.markForClose();
+        synchronized (subIndexLocks.get(subIndex)) {
+            LuceneIndexHolder indexHolder = indexHolders.remove(subIndex);
+            if (indexHolder != null) {
+                indexHolder.markForClose();
+            }
         }
     }
 
@@ -361,7 +363,9 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
     public void refreshCache(final String subIndex) throws SearchEngineException {
         searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Object>() {
             public Object doInTransaction() throws CompassException {
-                internalRefreshCache(subIndex);
+                synchronized (subIndexLocks.get(subIndex)) {
+                    internalRefreshCache(subIndex);
+                }
                 return null;
             }
         });
@@ -418,16 +422,31 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
             LuceneIndexHolder indexHolder = indexHolders.get(subIndex);
             if (cacheAsyncInvalidation) {
                 if (indexHolder == null) {
-                    indexHolder = internalRefreshCache(subIndex);
+                    synchronized (subIndexLocks.get(subIndex)) {
+                        indexHolder = indexHolders.get(subIndex);
+                        if (indexHolder == null) {
+                            indexHolder = internalRefreshCache(subIndex);
+                        }
+                    }
                 }
             } else {
-                if (shouldInvalidateCache(indexHolder)) {
-                    indexHolder = internalRefreshCache(subIndex);
+                synchronized (subIndexLocks.get(subIndex)) {
+                    if (shouldInvalidateCache(indexHolder)) {
+                        indexHolder = internalRefreshCache(subIndex);
+                    }
                 }
             }
             // we spin here on the aquire until we manage to aquire one
             while (!indexHolder.acquire()) {
                 indexHolder = indexHolders.get(subIndex);
+                if (indexHolder == null) {
+                    synchronized (subIndexLocks.get(subIndex)) {
+                        indexHolder = indexHolders.get(subIndex);
+                        if (indexHolder == null) {
+                            indexHolder = internalRefreshCache(subIndex);
+                        }
+                    }
+                }
             }
             return indexHolder;
         } catch (Exception e) {
@@ -797,8 +816,10 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
                         try {
                             if (searchEngineStore.indexExists(subIndex)) {
                                 LuceneIndexHolder indexHolder = indexHolders.get(subIndex);
-                                if (shouldInvalidateCache(indexHolder)) {
-                                    internalRefreshCache(subIndex);
+                                synchronized (subIndexLocks.get(subIndex)) {
+                                    if (shouldInvalidateCache(indexHolder)) {
+                                        internalRefreshCache(subIndex);
+                                    }
                                 }
                             } else {
                                 log.trace("Sub index [" + subIndex + "] does not exists, no refresh perfomed");
