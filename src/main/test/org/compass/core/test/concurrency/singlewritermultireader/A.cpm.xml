@@ -2,7 +2,7 @@
         "-//Compass/Compass Core Mapping DTD 2.2//EN"
         "http://www.compass-project.org/dtd/compass-core-mapping-2.2.dtd">
 
-<compass-core-mapping package="org.compass.core.test.concurrent.singlewritermultireader">
+<compass-core-mapping package="org.compass.core.test.concurrency.singlewritermultireader">
 
     <class name="A" alias="a">
 

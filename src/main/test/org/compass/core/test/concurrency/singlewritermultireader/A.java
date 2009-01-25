@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-package org.compass.core.test.concurrent.multi;
-
-import java.util.Date;
+package org.compass.core.test.concurrency.singlewritermultireader;
 
 /**
  * @author kimchy
@@ -26,8 +24,4 @@ public class A {
     long id;
 
     String data1;
-
-    String data2;
-
-    Date indexTime;
 }

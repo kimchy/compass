@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.compass.core.test.concurrent.singlewritermultireader;
+package org.compass.core.test.concurrency.singlewritermultireader;
 
 /**
  * @author kimchy

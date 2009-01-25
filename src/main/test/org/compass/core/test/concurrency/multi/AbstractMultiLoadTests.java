@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.compass.core.test.concurrent.multi;
+package org.compass.core.test.concurrency.multi;
 
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicLong;
