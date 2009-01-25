@@ -17,7 +17,6 @@
 package org.compass.core.engine;
 
 /**
- * 
  * @author kimchy
  */
 public interface SearchEngineIndexManager {
@@ -154,23 +153,29 @@ public interface SearchEngineIndexManager {
     boolean isCached() throws SearchEngineException;
 
     /**
-     * Clears any internal caching done by the index for the specified sub-index.
-     *
-     * @throws SearchEngineException
+     * Clears any internal caching done by the index for the specified sub-index. Closes any
+     * cached resources.
      */
     void clearCache(String subIndex) throws SearchEngineException;
 
     /**
-     * Clears any internal caching done by the index.
-     *
-     * @throws SearchEngineException
+     * Clears any internal caching done by the index. Closes any cached resources.
      */
     void clearCache() throws SearchEngineException;
 
     /**
+     * Invalidates any internal caching done by the index for the specified sub-index. More lightweight
+     * than {@link #clearCache(String)}.
+     */
+    void invalidateCache(String subIndex) throws SearchEngineException;
+
+    /**
+     * Invalidates any internal caching done by the index. More lightweight than {@link #clearCache()}.
+     */
+    void invalidateCache() throws SearchEngineException;
+
+    /**
      * Refresh any internal caching done by the index for the specified sub-index.
-     *
-     * @throws SearchEngineException
      */
     void refreshCache(String subIndex) throws SearchEngineException;
 
@@ -213,7 +218,7 @@ public interface SearchEngineIndexManager {
      * Returns <code>true</code> if the sub index exists.
      */
     boolean subIndexExists(String subIndex);
-    
+
     /**
      * Releases all the locks held over all the possbile sub indexes.
      */

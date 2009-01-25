@@ -134,6 +134,19 @@ public class IndexHoldersCache {
         }
     }
 
+    public void invalidateCache() throws SearchEngineException {
+        for (String subIndex : indexManager.getSubIndexes()) {
+            invalidateCache(subIndex);
+        }
+    }
+
+    public void invalidateCache(String subIndex) throws SearchEngineException {
+        LuceneIndexHolder indexHolder = indexHolders.get(subIndex);
+        if (indexHolder != null) {
+            indexHolder.invalidate();
+        }
+    }
+
     public synchronized void checkAndClearIfNotifiedAllToClearCache() throws SearchEngineException {
         if (lastModifiled == null) {
             String[] subIndexes = indexManager.getSubIndexes();
@@ -208,10 +221,10 @@ public class IndexHoldersCache {
         try {
             LuceneIndexHolder indexHolder = indexHolders.get(subIndex);
             if (cacheAsyncInvalidation) {
-                if (indexHolder == null) {
+                if (indexHolder == null || indexHolder.isInvalidated()) {
                     synchronized (subIndexCacheLocks.get(subIndex)) {
                         indexHolder = indexHolders.get(subIndex);
-                        if (indexHolder == null) {
+                        if (indexHolder == null || indexHolder.isInvalidated()) {
                             indexHolder = internalRefreshCache(subIndex);
                         }
                     }
@@ -265,7 +278,7 @@ public class IndexHoldersCache {
                 origHolder.markForClose();
             } else {
                 // index did not change, we checked it now, so mark it...
-                indexHolder.setLastCacheInvalidation(System.currentTimeMillis());
+                indexHolder.markLastCacheInvalidation();
             }
         } else {
             try {
@@ -287,17 +300,20 @@ public class IndexHoldersCache {
      * Checks if a an index holder should be invalidated.
      */
     protected boolean shouldInvalidateCache(LuceneIndexHolder indexHolder) throws IOException {
-        long currentTime = System.currentTimeMillis();
         // we have not created an index holder, invalidated by default
         if (indexHolder == null) {
+            return true;
+        }
+        if (indexHolder.isInvalidated()) {
             return true;
         }
         // configured to perform no cache invalidation
         if (indexManager.getSettings().getCacheInvalidationInterval() == -1) {
             return false;
         }
+        long currentTime = System.currentTimeMillis();
         if ((currentTime - indexHolder.getLastCacheInvalidation()) > indexManager.getSettings().getCacheInvalidationInterval()) {
-            indexHolder.setLastCacheInvalidation(currentTime);
+            indexHolder.markLastCacheInvalidation();
             try {
                 if (!indexHolder.getIndexReader().isCurrent()) {
                     return true;

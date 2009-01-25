@@ -24,17 +24,19 @@ import org.apache.lucene.search.IndexSearcher;
  */
 public class LuceneIndexHolder {
 
+    private final String subIndex;
+    
+    private final IndexSearcher indexSearcher;
+
+    private final IndexReader indexReader;
+
     private volatile long lastCacheInvalidation = System.currentTimeMillis();
 
-    private IndexSearcher indexSearcher;
-
-    private IndexReader indexReader;
+    private volatile boolean invalidated;
 
     private int count = 0;
 
     private boolean markForClose = false;
-
-    private String subIndex;
 
     private boolean closed;
 
@@ -74,6 +76,14 @@ public class LuceneIndexHolder {
         checkIfCanClose();
     }
 
+    public boolean isInvalidated() {
+        return invalidated;
+    }
+
+    public void invalidate() {
+        this.invalidated = true;
+    }
+
     private void checkIfCanClose() {
         if (markForClose && count <= 0 && !closed) {
             closed = true;
@@ -94,7 +104,7 @@ public class LuceneIndexHolder {
         return lastCacheInvalidation;
     }
 
-    public void setLastCacheInvalidation(long lastCacheInvalidation) {
-        this.lastCacheInvalidation = lastCacheInvalidation;
+    public void markLastCacheInvalidation() {
+        this.lastCacheInvalidation = System.currentTimeMillis();
     }
 }

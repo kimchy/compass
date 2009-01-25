@@ -41,13 +41,13 @@ public class CommitCallable implements Callable {
 
     private final IndexWriter indexWriter;
 
-    private final boolean clearCacheOnCommit;
+    private final boolean invalidateCacheOnCommit;
 
-    public CommitCallable(LuceneSearchEngineIndexManager indexManager, String subIndex, IndexWriter indexWriter, boolean clearCacheOnCommit) {
+    public CommitCallable(LuceneSearchEngineIndexManager indexManager, String subIndex, IndexWriter indexWriter, boolean invalidateCacheOnCommit) {
         this.indexManager = indexManager;
         this.subIndex = subIndex;
         this.indexWriter = indexWriter;
-        this.clearCacheOnCommit = clearCacheOnCommit;
+        this.invalidateCacheOnCommit = invalidateCacheOnCommit;
     }
 
     public Object call() throws Exception {
@@ -65,11 +65,11 @@ public class CommitCallable implements Callable {
             }
             throw new SearchEngineException("Failed commit transaction sub index [" + subIndex + "]", e);
         }
-        if (clearCacheOnCommit) {
+        if (invalidateCacheOnCommit) {
             if (logger.isTraceEnabled()) {
-                logger.trace("Clearing cache after commit for sub index [" + subIndex + "]");
+                logger.trace("Invalidating cache after commit for sub index [" + subIndex + "]");
             }
-            indexManager.clearCache(subIndex);
+            indexManager.getIndexHoldersCache().invalidateCache(subIndex);
         }
         return null;
     }

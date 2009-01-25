@@ -349,6 +349,14 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         indexHoldersCache.clearCache();
     }
 
+    public void invalidateCache(String subIndex) throws SearchEngineException {
+        indexHoldersCache.invalidateCache(subIndex);
+    }
+
+    public void invalidateCache() throws SearchEngineException {
+        indexHoldersCache.invalidateCache();
+    }
+
     public void refreshCache(final String subIndex) throws SearchEngineException {
         getTransactionContext().execute(new TransactionContextCallback<Object>() {
             public Object doInTransaction() throws CompassException {

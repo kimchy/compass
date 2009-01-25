@@ -153,7 +153,7 @@ public abstract class AbstractTransactionProcessor implements TransactionProcess
         return hits;
     }
 
-    protected boolean isClearCacheOnCommit() {
+    protected boolean isInvalidateCacheOnCommit() {
         return searchEngine.getSettings().getSettingAsBoolean(LuceneEnvironment.Transaction.CLEAR_CACHE_ON_COMMIT, true);
     }
 
