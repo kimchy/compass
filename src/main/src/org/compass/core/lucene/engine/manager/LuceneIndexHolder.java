@@ -36,6 +36,8 @@ public class LuceneIndexHolder {
 
     private String subIndex;
 
+    private boolean closed;
+
     public LuceneIndexHolder(String subIndex, IndexSearcher indexSearcher) {
         this.subIndex = subIndex;
         this.indexSearcher = indexSearcher;
@@ -73,7 +75,8 @@ public class LuceneIndexHolder {
     }
 
     private void checkIfCanClose() {
-        if (markForClose && count <= 0) {
+        if (markForClose && count <= 0 && !closed) {
+            closed = true;
             try {
                 indexSearcher.close();
             } catch (Exception e) {
