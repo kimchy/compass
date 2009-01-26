@@ -22,7 +22,7 @@ import org.apache.lucene.search.spans.SpanOrQuery;
 import org.apache.lucene.search.spans.SpanQuery;
 import org.compass.core.engine.SearchEngineQuery;
 import org.compass.core.engine.SearchEngineQueryBuilder;
-import org.compass.core.lucene.engine.LuceneSearchEngine;
+import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
 
 /**
@@ -30,22 +30,22 @@ import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
  */
 public class LuceneSearchEngineQuerySpanOrBuilder implements SearchEngineQueryBuilder.SearchEngineQuerySpanOrBuilder {
 
-    private LuceneSearchEngine searchEngine;
+    private LuceneSearchEngineFactory searchEngineFactory;
 
-    private ArrayList queries = new ArrayList();
+    private ArrayList<SpanQuery> queries = new ArrayList<SpanQuery>();
 
-    public LuceneSearchEngineQuerySpanOrBuilder(LuceneSearchEngine searchEngine) {
-        this.searchEngine = searchEngine;
+    public LuceneSearchEngineQuerySpanOrBuilder(LuceneSearchEngineFactory searchEngineFactory) {
+        this.searchEngineFactory = searchEngineFactory;
     }
 
     public SearchEngineQueryBuilder.SearchEngineQuerySpanOrBuilder add(SearchEngineQuery.SearchEngineSpanQuery query) {
-        queries.add(((LuceneSearchEngineQuery.LuceneSearchEngineSpanQuery) query).getQuery());
+        queries.add((SpanQuery) ((LuceneSearchEngineQuery.LuceneSearchEngineSpanQuery) query).getQuery());
         return this;
     }
 
     public SearchEngineQuery.SearchEngineSpanQuery toQuery() {
-        SpanQuery[] spanQueries = (SpanQuery[]) queries.toArray(new SpanQuery[queries.size()]);
+        SpanQuery[] spanQueries = queries.toArray(new SpanQuery[queries.size()]);
         SpanOrQuery spanOrQuery = new SpanOrQuery(spanQueries);
-        return new LuceneSearchEngineQuery.LuceneSearchEngineSpanQuery(searchEngine, spanOrQuery);
+        return new LuceneSearchEngineQuery.LuceneSearchEngineSpanQuery(searchEngineFactory, spanOrQuery);
     }
 }

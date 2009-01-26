@@ -16,6 +16,9 @@
 
 package org.compass.core.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.compass.core.CompassAnalyzerHelper;
 import org.compass.core.CompassException;
 import org.compass.core.CompassHits;
@@ -35,7 +38,6 @@ import org.compass.core.config.RuntimeCompassSettings;
 import org.compass.core.engine.SearchEngine;
 import org.compass.core.engine.SearchEngineAnalyzerHelper;
 import org.compass.core.engine.SearchEngineQueryBuilder;
-import org.compass.core.engine.SearchEngineQueryFilterBuilder;
 import org.compass.core.events.FilterOperation;
 import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.mapping.Cascade;
@@ -49,6 +51,7 @@ import org.compass.core.spi.DirtyOperationContext;
 import org.compass.core.spi.InternalCompass;
 import org.compass.core.spi.InternalCompassSession;
 import org.compass.core.spi.InternalResource;
+import org.compass.core.spi.InternalSessionDelegateClose;
 import org.compass.core.spi.ResourceKey;
 import org.compass.core.transaction.LocalTransactionFactory;
 import org.compass.core.transaction.TransactionFactory;
@@ -80,6 +83,8 @@ public class DefaultCompassSession implements InternalCompassSession {
     private RuntimeCompassSettings runtimeSettings;
 
     private CascadingManager cascadingManager;
+
+    private final List<InternalSessionDelegateClose> delegateClose = new ArrayList<InternalSessionDelegateClose>();
 
     public DefaultCompassSession(RuntimeCompassSettings runtimeSettings, InternalCompass compass, SearchEngine searchEngine,
                                  FirstLevelCache firstLevelCache) {
@@ -117,13 +122,12 @@ public class DefaultCompassSession implements InternalCompassSession {
     public CompassQueryBuilder queryBuilder() throws CompassException {
         checkClosed();
         SearchEngineQueryBuilder searchEngineQueryBuilder = searchEngine.queryBuilder();
-        return new DefaultCompassQueryBuilder(searchEngineQueryBuilder, this);
+        return new DefaultCompassQueryBuilder(searchEngineQueryBuilder, compass, this);
     }
 
     public CompassQueryFilterBuilder queryFilterBuilder() throws CompassException {
         checkClosed();
-        SearchEngineQueryFilterBuilder searchEngineQueryFilterBuilder = searchEngine.queryFilterBuilder();
-        return new DefaultCompassQueryFilterBuilder(searchEngineQueryFilterBuilder, this);
+        return compass.queryFilterBuilder();
     }
 
     public CompassTermFreqsBuilder termFreqsBuilder(String ... names) throws CompassException {
@@ -649,9 +653,16 @@ public class DefaultCompassSession implements InternalCompassSession {
         firstLevelCache.evictAll();
     }
 
+    public void addDelegateClose(InternalSessionDelegateClose delegateClose) {
+        this.delegateClose.add(delegateClose);
+    }
+    
     public void close() throws CompassException {
         if (closed) {
             return;
+        }
+        for (InternalSessionDelegateClose delegateClose : this.delegateClose) {
+            delegateClose.close();
         }
         CompassSession transactionBoundSession = transactionFactory.getTransactionBoundSession();
         if (transactionBoundSession == null || transactionBoundSession != this) {

@@ -32,6 +32,7 @@ import org.apache.lucene.search.spans.SpanQuery;
 import org.compass.core.CompassQuery.SortDirection;
 import org.compass.core.CompassQuery.SortImplicitType;
 import org.compass.core.CompassQuery.SortPropertyType;
+import org.compass.core.engine.SearchEngine;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineHits;
 import org.compass.core.engine.SearchEngineQuery;
@@ -48,8 +49,8 @@ public class LuceneSearchEngineQuery implements SearchEngineQuery, Cloneable {
 
         private SpanQuery spanQuery;
 
-        public LuceneSearchEngineSpanQuery(LuceneSearchEngine searchEngine, SpanQuery query) {
-            super(searchEngine, query);
+        public LuceneSearchEngineSpanQuery(LuceneSearchEngineFactory searchEngineFactory, SpanQuery query) {
+            super(searchEngineFactory, query);
             this.spanQuery = query;
         }
 
@@ -58,7 +59,7 @@ public class LuceneSearchEngineQuery implements SearchEngineQuery, Cloneable {
         }
     }
 
-    private LuceneSearchEngine searchEngine;
+    private final LuceneSearchEngineFactory searchEngineFactory;
 
     private ArrayList<SortField> sortFields = new ArrayList<SortField>();
 
@@ -78,16 +79,16 @@ public class LuceneSearchEngineQuery implements SearchEngineQuery, Cloneable {
 
     private boolean suggested;
 
-    public LuceneSearchEngineQuery(LuceneSearchEngine searchEngine, Query query) {
-        this(searchEngine, new QueryHolder(query), searchEngine.getSearchEngineFactory().getLuceneSettings().getDefaultSearchPropery());
+    public LuceneSearchEngineQuery(LuceneSearchEngineFactory searchEngineFactory, Query query) {
+        this(searchEngineFactory, new QueryHolder(query));
     }
 
-    public LuceneSearchEngineQuery(LuceneSearchEngine searchEngine, QueryHolder query) {
-        this(searchEngine, query, searchEngine.getSearchEngineFactory().getLuceneSettings().getDefaultSearchPropery());
+    public LuceneSearchEngineQuery(LuceneSearchEngineFactory searchEngineFactory, QueryHolder query) {
+        this(searchEngineFactory, query, searchEngineFactory.getLuceneSettings().getDefaultSearchPropery());
     }
 
-    public LuceneSearchEngineQuery(LuceneSearchEngine searchEngine, QueryHolder query, String defualtSearchProperty) {
-        this.searchEngine = searchEngine;
+    public LuceneSearchEngineQuery(LuceneSearchEngineFactory searchEngineFactory, QueryHolder query, String defualtSearchProperty) {
+        this.searchEngineFactory = searchEngineFactory;
         this.query = query.getQuery();
         this.origQuery = query.getQuery();
         this.suggested = query.isSuggested();
@@ -183,11 +184,15 @@ public class LuceneSearchEngineQuery implements SearchEngineQuery, Cloneable {
         }
     }
 
-    public long count() {
-        return count(0.0f);
+    public SearchEngineHits hits(SearchEngine searchEngine) {
+        return ((LuceneSearchEngine) searchEngine).find(this);
     }
 
-    public long count(float minimumScore) {
+    public long count(SearchEngine searchEngine) {
+        return count(searchEngine, 0.0f);
+    }
+
+    public long count(SearchEngine searchEngine, float minimumScore) {
         LuceneSearchEngineInternalSearch internalSearch = (LuceneSearchEngineInternalSearch) searchEngine.internalSearch(getSubIndexes(), getAliases());
         CountHitCollector countHitCollector = new CountHitCollector(minimumScore);
         try {
@@ -200,10 +205,6 @@ public class LuceneSearchEngineQuery implements SearchEngineQuery, Cloneable {
             throw new SearchEngineException("Failed to count query [" + query + "]", e);
         }
         return countHitCollector.getTotalHits();
-    }
-
-    public SearchEngineHits hits() {
-        return this.searchEngine.find(this);
     }
 
     public SearchEngineQuery setBoost(float boost) {
@@ -226,7 +227,7 @@ public class LuceneSearchEngineQuery implements SearchEngineQuery, Cloneable {
             return this;
         }
 
-        String aliasProperty = searchEngine.getSearchEngineFactory().getLuceneSettings().getAliasProperty();
+        String aliasProperty = searchEngineFactory.getLuceneSettings().getAliasProperty();
         BooleanQuery boolQuery2 = new BooleanQuery();
         for (String alias : aliases) {
             boolQuery2.add(new TermQuery(new Term(aliasProperty, alias)), BooleanClause.Occur.SHOULD);

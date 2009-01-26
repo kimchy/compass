@@ -25,6 +25,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.compass.core.Compass;
 import org.compass.core.CompassException;
+import org.compass.core.CompassQueryBuilder;
+import org.compass.core.CompassQueryFilterBuilder;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
 import org.compass.core.ResourceFactory;
@@ -193,6 +195,14 @@ public class DefaultCompass implements InternalCompass {
 
     public String getName() {
         return this.name;
+    }
+
+    public CompassQueryBuilder queryBuilder() throws CompassException {
+        return new DefaultCompassQueryBuilder(searchEngineFactory.queryBuilder(), this);
+    }
+
+    public CompassQueryFilterBuilder queryFilterBuilder() throws CompassException {
+        return new DefaultCompassQueryFilterBuilder(searchEngineFactory.queryFilterBuilder(), this);
     }
 
     public ResourceFactory getResourceFactory() {

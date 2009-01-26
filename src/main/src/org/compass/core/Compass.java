@@ -89,6 +89,19 @@ public interface Compass extends Referenceable, Serializable {
     Compass clone(CompassSettings addedSettings);
 
     /**
+     * Creats a new query builder, used to build queries programmatically.
+     *
+     * @return The query builder.
+     */
+    CompassQueryBuilder queryBuilder() throws CompassException;
+
+    /**
+     * Creates a new query filter builder that can create {@link org.compass.core.CompassQueryFilter}s
+     * that can later be added to {@link org.compass.core.CompassQuery#setFilter(CompassQueryFilter)}.
+     */
+    CompassQueryFilterBuilder queryFilterBuilder() throws CompassException;
+    
+    /**
      * Returns a resource factory allowing to create resources and properties.
      */
     ResourceFactory getResourceFactory();

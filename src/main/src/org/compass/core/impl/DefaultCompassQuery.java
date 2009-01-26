@@ -22,25 +22,29 @@ import org.compass.core.CompassException;
 import org.compass.core.CompassHits;
 import org.compass.core.CompassQuery;
 import org.compass.core.CompassQueryFilter;
+import org.compass.core.CompassSession;
 import org.compass.core.engine.SearchEngineHits;
 import org.compass.core.engine.SearchEngineQuery;
 import org.compass.core.engine.SearchEngineQuery.SearchEngineSpanQuery;
 import org.compass.core.events.FilterOperation;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.ResourcePropertyLookup;
+import org.compass.core.spi.InternalCompass;
+import org.compass.core.spi.InternalCompassQuery;
 import org.compass.core.spi.InternalCompassSession;
+import org.compass.core.spi.InternalCompassSpanQuery;
 
 /**
  * @author kimchy
  */
-public class DefaultCompassQuery implements CompassQuery, Cloneable {
+public class DefaultCompassQuery implements InternalCompassQuery, Cloneable {
 
-    public static class DefaultCompassSpanQuey extends DefaultCompassQuery implements CompassSpanQuery {
+    public static class DefaultCompassSpanQuey extends DefaultCompassQuery implements InternalCompassSpanQuery {
 
         private SearchEngineSpanQuery spanQuery;
 
-        public DefaultCompassSpanQuey(SearchEngineSpanQuery searchEngineQuery, InternalCompassSession session) {
-            super(searchEngineQuery, session);
+        public DefaultCompassSpanQuey(SearchEngineSpanQuery searchEngineQuery, InternalCompass compass) {
+            super(searchEngineQuery, compass);
             this.spanQuery = searchEngineQuery;
         }
 
@@ -49,15 +53,30 @@ public class DefaultCompassQuery implements CompassQuery, Cloneable {
         }
     }
 
+    private static final ThreadLocal<InternalCompassSession> attachedSession = new ThreadLocal<InternalCompassSession>();
+
     private SearchEngineQuery searchEngineQuery;
 
-    private InternalCompassSession session;
+    private InternalCompass compass;
 
     private CompassQueryFilter filter;
 
-    public DefaultCompassQuery(SearchEngineQuery searchEngineQuery, InternalCompassSession session) {
+    public DefaultCompassQuery(SearchEngineQuery searchEngineQuery, InternalCompass compass) {
         this.searchEngineQuery = searchEngineQuery;
-        this.session = session;
+        this.compass = compass;
+    }
+
+    public CompassQuery attach(CompassSession session) {
+        attachedSession.set((InternalCompassSession) session);
+        return this;
+    }
+
+    public void detach() {
+        attachedSession.remove();
+    }
+
+    public void close() {
+        detach();
     }
 
     public CompassQuery setBoost(float boost) {
@@ -66,25 +85,25 @@ public class DefaultCompassQuery implements CompassQuery, Cloneable {
     }
 
     public CompassQuery addSort(String name) {
-        ResourcePropertyLookup lookup = session.getMapping().getResourcePropertyLookup(name);
+        ResourcePropertyLookup lookup = compass.getMapping().getResourcePropertyLookup(name);
         searchEngineQuery.addSort(lookup.getPath());
         return this;
     }
 
     public CompassQuery addSort(String name, SortDirection direction) {
-        ResourcePropertyLookup lookup = session.getMapping().getResourcePropertyLookup(name);
+        ResourcePropertyLookup lookup = compass.getMapping().getResourcePropertyLookup(name);
         searchEngineQuery.addSort(lookup.getPath(), direction);
         return this;
     }
 
     public CompassQuery addSort(String name, SortPropertyType type) {
-        ResourcePropertyLookup lookup = session.getMapping().getResourcePropertyLookup(name);
+        ResourcePropertyLookup lookup = compass.getMapping().getResourcePropertyLookup(name);
         searchEngineQuery.addSort(lookup.getPath(), type);
         return this;
     }
 
     public CompassQuery addSort(String name, SortPropertyType type, SortDirection direction) {
-        ResourcePropertyLookup lookup = session.getMapping().getResourcePropertyLookup(name);
+        ResourcePropertyLookup lookup = compass.getMapping().getResourcePropertyLookup(name);
         searchEngineQuery.addSort(lookup.getPath(), type, direction);
         return this;
     }
@@ -126,7 +145,7 @@ public class DefaultCompassQuery implements CompassQuery, Cloneable {
         }
         String[] aliases = new String[types.length];
         for (int i = 0; i < types.length; i++) {
-            ResourceMapping resourceMapping = session.getMapping().getRootMappingByClass(types[i]);
+            ResourceMapping resourceMapping = compass.getMapping().getRootMappingByClass(types[i]);
             aliases[i] = resourceMapping.getAlias();
         }
         setAliases(aliases);
@@ -149,10 +168,10 @@ public class DefaultCompassQuery implements CompassQuery, Cloneable {
     }
 
     public CompassQuery getSuggestedQuery() {
-        if (session.getCompass().getSpellCheckManager() == null) {
+        if (compass.getSpellCheckManager() == null) {
             return this;
         }
-        return session.getCompass().getSpellCheckManager().suggest(this);
+        return compass.getSpellCheckManager().suggest(this);
     }
 
     public boolean isSuggested() {
@@ -160,19 +179,21 @@ public class DefaultCompassQuery implements CompassQuery, Cloneable {
     }
 
     public long count() {
-        return searchEngineQuery.count();
+        return searchEngineQuery.count(session().getSearchEngine());
     }
 
     public long count(float minimumScore) {
-        return searchEngineQuery.count(minimumScore);
+        return searchEngineQuery.count(session().getSearchEngine(), minimumScore);
     }
 
     public CompassHits hits() throws CompassException {
-        SearchEngineHits searchEngineHits = searchEngineQuery.hits();
+        InternalCompassSession session = session();
+        SearchEngineHits searchEngineHits = searchEngineQuery.hits(session.getSearchEngine());
         return new DefaultCompassHits(searchEngineHits, session, this);
     }
 
     public void delete() throws CompassException {
+        InternalCompassSession session = session();
         session.getFirstLevelCache().evictAll();
         if (session.getCompass().getEventManager().onPreDelete(this) == FilterOperation.YES) {
             return;
@@ -193,5 +214,13 @@ public class DefaultCompassQuery implements CompassQuery, Cloneable {
         DefaultCompassQuery clone = (DefaultCompassQuery) super.clone();
         clone.searchEngineQuery = (SearchEngineQuery) searchEngineQuery.clone();
         return clone;
+    }
+
+    private InternalCompassSession session() throws CompassException {
+        InternalCompassSession session = attachedSession.get();
+        if (session == null) {
+            throw new CompassException("Trying to execute a query without an attached session, have you called attach on the query?");
+        }
+        return session;
     }
 }

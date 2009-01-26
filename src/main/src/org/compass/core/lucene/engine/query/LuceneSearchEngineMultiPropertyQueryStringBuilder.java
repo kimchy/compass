@@ -23,7 +23,7 @@ import org.apache.lucene.queryParser.QueryParser;
 import org.compass.core.engine.SearchEngineQuery;
 import org.compass.core.engine.SearchEngineQueryBuilder;
 import org.compass.core.lucene.LuceneEnvironment;
-import org.compass.core.lucene.engine.LuceneSearchEngine;
+import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
 import org.compass.core.lucene.engine.queryparser.LuceneQueryParser;
 import org.compass.core.lucene.engine.queryparser.QueryHolder;
@@ -33,7 +33,7 @@ import org.compass.core.lucene.engine.queryparser.QueryHolder;
  */
 public class LuceneSearchEngineMultiPropertyQueryStringBuilder implements SearchEngineQueryBuilder.SearchEngineMultiPropertyQueryStringBuilder {
 
-    private LuceneSearchEngine searchEngine;
+    private LuceneSearchEngineFactory searchEngineFactory;
 
     private Analyzer analyzer;
 
@@ -47,20 +47,20 @@ public class LuceneSearchEngineMultiPropertyQueryStringBuilder implements Search
 
     private LuceneQueryParser queryParser;
 
-    public LuceneSearchEngineMultiPropertyQueryStringBuilder(LuceneSearchEngine searchEngine, String queryString) {
-        this.searchEngine = searchEngine;
+    public LuceneSearchEngineMultiPropertyQueryStringBuilder(LuceneSearchEngineFactory searchEngineFactory , String queryString) {
+        this.searchEngineFactory = searchEngineFactory;
         this.queryString = queryString;
-        this.analyzer = searchEngine.getSearchEngineFactory().getAnalyzerManager().getSearchAnalyzer();
-        this.queryParser = searchEngine.getSearchEngineFactory().getQueryParserManager().getDefaultQueryParser();
+        this.analyzer = searchEngineFactory.getAnalyzerManager().getSearchAnalyzer();
+        this.queryParser = searchEngineFactory.getQueryParserManager().getDefaultQueryParser();
     }
 
     public SearchEngineQueryBuilder.SearchEngineMultiPropertyQueryStringBuilder setAnalyzer(String analyzer) {
-        this.analyzer = searchEngine.getSearchEngineFactory().getAnalyzerManager().getAnalyzerMustExist(analyzer);
+        this.analyzer = searchEngineFactory.getAnalyzerManager().getAnalyzerMustExist(analyzer);
         return this;
     }
 
     public SearchEngineQueryBuilder.SearchEngineMultiPropertyQueryStringBuilder setAnalyzerByAlias(String alias) {
-        this.analyzer = searchEngine.getSearchEngineFactory().getAnalyzerManager().getAnalyzerByAliasMustExists(alias);
+        this.analyzer = searchEngineFactory.getAnalyzerManager().getAnalyzerByAliasMustExists(alias);
         return this;
     }
 
@@ -85,7 +85,7 @@ public class LuceneSearchEngineMultiPropertyQueryStringBuilder implements Search
     }
 
     public SearchEngineQueryBuilder.SearchEngineMultiPropertyQueryStringBuilder setQueryParser(String queryParser) {
-        this.queryParser = searchEngine.getSearchEngineFactory().getQueryParserManager().getQueryParser(queryParser);
+        this.queryParser = searchEngineFactory.getQueryParserManager().getQueryParser(queryParser);
         return this;
     }
 
@@ -97,6 +97,6 @@ public class LuceneSearchEngineMultiPropertyQueryStringBuilder implements Search
     public SearchEngineQuery toQuery() {
         QueryHolder qQuery = queryParser.parse(propertyNames.toArray(new String[propertyNames.size()]),
                 operator, analyzer, forceAnalyzer, queryString);
-        return new LuceneSearchEngineQuery(searchEngine, qQuery);
+        return new LuceneSearchEngineQuery(searchEngineFactory, qQuery);
     }
 }

@@ -20,7 +20,7 @@ import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.compass.core.engine.SearchEngineQuery;
 import org.compass.core.engine.SearchEngineQueryBuilder;
-import org.compass.core.lucene.engine.LuceneSearchEngine;
+import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
 
 /**
@@ -28,12 +28,12 @@ import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
  */
 public class LuceneSearchEngineBooleanQueryBuilder implements SearchEngineQueryBuilder.SearchEngineBooleanQueryBuilder {
 
-    private LuceneSearchEngine searchEngine;
+    private LuceneSearchEngineFactory searchEngineFactory;
 
     private BooleanQuery boolQuery;
 
-    public LuceneSearchEngineBooleanQueryBuilder(LuceneSearchEngine searchEngine, boolean disableCoord) {
-        this.searchEngine = searchEngine;
+    public LuceneSearchEngineBooleanQueryBuilder(LuceneSearchEngineFactory searchEngineFactory, boolean disableCoord) {
+        this.searchEngineFactory = searchEngineFactory;
         boolQuery = new BooleanQuery(disableCoord);
     }
 
@@ -58,6 +58,6 @@ public class LuceneSearchEngineBooleanQueryBuilder implements SearchEngineQueryB
     }
 
     public SearchEngineQuery toQuery() {
-        return new LuceneSearchEngineQuery(searchEngine, boolQuery);
+        return new LuceneSearchEngineQuery(searchEngineFactory, boolQuery);
     }
 }

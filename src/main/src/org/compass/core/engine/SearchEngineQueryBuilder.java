@@ -191,7 +191,7 @@ public interface SearchEngineQueryBuilder {
 
     SearchEngineQuerySpanOrBuilder spanOr();
 
-    SearchEngineMoreLikeThisQueryBuilder moreLikeThis(Resource idResource);
+    SearchEngineMoreLikeThisQueryBuilder moreLikeThis(SearchEngine searchEngine, Resource idResource);
 
-    SearchEngineMoreLikeThisQueryBuilder moreLikeThis(Reader reader);
+    SearchEngineMoreLikeThisQueryBuilder moreLikeThis(SearchEngine searchEngine, Reader reader);
 }

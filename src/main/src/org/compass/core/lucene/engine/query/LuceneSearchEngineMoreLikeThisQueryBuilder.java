@@ -31,6 +31,7 @@ import org.compass.core.engine.SearchEngineQuery;
 import org.compass.core.engine.SearchEngineQueryBuilder;
 import org.compass.core.lucene.LuceneResource;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
+import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.lucene.engine.LuceneSearchEngineInternalSearch;
 import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
 import org.compass.core.lucene.support.ResourceHelper;
@@ -41,6 +42,8 @@ import org.compass.core.lucene.support.ResourceHelper;
 public class LuceneSearchEngineMoreLikeThisQueryBuilder implements SearchEngineQueryBuilder.SearchEngineMoreLikeThisQueryBuilder {
 
     private LuceneSearchEngine searchEngine;
+
+    private LuceneSearchEngineFactory searchEngineFactory;
 
     private Reader reader;
 
@@ -57,19 +60,20 @@ public class LuceneSearchEngineMoreLikeThisQueryBuilder implements SearchEngineQ
 
     private boolean propertiesSet;
 
-    public LuceneSearchEngineMoreLikeThisQueryBuilder(LuceneSearchEngine searchEngine, Resource idResource) {
+    public LuceneSearchEngineMoreLikeThisQueryBuilder(LuceneSearchEngine searchEngine, LuceneSearchEngineFactory searchEngineFactory, Resource idResource) {
         this.idResource = idResource;
         this.resource = (LuceneResource) searchEngine.load(idResource);
-        init(searchEngine);
+        init(searchEngine, searchEngineFactory);
     }
 
-    public LuceneSearchEngineMoreLikeThisQueryBuilder(LuceneSearchEngine searchEngine, Reader reader) {
+    public LuceneSearchEngineMoreLikeThisQueryBuilder(LuceneSearchEngine searchEngine, LuceneSearchEngineFactory searchEngineFactory, Reader reader) {
         this.reader = reader;
-        init(searchEngine);
+        init(searchEngine, searchEngineFactory);
     }
 
-    private void init(LuceneSearchEngine searchEngine) {
+    private void init(LuceneSearchEngine searchEngine, LuceneSearchEngineFactory searchEngineFactory) {
         this.searchEngine = searchEngine;
+        this.searchEngineFactory = searchEngineFactory;
         LuceneSearchEngineInternalSearch internalSearch = (LuceneSearchEngineInternalSearch) searchEngine.internalSearch(subIndexes, aliases);
         this.moreLikeThis = new MoreLikeThis(internalSearch.getReader());
         this.moreLikeThis.setFieldNames(null);
@@ -174,7 +178,7 @@ public class LuceneSearchEngineMoreLikeThisQueryBuilder implements SearchEngineQ
                 boolQuery.add(ResourceHelper.buildResourceLoadQuery(resource.getResourceKey()), BooleanClause.Occur.MUST_NOT);
                 query = boolQuery;
             }
-            return new LuceneSearchEngineQuery(searchEngine, query);
+            return new LuceneSearchEngineQuery(searchEngineFactory, query);
         } catch (IOException e) {
             throw new SearchEngineException("Failed to find queries like [" + idResource + "]", e);
         }

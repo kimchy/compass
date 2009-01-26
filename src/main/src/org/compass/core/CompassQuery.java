@@ -136,6 +136,18 @@ public interface CompassQuery {
     }
 
     /**
+     * Attaches the Compass Query to the current session. Should be called when the query
+     * is created using {@link org.compass.core.Compass#queryBuilder()}.
+     */
+    CompassQuery attach(CompassSession session);
+
+    /**
+     * Detaches the query from the current session. Note, not required to be called since
+     * it will be automatically detached when the session is closed.
+     */
+    void detach();
+
+    /**
      * Sets the boost for this query to <code>boost</code>. Hits matching
      * this query will (in addition to the normal weightings) have their score
      * multiplied by <code>boost</code>.

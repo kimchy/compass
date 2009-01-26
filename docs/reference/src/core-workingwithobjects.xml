@@ -244,9 +244,13 @@ CompassHits hits =  queryBuilder.bool()
   .hits();
 ]]></programlisting>
         </para>
+        
+        <para>
+            <literal>CompassQuery</literal> can also be created using the <literal>Compass</literal> instance, without the need to construct a <literal>CompassSession</literal>. They can then stored and used safely by multiple sessions (in a multi threaded environment) by attaching them to the current session using <literal>CompassQuery#attach(CompssSession)</literal> API.
+        </para>
 
         <para>
-          Note that sorted resource properties / meta-data must be stored and un_tokenized. Also sorting requires more memory to keep sorting properties available. For numeric types, each property sorted requires four bytes to be cached for each resource in the index. For <literal>String</literal> types, each unique term needs to be cached.
+          Note that sorted resource properties / meta-data must be stored and <literal>not_analyzed</literal>. Also sorting requires more memory to keep sorting properties available. For numeric types, each property sorted requires four bytes to be cached for each resource in the index. For <literal>String</literal> types, each unique term needs to be cached.
         </para>
 
         <para>

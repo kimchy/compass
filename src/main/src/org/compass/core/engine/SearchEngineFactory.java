@@ -42,6 +42,16 @@ public interface SearchEngineFactory {
     SearchEngine openSearchEngine(RuntimeCompassSettings runtimeSettings);
 
     /**
+     * Creates a new query builder.
+     */
+    SearchEngineQueryBuilder queryBuilder() throws SearchEngineException;
+
+    /**
+     * Creates a new query filter builder.
+     */
+    SearchEngineQueryFilterBuilder queryFilterBuilder() throws SearchEngineException;
+    
+    /**
      * Returns a resource factory allowing to create resources and properties.
      */
     ResourceFactory getResourceFactory();

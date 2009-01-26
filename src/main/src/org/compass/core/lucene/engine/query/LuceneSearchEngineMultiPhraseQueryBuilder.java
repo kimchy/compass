@@ -20,7 +20,7 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.search.MultiPhraseQuery;
 import org.compass.core.engine.SearchEngineQuery;
 import org.compass.core.engine.SearchEngineQueryBuilder;
-import org.compass.core.lucene.engine.LuceneSearchEngine;
+import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
 
 /**
@@ -28,14 +28,14 @@ import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
  */
 public class LuceneSearchEngineMultiPhraseQueryBuilder implements SearchEngineQueryBuilder.SearchEngineMultiPhraseQueryBuilder {
 
-    private LuceneSearchEngine searchEngine;
+    private LuceneSearchEngineFactory searchEngineFactory;
 
     private String resourceProperty;
 
     private MultiPhraseQuery multiPhraseQuery;
 
-    public LuceneSearchEngineMultiPhraseQueryBuilder(LuceneSearchEngine searchEngine, String resourceProperty) {
-        this.searchEngine = searchEngine;
+    public LuceneSearchEngineMultiPhraseQueryBuilder(LuceneSearchEngineFactory searchEngineFactory, String resourceProperty) {
+        this.searchEngineFactory = searchEngineFactory;
         this.resourceProperty = resourceProperty;
         this.multiPhraseQuery = new MultiPhraseQuery();
     }
@@ -74,6 +74,6 @@ public class LuceneSearchEngineMultiPhraseQueryBuilder implements SearchEngineQu
     }
 
     public SearchEngineQuery toQuery() {
-        return new LuceneSearchEngineQuery(searchEngine, multiPhraseQuery);
+        return new LuceneSearchEngineQuery(searchEngineFactory, multiPhraseQuery);
     }
 }

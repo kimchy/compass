@@ -59,11 +59,11 @@ public interface SearchEngineQuery {
 
     boolean isSuggested();
 
-    SearchEngineHits hits() throws SearchEngineException;
+    SearchEngineHits hits(SearchEngine searchEngine) throws SearchEngineException;
 
-    long count();
+    long count(SearchEngine searchEngine);
 
-    long count(float minimumScore);
+    long count(SearchEngine searchEngine, float minimumScore);
 
     Object clone() throws CloneNotSupportedException;
 }

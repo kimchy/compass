@@ -27,6 +27,8 @@ import org.compass.core.engine.SearchEngine;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineIndexManager;
 import org.compass.core.engine.SearchEngineOptimizer;
+import org.compass.core.engine.SearchEngineQueryBuilder;
+import org.compass.core.engine.SearchEngineQueryFilterBuilder;
 import org.compass.core.engine.event.SearchEngineEventManager;
 import org.compass.core.engine.naming.PropertyNamingStrategy;
 import org.compass.core.engine.spellcheck.SearchEngineSpellCheckManager;
@@ -41,6 +43,8 @@ import org.compass.core.lucene.engine.indexdeletionpolicy.IndexDeletionPolicyFac
 import org.compass.core.lucene.engine.manager.DefaultLuceneSearchEngineIndexManager;
 import org.compass.core.lucene.engine.manager.LuceneSearchEngineIndexManager;
 import org.compass.core.lucene.engine.optimizer.LuceneSearchEngineOptimizerManager;
+import org.compass.core.lucene.engine.query.LuceneSearchEngineQueryBuilder;
+import org.compass.core.lucene.engine.query.LuceneSearchEngineQueryFilterBuilder;
 import org.compass.core.lucene.engine.queryparser.LuceneQueryParserManager;
 import org.compass.core.lucene.engine.similarity.LuceneSimilarityManager;
 import org.compass.core.lucene.engine.spellcheck.DefaultLuceneSpellCheckManager;
@@ -115,6 +119,14 @@ public class LuceneSearchEngineFactory implements InternalSearchEngineFactory {
 
     public SearchEngine openSearchEngine(RuntimeCompassSettings runtimeSettings) {
         return new LuceneSearchEngine(runtimeSettings, this);
+    }
+
+    public SearchEngineQueryBuilder queryBuilder() throws SearchEngineException {
+        return new LuceneSearchEngineQueryBuilder(this);
+    }
+
+    public SearchEngineQueryFilterBuilder queryFilterBuilder() throws SearchEngineException {
+        return new LuceneSearchEngineQueryFilterBuilder();
     }
 
     public TransactionContext getTransactionContext() {

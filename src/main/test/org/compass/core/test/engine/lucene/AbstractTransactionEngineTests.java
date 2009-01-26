@@ -197,19 +197,19 @@ public abstract class AbstractTransactionEngineTests extends AbstractLuceneEngin
         
         getSearchEngine().begin();
         SearchEngineQuery query = getSearchEngine().queryBuilder().queryString(PROPERTY_VAL1 + ":" + VALUE_VAL1).toQuery();
-        SearchEngineHits hits = query.hits();
+        SearchEngineHits hits = query.hits(getSearchEngine());
         assertEquals(1, hits.getLength());
         Resource r = hits.getResource(0);
         assertEquals(VALUE_ID1, r.getProperty(PROPERTY_ID1).getStringValue());
 
         query = getSearchEngine().queryBuilder().queryString(PROPERTY_VAL2 + ":" + VALUE_VAL2).toQuery();
-        hits = query.hits();
+        hits = query.hits(getSearchEngine());
         assertEquals(1, hits.getLength());
         r = hits.getResource(0);
         assertEquals(VALUE_ID2, r.getProperty(PROPERTY_ID2).getStringValue());
 
         query = getSearchEngine().queryBuilder().queryString(PROPERTY_VAL4 + ":" + VALUE_VAL4).toQuery();
-        hits = query.hits();
+        hits = query.hits(getSearchEngine());
         assertEquals(2, hits.getLength());
 
         getSearchEngine().delete(r);
@@ -219,11 +219,11 @@ public abstract class AbstractTransactionEngineTests extends AbstractLuceneEngin
         
         getSearchEngine().begin();
         query = getSearchEngine().queryBuilder().queryString(PROPERTY_VAL2 + ":" + VALUE_VAL2).toQuery();
-        hits = query.hits();
+        hits = query.hits(getSearchEngine());
         assertEquals(0, hits.getLength());
 
         query = getSearchEngine().queryBuilder().queryString(PROPERTY_VAL4 + ":" + VALUE_VAL4).toQuery();
-        hits = query.hits();
+        hits = query.hits(getSearchEngine());
         assertEquals(1, hits.getLength());
         getSearchEngine().rollback();
     }
@@ -545,7 +545,7 @@ public abstract class AbstractTransactionEngineTests extends AbstractLuceneEngin
 
         getSearchEngine().begin();
         SearchEngineQuery query = getSearchEngine().queryBuilder().queryString(PROPERTY_VAL1 + ":" + VALUE_VAL1).toQuery();
-        SearchEngineHits hits = query.hits();
+        SearchEngineHits hits = query.hits(getSearchEngine());
         assertEquals(1, hits.getLength());
         Resource r = hits.getResource(0);
         assertEquals(VALUE_ID1, r.getProperty(PROPERTY_ID1).getStringValue());
@@ -555,13 +555,13 @@ public abstract class AbstractTransactionEngineTests extends AbstractLuceneEngin
 
         getSearchEngine().begin();
         query = getSearchEngine().queryBuilder().queryString(PROPERTY_VAL1 + ":" + VALUE_VAL1).toQuery();
-        hits = query.hits();
+        hits = query.hits(getSearchEngine());
         assertEquals(1, hits.getLength());
         r = hits.getResource(0);
         assertEquals(VALUE_ID1, r.getProperty(PROPERTY_ID1).getStringValue());
 
         query = getSearchEngine().queryBuilder().queryString(PROPERTY_VAL2 + ":" + VALUE_VAL2).toQuery();
-        hits = query.hits();
+        hits = query.hits(getSearchEngine());
         assertEquals(1, hits.getLength());
         r = hits.getResource(0);
         assertEquals(VALUE_ID2, r.getProperty(PROPERTY_ID2).getStringValue());
@@ -578,12 +578,12 @@ public abstract class AbstractTransactionEngineTests extends AbstractLuceneEngin
         getSearchEngine().begin();
         assertMulitIdResourceNotExists(getSearchEngine());
         query = getSearchEngine().queryBuilder().queryString(PROPERTY_VAL1 + ":" + VALUE_VAL1).toQuery();
-        hits = query.hits();
+        hits = query.hits(getSearchEngine());
         assertEquals(1, hits.getLength());
         r = hits.getResource(0);
         assertEquals(VALUE_ID1, r.getProperty(PROPERTY_ID1).getStringValue());
         query = getSearchEngine().queryBuilder().queryString(PROPERTY_VAL2 + ":" + VALUE_VAL2).toQuery();
-        hits = query.hits();
+        hits = query.hits(getSearchEngine());
         assertEquals(0, hits.getLength());
         getSearchEngine().commit(true);
 
@@ -592,15 +592,15 @@ public abstract class AbstractTransactionEngineTests extends AbstractLuceneEngin
         getSearchEngine().begin();
         assertMulitIdResourceNotExists(getSearchEngine());
         query = getSearchEngine().queryBuilder().queryString(PROPERTY_VAL1 + ":" + VALUE_VAL1).toQuery();
-        hits = query.hits();
+        hits = query.hits(getSearchEngine());
         assertEquals(1, hits.getLength());
         r = hits.getResource(0);
         assertEquals(VALUE_ID1, r.getProperty(PROPERTY_ID1).getStringValue());
         query = getSearchEngine().queryBuilder().queryString(PROPERTY_VAL2 + ":" + VALUE_VAL2).toQuery();
-        hits = query.hits();
+        hits = query.hits(getSearchEngine());
         assertEquals(0, hits.getLength());
         query = getSearchEngine().queryBuilder().queryString(PROPERTY_VAL4 + ":" + VALUE_VAL4).toQuery();
-        hits = query.hits();
+        hits = query.hits(getSearchEngine());
         assertEquals(1, hits.getLength());
         getSearchEngine().commit(true);
     }

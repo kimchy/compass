@@ -34,8 +34,6 @@ import org.compass.core.engine.SearchEngineQueryFilterBuilder;
 import org.compass.core.engine.SearchEngineTermFrequencies;
 import org.compass.core.engine.event.SearchEngineEventManager;
 import org.compass.core.lucene.LuceneEnvironment;
-import org.compass.core.lucene.engine.query.LuceneSearchEngineQueryBuilder;
-import org.compass.core.lucene.engine.query.LuceneSearchEngineQueryFilterBuilder;
 import org.compass.core.lucene.engine.transaction.TransactionProcessor;
 import org.compass.core.lucene.engine.transaction.TransactionProcessorFactory;
 import org.compass.core.mapping.ResourceMapping;
@@ -86,11 +84,11 @@ public class LuceneSearchEngine implements SearchEngine {
     }
 
     public SearchEngineQueryBuilder queryBuilder() throws SearchEngineException {
-        return new LuceneSearchEngineQueryBuilder(this);
+        return searchEngineFactory.queryBuilder();
     }
 
     public SearchEngineQueryFilterBuilder queryFilterBuilder() throws SearchEngineException {
-        return new LuceneSearchEngineQueryFilterBuilder();
+        return searchEngineFactory.queryFilterBuilder();
     }
 
     public SearchEngineAnalyzerHelper analyzerHelper() {

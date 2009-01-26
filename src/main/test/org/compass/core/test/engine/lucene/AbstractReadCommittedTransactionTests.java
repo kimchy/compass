@@ -151,28 +151,28 @@ public abstract class AbstractReadCommittedTransactionTests extends AbstractTran
         getSearchEngine().create(multiId);
 
         SearchEngineQuery query = getSearchEngine().queryBuilder().queryString(PROPERTY_VAL1 + ":" + VALUE_VAL1).toQuery();
-        SearchEngineHits hits = query.hits();
+        SearchEngineHits hits = query.hits(getSearchEngine());
         assertEquals(1, hits.getLength());
-        Resource r = (Resource) hits.getResource(0);
+        Resource r = hits.getResource(0);
         assertEquals(VALUE_ID1, r.getProperty(PROPERTY_ID1).getStringValue());
 
         query = getSearchEngine().queryBuilder().queryString(PROPERTY_VAL2 + ":" + VALUE_VAL2).toQuery();
-        hits = query.hits();
+        hits = query.hits(getSearchEngine());
         assertEquals(1, hits.getLength());
-        r = (Resource) hits.getResource(0);
+        r = hits.getResource(0);
         assertEquals(VALUE_ID2, r.getProperty(PROPERTY_ID2).getStringValue());
 
         query = getSearchEngine().queryBuilder().queryString(PROPERTY_VAL4 + ":" + VALUE_VAL4).toQuery();
-        hits = query.hits();
+        hits = query.hits(getSearchEngine());
         assertEquals(2, hits.getLength());
 
         getSearchEngine().delete(r);
         query = getSearchEngine().queryBuilder().queryString(PROPERTY_VAL2 + ":" + VALUE_VAL2).toQuery();
-        hits = query.hits();
+        hits = query.hits(getSearchEngine());
         assertEquals(0, hits.getLength());
 
         query = getSearchEngine().queryBuilder().queryString(PROPERTY_VAL4 + ":" + VALUE_VAL4).toQuery();
-        hits = query.hits();
+        hits = query.hits(getSearchEngine());
         assertEquals(1, hits.getLength());
         getSearchEngine().rollback();
     }
@@ -295,7 +295,7 @@ public abstract class AbstractReadCommittedTransactionTests extends AbstractTran
         getSearchEngine().create(multiId);
 
         SearchEngineQuery query = getSearchEngine().queryBuilder().queryString(PROPERTY_VAL1 + ":" + VALUE_VAL1).toQuery();
-        SearchEngineHits hits = query.hits();
+        SearchEngineHits hits = query.hits(getSearchEngine());
         assertEquals(1, hits.getLength());
         Resource r = hits.getResource(0);
         assertEquals(VALUE_ID1, r.getProperty(PROPERTY_ID1).getStringValue());
@@ -304,13 +304,13 @@ public abstract class AbstractReadCommittedTransactionTests extends AbstractTran
 
         getSearchEngine().begin();
         query = getSearchEngine().queryBuilder().queryString(PROPERTY_VAL1 + ":" + VALUE_VAL1).toQuery();
-        hits = query.hits();
+        hits = query.hits(getSearchEngine());
         assertEquals(1, hits.getLength());
         r = hits.getResource(0);
         assertEquals(VALUE_ID1, r.getProperty(PROPERTY_ID1).getStringValue());
 
         query = getSearchEngine().queryBuilder().queryString(PROPERTY_VAL2 + ":" + VALUE_VAL2).toQuery();
-        hits = query.hits();
+        hits = query.hits(getSearchEngine());
         assertEquals(1, hits.getLength());
         r = hits.getResource(0);
         assertEquals(VALUE_ID2, r.getProperty(PROPERTY_ID2).getStringValue());
@@ -318,27 +318,27 @@ public abstract class AbstractReadCommittedTransactionTests extends AbstractTran
         getSearchEngine().delete(r);
         assertMulitIdResourceNotExists(getSearchEngine());
         query = getSearchEngine().queryBuilder().queryString(PROPERTY_VAL1 + ":" + VALUE_VAL1).toQuery();
-        hits = query.hits();
+        hits = query.hits(getSearchEngine());
         assertEquals(1, hits.getLength());
         r = hits.getResource(0);
         assertEquals(VALUE_ID1, r.getProperty(PROPERTY_ID1).getStringValue());
         query = getSearchEngine().queryBuilder().queryString(PROPERTY_VAL2 + ":" + VALUE_VAL2).toQuery();
-        hits = query.hits();
+        hits = query.hits(getSearchEngine());
         assertEquals(0, hits.getLength());
         getSearchEngine().commit(true);
 
         getSearchEngine().begin();
         assertMulitIdResourceNotExists(getSearchEngine());
         query = getSearchEngine().queryBuilder().queryString(PROPERTY_VAL1 + ":" + VALUE_VAL1).toQuery();
-        hits = query.hits();
+        hits = query.hits(getSearchEngine());
         assertEquals(1, hits.getLength());
-        r = (Resource) hits.getResource(0);
+        r = hits.getResource(0);
         assertEquals(VALUE_ID1, r.getProperty(PROPERTY_ID1).getStringValue());
         query = getSearchEngine().queryBuilder().queryString(PROPERTY_VAL2 + ":" + VALUE_VAL2).toQuery();
-        hits = query.hits();
+        hits = query.hits(getSearchEngine());
         assertEquals(0, hits.getLength());
         query = getSearchEngine().queryBuilder().queryString(PROPERTY_VAL4 + ":" + VALUE_VAL4).toQuery();
-        hits = query.hits();
+        hits = query.hits(getSearchEngine());
         assertEquals(1, hits.getLength());
         getSearchEngine().commit(true);
     }
@@ -540,7 +540,7 @@ public abstract class AbstractReadCommittedTransactionTests extends AbstractTran
         Resource singleId = createSingleIdResource(getSearchEngine());
         getSearchEngine().create(singleId);
 
-        SearchEngineHits hits = getSearchEngine().queryBuilder().term(PROPERTY_VAL1, VALUE_VAL1).hits();
+        SearchEngineHits hits = getSearchEngine().queryBuilder().term(PROPERTY_VAL1, VALUE_VAL1).hits(getSearchEngine());
         assertEquals(1, hits.getLength());
 
         getSearchEngine().rollback();

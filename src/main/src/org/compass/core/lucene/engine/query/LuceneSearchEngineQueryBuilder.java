@@ -31,10 +31,12 @@ import org.apache.lucene.search.spans.SpanNotQuery;
 import org.apache.lucene.search.spans.SpanQuery;
 import org.apache.lucene.search.spans.SpanTermQuery;
 import org.compass.core.Resource;
+import org.compass.core.engine.SearchEngine;
 import org.compass.core.engine.SearchEngineQuery;
 import org.compass.core.engine.SearchEngineQuery.SearchEngineSpanQuery;
 import org.compass.core.engine.SearchEngineQueryBuilder;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
+import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
 import org.compass.core.lucene.engine.LuceneSearchEngineQuery.LuceneSearchEngineSpanQuery;
 import org.compass.core.lucene.search.ConstantScorePrefixQuery;
@@ -44,10 +46,10 @@ import org.compass.core.lucene.search.ConstantScorePrefixQuery;
  */
 public class LuceneSearchEngineQueryBuilder implements SearchEngineQueryBuilder {
 
-    private LuceneSearchEngine searchEngine;
+    private LuceneSearchEngineFactory searchEngineFactory;
 
-    public LuceneSearchEngineQueryBuilder(LuceneSearchEngine searchEngine) {
-        this.searchEngine = searchEngine;
+    public LuceneSearchEngineQueryBuilder(LuceneSearchEngineFactory searchEngineFactory) {
+        this.searchEngineFactory = searchEngineFactory;
     }
 
     public SearchEngineBooleanQueryBuilder bool() {
@@ -55,16 +57,16 @@ public class LuceneSearchEngineQueryBuilder implements SearchEngineQueryBuilder 
     }
 
     public SearchEngineBooleanQueryBuilder bool(boolean disableCoord) {
-        return new LuceneSearchEngineBooleanQueryBuilder(searchEngine, disableCoord);
+        return new LuceneSearchEngineBooleanQueryBuilder(searchEngineFactory, disableCoord);
     }
 
     public SearchEngineMultiPhraseQueryBuilder multiPhrase(String resourcePropertyName) {
-        return new LuceneSearchEngineMultiPhraseQueryBuilder(searchEngine, resourcePropertyName);
+        return new LuceneSearchEngineMultiPhraseQueryBuilder(searchEngineFactory, resourcePropertyName);
     }
 
     public SearchEngineQuery term(String resourcePropertyName, String value) {
         Query query = new TermQuery(new Term(resourcePropertyName, value));
-        return new LuceneSearchEngineQuery(searchEngine, query);
+        return new LuceneSearchEngineQuery(searchEngineFactory, query);
     }
 
     public SearchEngineQuery between(String resourcePropertyName, String low, String high,
@@ -83,7 +85,7 @@ public class LuceneSearchEngineQueryBuilder implements SearchEngineQueryBuilder 
             }
             query = new RangeQuery(lowTerm, highTerm, inclusive);
         }
-        return new LuceneSearchEngineQuery(searchEngine, query);
+        return new LuceneSearchEngineQuery(searchEngineFactory, query);
     }
 
     public SearchEngineQuery between(String resourcePropertyName, String low, String high, boolean inclusive) {
@@ -108,75 +110,75 @@ public class LuceneSearchEngineQueryBuilder implements SearchEngineQueryBuilder 
 
     public SearchEngineQuery prefix(String resourcePropertyName, String prefix) {
         Query query = new ConstantScorePrefixQuery(new Term(resourcePropertyName, prefix));
-        return new LuceneSearchEngineQuery(searchEngine, query);
+        return new LuceneSearchEngineQuery(searchEngineFactory, query);
     }
 
     public SearchEngineQuery wildcard(String resourcePropertyName, String wildcard) {
         Query query = new WildcardQuery(new Term(resourcePropertyName, wildcard));
-        return new LuceneSearchEngineQuery(searchEngine, query);
+        return new LuceneSearchEngineQuery(searchEngineFactory, query);
     }
 
     public SearchEngineQuery matchAll() {
-        return new LuceneSearchEngineQuery(searchEngine, new MatchAllDocsQuery());
+        return new LuceneSearchEngineQuery(searchEngineFactory, new MatchAllDocsQuery());
     }
 
     public SearchEngineQuery fuzzy(String resourcePropertyName, String value, float minimumSimilarity) {
         Query query = new FuzzyQuery(new Term(resourcePropertyName, value), minimumSimilarity);
-        return new LuceneSearchEngineQuery(searchEngine, query);
+        return new LuceneSearchEngineQuery(searchEngineFactory, query);
     }
 
     public SearchEngineQuery fuzzy(String resourcePropertyName, String value, float minimumSimilarity, int prefixLength) {
         Query query = new FuzzyQuery(new Term(resourcePropertyName, value), minimumSimilarity, prefixLength);
-        return new LuceneSearchEngineQuery(searchEngine, query);
+        return new LuceneSearchEngineQuery(searchEngineFactory, query);
     }
 
     public SearchEngineQuery fuzzy(String resourcePropertyName, String value) {
         Query query = new FuzzyQuery(new Term(resourcePropertyName, value));
-        return new LuceneSearchEngineQuery(searchEngine, query);
+        return new LuceneSearchEngineQuery(searchEngineFactory, query);
     }
 
     public SearchEngineQueryStringBuilder queryString(String queryString) {
-        return new LuceneSearchEngineQueryStringBuilder(searchEngine, queryString);
+        return new LuceneSearchEngineQueryStringBuilder(searchEngineFactory, queryString);
     }
 
     public SearchEngineMultiPropertyQueryStringBuilder multiPropertyQueryString(String queryString) {
-        return new LuceneSearchEngineMultiPropertyQueryStringBuilder(searchEngine, queryString);
+        return new LuceneSearchEngineMultiPropertyQueryStringBuilder(searchEngineFactory, queryString);
     }
 
     public SearchEngineSpanQuery spanEq(String resourcePropertyName, String value) {
         SpanQuery spanQuery = new SpanTermQuery(new Term(resourcePropertyName, value));
-        return new LuceneSearchEngineQuery.LuceneSearchEngineSpanQuery(searchEngine, spanQuery);
+        return new LuceneSearchEngineQuery.LuceneSearchEngineSpanQuery(searchEngineFactory, spanQuery);
     }
 
     public SearchEngineSpanQuery spanFirst(SearchEngineSpanQuery searchEngineSpanQuery, int end) {
         SpanQuery spanQuery = new SpanFirstQuery(((LuceneSearchEngineSpanQuery) searchEngineSpanQuery).toSpanQuery(), end);
-        return new LuceneSearchEngineQuery.LuceneSearchEngineSpanQuery(searchEngine, spanQuery);
+        return new LuceneSearchEngineQuery.LuceneSearchEngineSpanQuery(searchEngineFactory, spanQuery);
     }
 
     public SearchEngineSpanQuery spanFirst(String resourcePropertyName, String value, int end) {
         SpanQuery spanQuery = new SpanFirstQuery(new SpanTermQuery(new Term(resourcePropertyName, value)), end);
-        return new LuceneSearchEngineQuery.LuceneSearchEngineSpanQuery(searchEngine, spanQuery);
+        return new LuceneSearchEngineQuery.LuceneSearchEngineSpanQuery(searchEngineFactory, spanQuery);
     }
 
     public SearchEngineQuerySpanNearBuilder spanNear(String resourcePropertyName) {
-        return new LuceneSearchEngineQuerySpanNearBuilder(searchEngine, resourcePropertyName);
+        return new LuceneSearchEngineQuerySpanNearBuilder(searchEngineFactory, resourcePropertyName);
     }
 
     public SearchEngineSpanQuery spanNot(SearchEngineSpanQuery include, SearchEngineSpanQuery exclude) {
         SpanNotQuery spanNotQuery = new SpanNotQuery(((LuceneSearchEngineSpanQuery) include).toSpanQuery(),
                 ((LuceneSearchEngineSpanQuery) exclude).toSpanQuery());
-        return new LuceneSearchEngineQuery.LuceneSearchEngineSpanQuery(searchEngine, spanNotQuery);
+        return new LuceneSearchEngineQuery.LuceneSearchEngineSpanQuery(searchEngineFactory, spanNotQuery);
     }
 
     public SearchEngineQuerySpanOrBuilder spanOr() {
-        return new LuceneSearchEngineQuerySpanOrBuilder(searchEngine);
+        return new LuceneSearchEngineQuerySpanOrBuilder(searchEngineFactory);
     }
 
-    public SearchEngineMoreLikeThisQueryBuilder moreLikeThis(Resource idResource) {
-        return new LuceneSearchEngineMoreLikeThisQueryBuilder(searchEngine, idResource);
+    public SearchEngineMoreLikeThisQueryBuilder moreLikeThis(SearchEngine searchEngine, Resource idResource) {
+        return new LuceneSearchEngineMoreLikeThisQueryBuilder((LuceneSearchEngine) searchEngine, searchEngineFactory, idResource);
     }
 
-    public SearchEngineMoreLikeThisQueryBuilder moreLikeThis(Reader reader) {
-        return new LuceneSearchEngineMoreLikeThisQueryBuilder(searchEngine, reader);
+    public SearchEngineMoreLikeThisQueryBuilder moreLikeThis(SearchEngine searchEngine, Reader reader) {
+        return new LuceneSearchEngineMoreLikeThisQueryBuilder((LuceneSearchEngine) searchEngine, searchEngineFactory, reader);
     }
 }

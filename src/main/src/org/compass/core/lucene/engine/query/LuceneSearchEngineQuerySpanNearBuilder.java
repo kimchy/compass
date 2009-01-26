@@ -19,12 +19,13 @@ package org.compass.core.lucene.engine.query;
 import java.util.ArrayList;
 
 import org.apache.lucene.index.Term;
+import org.apache.lucene.search.Query;
 import org.apache.lucene.search.spans.SpanNearQuery;
 import org.apache.lucene.search.spans.SpanQuery;
 import org.apache.lucene.search.spans.SpanTermQuery;
 import org.compass.core.engine.SearchEngineQuery;
 import org.compass.core.engine.SearchEngineQueryBuilder;
-import org.compass.core.lucene.engine.LuceneSearchEngine;
+import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
 
 /**
@@ -32,7 +33,7 @@ import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
  */
 public class LuceneSearchEngineQuerySpanNearBuilder implements SearchEngineQueryBuilder.SearchEngineQuerySpanNearBuilder {
 
-    private LuceneSearchEngine searchEngine;
+    private LuceneSearchEngineFactory searchEngineFactory;
 
     private String resourceProperty;
 
@@ -40,10 +41,10 @@ public class LuceneSearchEngineQuerySpanNearBuilder implements SearchEngineQuery
 
     private boolean inOrder = true;
 
-    private ArrayList values = new ArrayList();
+    private ArrayList<Query> values = new ArrayList<Query>();
 
-    public LuceneSearchEngineQuerySpanNearBuilder(LuceneSearchEngine searchEngine, String resourceProperty) {
-        this.searchEngine = searchEngine;
+    public LuceneSearchEngineQuerySpanNearBuilder(LuceneSearchEngineFactory searchEngineFactory, String resourceProperty) {
+        this.searchEngineFactory = searchEngineFactory;
         this.resourceProperty = resourceProperty;
     }
 
@@ -68,9 +69,9 @@ public class LuceneSearchEngineQuerySpanNearBuilder implements SearchEngineQuery
     }
 
     public SearchEngineQuery.SearchEngineSpanQuery toQuery() {
-        SpanQuery[] spanQueries = (SpanQuery[]) values.toArray(new SpanQuery[values.size()]);
+        SpanQuery[] spanQueries = values.toArray(new SpanQuery[values.size()]);
         SpanNearQuery spanNearQuery = new SpanNearQuery(spanQueries, slop, inOrder);
-        return new LuceneSearchEngineQuery.LuceneSearchEngineSpanQuery(searchEngine, spanNearQuery);
+        return new LuceneSearchEngineQuery.LuceneSearchEngineSpanQuery(searchEngineFactory, spanNearQuery);
     }
 
 }

@@ -34,7 +34,10 @@ import org.compass.core.engine.SearchEngineQueryBuilder.SearchEngineQuerySpanNea
 import org.compass.core.engine.SearchEngineQueryBuilder.SearchEngineQuerySpanOrBuilder;
 import org.compass.core.engine.SearchEngineQueryBuilder.SearchEngineQueryStringBuilder;
 import org.compass.core.mapping.ResourcePropertyLookup;
+import org.compass.core.spi.InternalCompass;
+import org.compass.core.spi.InternalCompassQuery;
 import org.compass.core.spi.InternalCompassSession;
+import org.compass.core.spi.InternalCompassSpanQuery;
 
 /**
  * @author kimchy
@@ -45,12 +48,8 @@ public class DefaultCompassQueryBuilder implements CompassQueryBuilder {
 
         private SearchEngineBooleanQueryBuilder queryBuilder;
 
-        private InternalCompassSession session;
-
-        public DefaultCompassBooleanQueryBuilder(SearchEngineBooleanQueryBuilder queryBuilder,
-                                                 InternalCompassSession session) {
+        public DefaultCompassBooleanQueryBuilder(SearchEngineBooleanQueryBuilder queryBuilder) {
             this.queryBuilder = queryBuilder;
-            this.session = session;
         }
 
         public CompassBooleanQueryBuilder addMust(CompassQuery query) {
@@ -74,8 +73,7 @@ public class DefaultCompassQueryBuilder implements CompassQueryBuilder {
         }
 
         public CompassQuery toQuery() {
-            SearchEngineQuery query = queryBuilder.toQuery();
-            return new DefaultCompassQuery(query, session);
+            return buildCompassQuery(queryBuilder.toQuery());
         }
 
     }
@@ -84,14 +82,10 @@ public class DefaultCompassQueryBuilder implements CompassQueryBuilder {
 
         private SearchEngineMultiPhraseQueryBuilder queryBuilder;
 
-        private InternalCompassSession session;
-
         private ResourcePropertyLookup lookup;
 
-        public DefaultCompassMultiPhraseQueryBuilder(SearchEngineMultiPhraseQueryBuilder queryBuilder,
-                                                     InternalCompassSession session, ResourcePropertyLookup lookup) {
+        public DefaultCompassMultiPhraseQueryBuilder(SearchEngineMultiPhraseQueryBuilder queryBuilder, ResourcePropertyLookup lookup) {
             this.queryBuilder = queryBuilder;
-            this.session = session;
             this.lookup = lookup;
         }
 
@@ -129,8 +123,7 @@ public class DefaultCompassQueryBuilder implements CompassQueryBuilder {
         }
 
         public CompassQuery toQuery() {
-            SearchEngineQuery query = queryBuilder.toQuery();
-            return new DefaultCompassQuery(wrapWithAliasQueryIfNeeded(lookup, query), session);
+            return buildCompassQuery(queryBuilder.toQuery());
         }
     }
 
@@ -138,12 +131,8 @@ public class DefaultCompassQueryBuilder implements CompassQueryBuilder {
 
         private SearchEngineQueryStringBuilder queryBuilder;
 
-        private InternalCompassSession session;
-
-        public DefaultCompassQueryStringBuilder(SearchEngineQueryStringBuilder queryBuilder,
-                                                InternalCompassSession session) {
+        public DefaultCompassQueryStringBuilder(SearchEngineQueryStringBuilder queryBuilder) {
             this.queryBuilder = queryBuilder;
-            this.session = session;
         }
 
         public CompassQueryStringBuilder setAnalyzer(String analyzer) throws CompassException {
@@ -187,8 +176,7 @@ public class DefaultCompassQueryBuilder implements CompassQueryBuilder {
         }
 
         public CompassQuery toQuery() {
-            SearchEngineQuery query = queryBuilder.toQuery();
-            return new DefaultCompassQuery(query, session);
+            return buildCompassQuery(queryBuilder.toQuery());
         }
 
     }
@@ -197,12 +185,8 @@ public class DefaultCompassQueryBuilder implements CompassQueryBuilder {
 
         private SearchEngineMultiPropertyQueryStringBuilder queryBuilder;
 
-        private InternalCompassSession session;
-
-        public DefaultCompassMultiPropertyQueryStringBuilder(SearchEngineMultiPropertyQueryStringBuilder queryBuilder,
-                                                             InternalCompassSession session) {
+        public DefaultCompassMultiPropertyQueryStringBuilder(SearchEngineMultiPropertyQueryStringBuilder queryBuilder) {
             this.queryBuilder = queryBuilder;
-            this.session = session;
         }
 
         public CompassMultiPropertyQueryStringBuilder setAnalyzer(String analyzer) throws CompassException {
@@ -226,7 +210,7 @@ public class DefaultCompassQueryBuilder implements CompassQueryBuilder {
         }
 
         public CompassMultiPropertyQueryStringBuilder add(String name) {
-            queryBuilder.add(session.getMapping().getResourcePropertyLookup(name).getPath());
+            queryBuilder.add(compass.getMapping().getResourcePropertyLookup(name).getPath());
             return this;
         }
 
@@ -246,8 +230,7 @@ public class DefaultCompassQueryBuilder implements CompassQueryBuilder {
         }
 
         public CompassQuery toQuery() {
-            SearchEngineQuery query = queryBuilder.toQuery();
-            return new DefaultCompassQuery(query, session);
+            return buildCompassQuery(queryBuilder.toQuery());
         }
     }
 
@@ -255,14 +238,10 @@ public class DefaultCompassQueryBuilder implements CompassQueryBuilder {
 
         private SearchEngineQuerySpanNearBuilder queryBuilder;
 
-        private InternalCompassSession session;
-
         private ResourcePropertyLookup lookup;
 
-        public DefaultCompassQuerySpanNearBuilder(SearchEngineQuerySpanNearBuilder queryBuilder,
-                                                  InternalCompassSession session, ResourcePropertyLookup lookup) {
+        public DefaultCompassQuerySpanNearBuilder(SearchEngineQuerySpanNearBuilder queryBuilder, ResourcePropertyLookup lookup) {
             this.queryBuilder = queryBuilder;
-            this.session = session;
             this.lookup = lookup;
         }
 
@@ -288,7 +267,7 @@ public class DefaultCompassQueryBuilder implements CompassQueryBuilder {
 
         public CompassSpanQuery toQuery() {
             SearchEngineSpanQuery query = queryBuilder.toQuery();
-            return new DefaultCompassQuery.DefaultCompassSpanQuey(query, session);
+            return buildCompassQuery(query);
         }
     }
 
@@ -296,12 +275,8 @@ public class DefaultCompassQueryBuilder implements CompassQueryBuilder {
 
         private SearchEngineQuerySpanOrBuilder queryBuilder;
 
-        private InternalCompassSession session;
-
-        public DefaultCompassQuerySpanOrBuilder(SearchEngineQuerySpanOrBuilder queryBuilder,
-                                                InternalCompassSession session) {
+        public DefaultCompassQuerySpanOrBuilder(SearchEngineQuerySpanOrBuilder queryBuilder) {
             this.queryBuilder = queryBuilder;
-            this.session = session;
         }
 
         public CompassQuerySpanOrBuilder add(CompassSpanQuery query) {
@@ -311,7 +286,7 @@ public class DefaultCompassQueryBuilder implements CompassQueryBuilder {
 
         public CompassSpanQuery toQuery() {
             SearchEngineSpanQuery query = queryBuilder.toQuery();
-            return new DefaultCompassQuery.DefaultCompassSpanQuey(query, session);
+            return buildCompassQuery(query);
         }
     }
 
@@ -402,21 +377,27 @@ public class DefaultCompassQueryBuilder implements CompassQueryBuilder {
         }
 
         public CompassQuery toQuery() {
-            SearchEngineQuery query = queryBuilder.toQuery();
-            return new DefaultCompassQuery(query, session);
+            return buildCompassQuery(queryBuilder.toQuery());
         }
     }
 
-    private SearchEngineQueryBuilder queryBuilder;
+    private final SearchEngineQueryBuilder queryBuilder;
 
-    private InternalCompassSession session;
+    private final InternalCompass compass;
+
+    private final InternalCompassSession session;
 
     private boolean convertOnlyWithDotPath = false;
 
     private boolean addAliasQueryIfNeeded = true;
 
-    public DefaultCompassQueryBuilder(SearchEngineQueryBuilder queryBuilder, InternalCompassSession session) {
+    public DefaultCompassQueryBuilder(SearchEngineQueryBuilder queryBuilder, InternalCompass compass) {
+        this(queryBuilder, compass, null);
+    }
+
+    public DefaultCompassQueryBuilder(SearchEngineQueryBuilder queryBuilder, InternalCompass compass, InternalCompassSession session) {
         this.queryBuilder = queryBuilder;
+        this.compass = compass;
         this.session = session;
     }
 
@@ -431,24 +412,24 @@ public class DefaultCompassQueryBuilder implements CompassQueryBuilder {
     }
 
     public CompassBooleanQueryBuilder bool() {
-        return new DefaultCompassBooleanQueryBuilder(queryBuilder.bool(), session);
+        return new DefaultCompassBooleanQueryBuilder(queryBuilder.bool());
     }
 
     public CompassBooleanQueryBuilder bool(boolean disableCoord) {
-        return new DefaultCompassBooleanQueryBuilder(queryBuilder.bool(disableCoord), session);
+        return new DefaultCompassBooleanQueryBuilder(queryBuilder.bool(disableCoord));
     }
 
     public CompassMultiPhraseQueryBuilder multiPhrase(String name) {
         ResourcePropertyLookup lookup = getLookup(name);
-        return new DefaultCompassMultiPhraseQueryBuilder(queryBuilder.multiPhrase(lookup.getPath()), session, lookup);
+        return new DefaultCompassMultiPhraseQueryBuilder(queryBuilder.multiPhrase(lookup.getPath()), lookup);
     }
 
     public CompassQueryStringBuilder queryString(String queryString) {
-        return new DefaultCompassQueryStringBuilder(queryBuilder.queryString(queryString), session);
+        return new DefaultCompassQueryStringBuilder(queryBuilder.queryString(queryString));
     }
 
     public CompassMultiPropertyQueryStringBuilder multiPropertyQueryString(String queryString) {
-        return new DefaultCompassMultiPropertyQueryStringBuilder(queryBuilder.multiPropertyQueryString(queryString), session);
+        return new DefaultCompassMultiPropertyQueryStringBuilder(queryBuilder.multiPropertyQueryString(queryString));
     }
 
     public CompassQuery alias(String aliasValue) {
@@ -457,7 +438,7 @@ public class DefaultCompassQueryBuilder implements CompassQueryBuilder {
         }
         String aliasProperty = session.getCompass().getSearchEngineFactory().getAliasProperty();
         SearchEngineQuery query = queryBuilder.term(aliasProperty, aliasValue);
-        return new DefaultCompassQuery(query, session);
+        return buildCompassQuery(query);
     }
 
     public CompassQuery polyAlias(String aliasValue) {
@@ -470,124 +451,150 @@ public class DefaultCompassQueryBuilder implements CompassQueryBuilder {
     public CompassQuery term(String name, Object value) {
         ResourcePropertyLookup lookup = getLookup(name);
         SearchEngineQuery query = queryBuilder.term(lookup.getPath(), lookup.getValue(value));
-        return new DefaultCompassQuery(wrapWithAliasQueryIfNeeded(lookup, query), session);
+        InternalCompassQuery compassQuery = new DefaultCompassQuery(wrapWithAliasQueryIfNeeded(lookup, query), compass);
+        attachIfPossible(compassQuery);
+        return compassQuery;
     }
 
     public CompassQuery matchAll() {
         SearchEngineQuery query = queryBuilder.matchAll();
-        return new DefaultCompassQuery(query, session);
+        return buildCompassQuery(query);
     }
 
     public CompassQuery between(String name, Object low, Object high, boolean inclusive, boolean constantScore) {
         ResourcePropertyLookup lookup = getLookup(name);
         SearchEngineQuery query = queryBuilder.between(lookup.getPath(), lookup.getValue(low), lookup.getValue(high),
                 inclusive, constantScore);
-        return new DefaultCompassQuery(wrapWithAliasQueryIfNeeded(lookup, query), session);
+        return buildCompassQuery(query, lookup);
     }
 
     public CompassQuery between(String name, Object low, Object high, boolean inclusive) {
         ResourcePropertyLookup lookup = getLookup(name);
         SearchEngineQuery query = queryBuilder.between(lookup.getPath(), lookup.getValue(low), lookup.getValue(high),
                 inclusive);
-        return new DefaultCompassQuery(wrapWithAliasQueryIfNeeded(lookup, query), session);
+        return buildCompassQuery(query, lookup);
     }
 
     public CompassQuery lt(String name, Object value) {
         ResourcePropertyLookup lookup = getLookup(name);
         SearchEngineQuery query = queryBuilder.lt(lookup.getPath(), lookup.getValue(value));
-        return new DefaultCompassQuery(wrapWithAliasQueryIfNeeded(lookup, query), session);
+        return buildCompassQuery(query, lookup);
     }
 
     public CompassQuery le(String name, Object value) {
         ResourcePropertyLookup lookup = getLookup(name);
         SearchEngineQuery query = queryBuilder.le(lookup.getPath(), lookup.getValue(value));
-        return new DefaultCompassQuery(wrapWithAliasQueryIfNeeded(lookup, query), session);
+        return buildCompassQuery(query, lookup);
     }
 
     public CompassQuery gt(String name, Object value) {
         ResourcePropertyLookup lookup = getLookup(name);
         SearchEngineQuery query = queryBuilder.gt(lookup.getPath(), lookup.getValue(value));
-        return new DefaultCompassQuery(wrapWithAliasQueryIfNeeded(lookup, query), session);
+        return buildCompassQuery(query, lookup);
     }
 
     public CompassQuery ge(String name, Object value) {
         ResourcePropertyLookup lookup = getLookup(name);
         SearchEngineQuery query = queryBuilder.ge(lookup.getPath(), lookup.getValue(value));
-        return new DefaultCompassQuery(wrapWithAliasQueryIfNeeded(lookup, query), session);
+        return buildCompassQuery(query, lookup);
     }
 
     public CompassQuery prefix(String name, String prefix) {
         ResourcePropertyLookup lookup = getLookup(name);
         SearchEngineQuery query = queryBuilder.prefix(lookup.getPath(), prefix);
-        return new DefaultCompassQuery(wrapWithAliasQueryIfNeeded(lookup, query), session);
+        return buildCompassQuery(query, lookup);
     }
 
     public CompassQuery wildcard(String name, String wildcard) {
         ResourcePropertyLookup lookup = getLookup(name);
         SearchEngineQuery query = queryBuilder.wildcard(lookup.getPath(), wildcard);
-        return new DefaultCompassQuery(wrapWithAliasQueryIfNeeded(lookup, query), session);
+        return buildCompassQuery(query, lookup);
     }
 
     public CompassQuery fuzzy(String name, String value, float minimumSimilarity) {
         ResourcePropertyLookup lookup = getLookup(name);
         SearchEngineQuery query = queryBuilder.fuzzy(lookup.getPath(), value, minimumSimilarity);
-        return new DefaultCompassQuery(wrapWithAliasQueryIfNeeded(lookup, query), session);
+        return buildCompassQuery(query, lookup);
     }
 
     public CompassQuery fuzzy(String name, String value, float minimumSimilarity, int prefixLength) {
         ResourcePropertyLookup lookup = getLookup(name);
         SearchEngineQuery query = queryBuilder.fuzzy(lookup.getPath(), value, minimumSimilarity, prefixLength);
-        return new DefaultCompassQuery(wrapWithAliasQueryIfNeeded(lookup, query), session);
+        return buildCompassQuery(query, lookup);
     }
 
     public CompassQuery fuzzy(String name, String value) {
         ResourcePropertyLookup lookup = getLookup(name);
         SearchEngineQuery query = queryBuilder.fuzzy(lookup.getPath(), value);
-        return new DefaultCompassQuery(wrapWithAliasQueryIfNeeded(lookup, query), session);
+        return buildCompassQuery(query, lookup);
     }
 
     public CompassSpanQuery spanEq(String name, Object value) {
         ResourcePropertyLookup lookup = getLookup(name);
         SearchEngineSpanQuery query = queryBuilder.spanEq(lookup.getPath(), lookup.getValue(value));
-        return new DefaultCompassQuery.DefaultCompassSpanQuey(query, session);
+        return buildCompassQuery(query);
     }
 
     public CompassSpanQuery spanFirst(String name, Object value, int end) {
         ResourcePropertyLookup lookup = getLookup(name);
         SearchEngineSpanQuery query = queryBuilder.spanFirst(lookup.getPath(), lookup.getValue(value), end);
-        return new DefaultCompassQuery.DefaultCompassSpanQuey(query, session);
+        return buildCompassQuery(query);
     }
 
     public CompassSpanQuery spanFirst(CompassSpanQuery spanQuery, int end) {
         SearchEngineSpanQuery query = queryBuilder.spanFirst(((DefaultCompassQuery.DefaultCompassSpanQuey) spanQuery).getSearchEngineSpanQuery(), end);
-        return new DefaultCompassQuery.DefaultCompassSpanQuey(query, session);
+        return buildCompassQuery(query);
     }
 
     public CompassQuerySpanNearBuilder spanNear(String name) {
         ResourcePropertyLookup lookup = getLookup(name);
-        return new DefaultCompassQuerySpanNearBuilder(queryBuilder.spanNear(lookup.getPath()), session, lookup);
+        return new DefaultCompassQuerySpanNearBuilder(queryBuilder.spanNear(lookup.getPath()), lookup);
     }
 
     public CompassSpanQuery spanNot(CompassSpanQuery include, CompassSpanQuery exclude) {
         SearchEngineSpanQuery query = queryBuilder.spanNot(((DefaultCompassQuery.DefaultCompassSpanQuey) include)
                 .getSearchEngineSpanQuery(), ((DefaultCompassQuery.DefaultCompassSpanQuey) exclude)
                 .getSearchEngineSpanQuery());
-        return new DefaultCompassQuery.DefaultCompassSpanQuey(query, session);
+        return buildCompassQuery(query);
     }
 
     public CompassQuerySpanOrBuilder spanOr() {
-        return new DefaultCompassQuerySpanOrBuilder(queryBuilder.spanOr(), session);
+        return new DefaultCompassQuerySpanOrBuilder(queryBuilder.spanOr());
     }
 
     public CompassMoreLikeThisQuery moreLikeThis(String alias, Serializable id) {
         Resource idResource = session.getMarshallingStrategy().marshallIds(alias, id);
-        SearchEngineQueryBuilder.SearchEngineMoreLikeThisQueryBuilder mltQueryBuilder = queryBuilder.moreLikeThis(idResource);
+        SearchEngineQueryBuilder.SearchEngineMoreLikeThisQueryBuilder mltQueryBuilder = queryBuilder.moreLikeThis(session.getSearchEngine(), idResource);
         return new DefaultCompassMoreLikeThisQuery(mltQueryBuilder, session);
     }
 
     public CompassMoreLikeThisQuery moreLikeThis(Reader reader) {
-        SearchEngineQueryBuilder.SearchEngineMoreLikeThisQueryBuilder mltQueryBuilder = queryBuilder.moreLikeThis(reader);
+        SearchEngineQueryBuilder.SearchEngineMoreLikeThisQueryBuilder mltQueryBuilder = queryBuilder.moreLikeThis(session.getSearchEngine(), reader);
         return new DefaultCompassMoreLikeThisQuery(mltQueryBuilder, session);
+    }
+
+    private InternalCompassSpanQuery buildCompassQuery(SearchEngineSpanQuery query) {
+        InternalCompassSpanQuery compassSpanQuery = new DefaultCompassQuery.DefaultCompassSpanQuey(query, compass);
+        attachIfPossible(compassSpanQuery);
+        return compassSpanQuery;
+    }
+
+    private InternalCompassQuery buildCompassQuery(SearchEngineQuery query, ResourcePropertyLookup lookup) {
+        return buildCompassQuery(wrapWithAliasQueryIfNeeded(lookup, query));
+    }
+
+
+    private InternalCompassQuery buildCompassQuery(SearchEngineQuery query) {
+        InternalCompassQuery compassQuery = new DefaultCompassQuery(query, compass);
+        attachIfPossible(compassQuery);
+        return compassQuery;
+    }
+
+    private void attachIfPossible(InternalCompassQuery query) {
+        if (session != null) {
+            query.attach(session);
+            session.addDelegateClose(query);
+        }
     }
 
     private SearchEngineQuery wrapWithAliasQueryIfNeeded(ResourcePropertyLookup lookup, SearchEngineQuery query) {
@@ -612,7 +619,7 @@ public class DefaultCompassQueryBuilder implements CompassQueryBuilder {
     }
 
     private ResourcePropertyLookup getLookup(String name) {
-        ResourcePropertyLookup lookup = session.getMapping().getResourcePropertyLookup(name);
+        ResourcePropertyLookup lookup = compass.getMapping().getResourcePropertyLookup(name);
         lookup.setConvertOnlyWithDotPath(convertOnlyWithDotPath);
         return lookup;
     }

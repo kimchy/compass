@@ -5,7 +5,7 @@ import org.compass.core.CompassQueryFilter;
 import org.compass.core.CompassQueryFilterBuilder;
 import org.compass.core.engine.SearchEngineQueryFilterBuilder;
 import org.compass.core.mapping.ResourcePropertyLookup;
-import org.compass.core.spi.InternalCompassSession;
+import org.compass.core.spi.InternalCompass;
 
 /**
  * @author kimchy
@@ -45,16 +45,16 @@ public class DefaultCompassQueryFilterBuilder implements CompassQueryFilterBuild
         }
     }
 
-    private InternalCompassSession session;
+    private InternalCompass compass;
 
     private SearchEngineQueryFilterBuilder filterBuilder;
 
     private boolean convertOnlyWithDotPath = false;
 
 
-    public DefaultCompassQueryFilterBuilder(SearchEngineQueryFilterBuilder filterBuilder, InternalCompassSession session) {
+    public DefaultCompassQueryFilterBuilder(SearchEngineQueryFilterBuilder filterBuilder, InternalCompass compass) {
         this.filterBuilder = filterBuilder;
-        this.session = session;
+        this.compass = compass;
     }
 
     public CompassQueryFilterBuilder convertOnlyWithDotPath(boolean convertOnlyWithDotPath) {
@@ -102,7 +102,7 @@ public class DefaultCompassQueryFilterBuilder implements CompassQueryFilterBuild
     }
 
     private ResourcePropertyLookup getLookup(String name) {
-        ResourcePropertyLookup lookup = session.getMapping().getResourcePropertyLookup(name);
+        ResourcePropertyLookup lookup = compass.getMapping().getResourcePropertyLookup(name);
         lookup.setConvertOnlyWithDotPath(convertOnlyWithDotPath);
         return lookup;
     }

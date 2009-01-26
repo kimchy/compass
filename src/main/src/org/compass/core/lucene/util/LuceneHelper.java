@@ -39,7 +39,6 @@ import org.compass.core.impl.DefaultCompassHits;
 import org.compass.core.impl.DefaultCompassQuery;
 import org.compass.core.impl.DefaultCompassQueryFilter;
 import org.compass.core.lucene.LuceneResource;
-import org.compass.core.lucene.engine.LuceneSearchEngine;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.lucene.engine.LuceneSearchEngineHits;
 import org.compass.core.lucene.engine.LuceneSearchEngineInternalSearch;
@@ -48,6 +47,7 @@ import org.compass.core.lucene.engine.LuceneSearchEngineQueryFilter;
 import org.compass.core.lucene.engine.analyzer.LuceneAnalyzerManager;
 import org.compass.core.lucene.engine.manager.LuceneSearchEngineIndexManager;
 import org.compass.core.spi.InternalCompass;
+import org.compass.core.spi.InternalCompassQuery;
 import org.compass.core.spi.InternalCompassSession;
 import org.compass.core.spi.InternalResource;
 
@@ -61,19 +61,38 @@ public abstract class LuceneHelper {
 
     /**
      * Creates a new {@link CompassQuery} based on a Lucene {@link Query}.
-     * <p/>
-     * Allows to create {@link CompassQuery} based on external Lucene {@link Query} that is not supported
+     *
+     * <p>Allows to create {@link CompassQuery} based on external Lucene {@link Query} that is not supported
      * by one of Compass query builders.
      *
-     * @param session Comapss session
+     * @param compass Compass instance
+     * @param query   The lucene query to wrap
+     * @return A compass query wrapping the lucene query
+     */
+    public static CompassQuery createCompassQuery(Compass compass, Query query) {
+        InternalCompass internalCompass = (InternalCompass) compass;
+        SearchEngineQuery searchEngineQuery =
+                new LuceneSearchEngineQuery((LuceneSearchEngineFactory) internalCompass.getSearchEngineFactory(), query);
+        return new DefaultCompassQuery(searchEngineQuery, internalCompass);
+    }
+
+    /**
+     * Creates a new {@link CompassQuery} based on a Lucene {@link Query}.
+     *
+     * <p>Allows to create {@link CompassQuery} based on external Lucene {@link Query} that is not supported
+     * by one of Compass query builders.
+     *
+     * @param session Compass session
      * @param query   The lucene query to wrap
      * @return A compass query wrapping the lucene query
      */
     public static CompassQuery createCompassQuery(CompassSession session, Query query) {
         InternalCompassSession internalCompassSession = (InternalCompassSession) session;
         SearchEngineQuery searchEngineQuery =
-                new LuceneSearchEngineQuery((LuceneSearchEngine) internalCompassSession.getSearchEngine(), query);
-        return new DefaultCompassQuery(searchEngineQuery, internalCompassSession);
+                new LuceneSearchEngineQuery((LuceneSearchEngineFactory) internalCompassSession.getCompass().getSearchEngineFactory(), query);
+        InternalCompassQuery compassQuery = new DefaultCompassQuery(searchEngineQuery, internalCompassSession.getCompass());
+        compassQuery.attach(session);
+        return compassQuery;
     }
 
     /**
