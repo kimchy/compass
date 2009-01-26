@@ -433,17 +433,17 @@ public class DefaultCompassQueryBuilder implements CompassQueryBuilder {
     }
 
     public CompassQuery alias(String aliasValue) {
-        if (!session.getCompass().getMapping().hasRootMappingByAlias(aliasValue)) {
+        if (!compass.getMapping().hasRootMappingByAlias(aliasValue)) {
             throw new CompassException("Alias [" + aliasValue + "] not found in Compass mappings definitions");
         }
-        String aliasProperty = session.getCompass().getSearchEngineFactory().getAliasProperty();
+        String aliasProperty = compass.getSearchEngineFactory().getAliasProperty();
         SearchEngineQuery query = queryBuilder.term(aliasProperty, aliasValue);
         return buildCompassQuery(query);
     }
 
     public CompassQuery polyAlias(String aliasValue) {
-        return bool().addShould(term(session.getCompass().getSearchEngineFactory().getAliasProperty(), aliasValue))
-                .addShould(term(session.getCompass().getSearchEngineFactory().getExtendedAliasProperty(), aliasValue))
+        return bool().addShould(term(compass.getSearchEngineFactory().getAliasProperty(), aliasValue))
+                .addShould(term(compass.getSearchEngineFactory().getExtendedAliasProperty(), aliasValue))
                 .setMinimumNumberShouldMatch(1)
                 .toQuery();
     }
@@ -563,12 +563,18 @@ public class DefaultCompassQueryBuilder implements CompassQueryBuilder {
     }
 
     public CompassMoreLikeThisQuery moreLikeThis(String alias, Serializable id) {
+        if (session == null) {
+            throw new CompassException("moreLikeThis query can only be used when constructed using a CompassSession");
+        }
         Resource idResource = session.getMarshallingStrategy().marshallIds(alias, id);
         SearchEngineQueryBuilder.SearchEngineMoreLikeThisQueryBuilder mltQueryBuilder = queryBuilder.moreLikeThis(session.getSearchEngine(), idResource);
         return new DefaultCompassMoreLikeThisQuery(mltQueryBuilder, session);
     }
 
     public CompassMoreLikeThisQuery moreLikeThis(Reader reader) {
+        if (session == null) {
+            throw new CompassException("moreLikeThis query can only be used when constructed using a CompassSession");
+        }
         SearchEngineQueryBuilder.SearchEngineMoreLikeThisQueryBuilder mltQueryBuilder = queryBuilder.moreLikeThis(session.getSearchEngine(), reader);
         return new DefaultCompassMoreLikeThisQuery(mltQueryBuilder, session);
     }
@@ -611,8 +617,8 @@ public class DefaultCompassQueryBuilder implements CompassQueryBuilder {
         return queryBuilder.bool()
                 .addMust(query)
                 .addMust(queryBuilder.bool()
-                        .addShould(queryBuilder.term(session.getCompass().getSearchEngineFactory().getAliasProperty(), alias))
-                        .addShould(queryBuilder.term(session.getCompass().getSearchEngineFactory().getExtendedAliasProperty(), alias))
+                        .addShould(queryBuilder.term(compass.getSearchEngineFactory().getAliasProperty(), alias))
+                        .addShould(queryBuilder.term(compass.getSearchEngineFactory().getExtendedAliasProperty(), alias))
                         .setMinimumNumberShouldMatch(1)
                         .toQuery())
                 .toQuery();
