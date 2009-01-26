@@ -45,9 +45,9 @@ public class DefaultCompassQueryFilterBuilder implements CompassQueryFilterBuild
         }
     }
 
-    private InternalCompass compass;
+    private final InternalCompass compass;
 
-    private SearchEngineQueryFilterBuilder filterBuilder;
+    private final SearchEngineQueryFilterBuilder filterBuilder;
 
     private boolean convertOnlyWithDotPath = false;
 
