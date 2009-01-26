@@ -17,7 +17,7 @@
         </converters>
 
         <searchEngine>
-            <optimizer type="org.compass.core.lucene.engine.optimizer.NullOptimizer"/>
+            <optimizer schedule="false"/>
         </searchEngine>
         
         <mappings>

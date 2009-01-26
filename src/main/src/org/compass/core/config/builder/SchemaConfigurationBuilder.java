@@ -178,8 +178,7 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
             settings.setSetting(LuceneEnvironment.Optimizer.TYPE, getElementAttribute(optimizerEle, "type"));
             settings.setSetting(LuceneEnvironment.Optimizer.SCHEDULE, getElementAttribute(optimizerEle, "schedule"));
             settings.setSetting(LuceneEnvironment.Optimizer.SCHEDULE_PERIOD, getElementAttribute(optimizerEle, "scheduleInterval"));
-            settings.setSetting(LuceneEnvironment.Optimizer.Adaptive.MERGE_FACTOR, getElementAttribute(optimizerEle, "mergeFactor"));
-            settings.setSetting(LuceneEnvironment.Optimizer.Aggressive.MERGE_FACTOR, getElementAttribute(optimizerEle, "mergeFactor"));
+            settings.setSetting(LuceneEnvironment.Optimizer.MAX_NUMBER_OF_SEGMENTS, getElementAttribute(optimizerEle, "maxNumberOfSegments"));
         }
         child = DomUtils.getChildElementsByTagName(ele, "highlighter", true);
         for (Iterator it = child.iterator(); it.hasNext();) {

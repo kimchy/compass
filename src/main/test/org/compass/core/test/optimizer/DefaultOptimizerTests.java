@@ -23,15 +23,15 @@ import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.lucene.LuceneEnvironment;
-import org.compass.core.lucene.engine.optimizer.AdaptiveOptimizer;
+import org.compass.core.lucene.engine.optimizer.DefaultLuceneSearchEngineOptimizer;
 
-public class AdaptiveOptimizerTests extends AbstractOptimizerTests {
+public class DefaultOptimizerTests extends AbstractOptimizerTests {
 
     protected void addSettings(CompassSettings settings) {
         super.addSettings(settings);
-        settings.setSetting(LuceneEnvironment.Optimizer.TYPE, AdaptiveOptimizer.class.getName());
+        settings.setSetting(LuceneEnvironment.Optimizer.TYPE, DefaultLuceneSearchEngineOptimizer.class.getName());
         settings.setBooleanSetting(LuceneEnvironment.Optimizer.SCHEDULE, false);
-        settings.setSetting(LuceneEnvironment.Optimizer.Adaptive.MERGE_FACTOR, "3");
+        settings.setIntSetting(LuceneEnvironment.Optimizer.MAX_NUMBER_OF_SEGMENTS, 3);
         settings.setIntSetting(LuceneEnvironment.SearchEngineIndex.CACHE_INTERVAL_INVALIDATION, 0);
     }
 
@@ -77,7 +77,7 @@ public class AdaptiveOptimizerTests extends AbstractOptimizerTests {
         assertEquals(2, infos.size());
         session.close();
 
-        getCompass().getSearchEngineOptimizer().forceOptimize();
+        getCompass().getSearchEngineOptimizer().optimize(1);
 
         session = openSession();
         infos = LuceneSubIndexInfo.getIndexInfo("a", session);

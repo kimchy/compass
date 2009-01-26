@@ -9,7 +9,6 @@ import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.engine.naming.DynamicPropertyNamingStrategy;
 import org.compass.core.lucene.LuceneEnvironment;
-import org.compass.core.lucene.engine.optimizer.NullOptimizer;
 import org.compass.core.lucene.engine.store.jdbc.C3P0DataSourceProvider;
 import org.compass.core.lucene.engine.store.jdbc.DbcpDataSourceProvider;
 import org.compass.core.lucene.engine.store.jdbc.DriverManagerDataSourceProvider;
@@ -169,9 +168,9 @@ public class SchemaSimpleTests extends TestCase {
 
         CompassSettings settings = conf.getSettings();
 
-        assertEquals(NullOptimizer.class.getName(), settings.getSetting(LuceneEnvironment.Optimizer.TYPE));
         assertEquals("true", settings.getSetting(LuceneEnvironment.Optimizer.SCHEDULE));
         assertEquals("90", settings.getSetting(LuceneEnvironment.Optimizer.SCHEDULE_PERIOD));
+        assertEquals("2", settings.getSetting(LuceneEnvironment.Optimizer.MAX_NUMBER_OF_SEGMENTS));
     }
 
     public void testDirectoryWrapperProvider() throws Exception {

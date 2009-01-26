@@ -20,9 +20,6 @@ import org.compass.core.CompassSession;
 import org.compass.core.CompassTermFreq;
 import org.compass.core.CompassTermFreqsBuilder;
 import org.compass.core.CompassTransaction;
-import org.compass.core.config.CompassSettings;
-import org.compass.core.lucene.LuceneEnvironment;
-import org.compass.core.lucene.engine.optimizer.AggressiveOptimizer;
 import org.compass.core.test.AbstractTestCase;
 
 /**
@@ -32,10 +29,6 @@ public class SimpleTermFreqsTests extends AbstractTestCase {
 
     protected String[] getMappings() {
         return new String[]{"termfreqs/simple/mapping.cpm.xml"};
-    }
-
-    protected void addSettings(CompassSettings settings) {
-        settings.setSetting(LuceneEnvironment.Optimizer.TYPE, AggressiveOptimizer.class.getName());
     }
 
     public void testNoFreqs() {
@@ -85,7 +78,7 @@ public class SimpleTermFreqsTests extends AbstractTestCase {
         session.close();
 
         // only after optimization the term freqs are updated in Lucene
-        getCompass().getSearchEngineOptimizer().forceOptimize();
+        getCompass().getSearchEngineOptimizer().optimize(1);
 
         // verify that the deletion affected the termFreqs
         session = openSession();

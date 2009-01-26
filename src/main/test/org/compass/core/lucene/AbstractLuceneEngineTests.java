@@ -24,7 +24,6 @@ import org.compass.core.engine.naming.DefaultPropertyNamingStrategyFactory;
 import org.compass.core.engine.naming.PropertyNamingStrategy;
 import org.compass.core.engine.naming.PropertyNamingStrategyFactory;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
-import org.compass.core.lucene.engine.optimizer.NullOptimizer;
 
 /**
  * @author kimchy
@@ -45,7 +44,6 @@ public abstract class AbstractLuceneEngineTests extends AbstractSearchEngineTest
         CompassSettings settings = super.buildCompassSettings();
         settings.setSetting(CompassEnvironment.CONNECTION, "target/test-index");
         settings.setSetting(LuceneEnvironment.DEFAULT_SEARCH, PROPERTY_VAL1);
-        settings.setSetting(LuceneEnvironment.Optimizer.TYPE, NullOptimizer.class.getName());
         settings.setBooleanSetting(LuceneEnvironment.Optimizer.SCHEDULE, false);
         return settings;
     }

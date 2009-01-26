@@ -627,17 +627,15 @@ session.getSettings().setSetting(LuceneEnvironment.Transaction.Processor.TYPE,
     </para>
 
     <para>
-      In order to solve the problem, Compass has a <classname>SearchEngineOptimizer</classname> which is responsible for keeping the number of segments at bay. When <classname>Compass</classname> is built using <classname>CompassConfiguration</classname>, the <classname>SearchEngineOptimizer</classname> is started and when <classname>Compass</classname> is closed, the <classname>SearchEngineOptimizer</classname> is stopped.
+      The optimization process works on a sub index level, performing the optimization for each one. During the optimization process, optimizers will lock the sub index for dirty operations (only if optimization is required). This causes a tradeoff between having an optimized index, and spending less time on the optimization process in order to allow for other dirty operations.
     </para>
-
+    
     <para>
-      The optimization process works on a sub index level, performing the optimization for each one. During the optimization process, optimizers will lock the sub index for dirty operations. This causes a tradeoff between having an optimized index, and spending less time on the optimization process in order to allow for other dirty operations.
+        Compass comes with a single default optimizer implementation. The default optimizer will try and maintain no more than a configured maximum number of segments (defaults to <literal>10</literal>). This applies when using the <literal>optimize()</literal> and <literal>optimizer(subIndex)</literal> API, as well as when the optimizer is scheduled to run periodically (which is the default). It also provides support for specific, API level, optimization with a provided maximum number of segments.
     </para>
-
-    <sect2 id="core-searchengine-optimizers-scheduledOptimizers">
-      <title>Scheduled Optimizers</title>
-      <para>
-        Each optimizer in Compass can be wrapped to be executed in a scheduled manner. The default behavior within Compass is to schedule the configured optimizer (unless it is the null optimizer). Here is a sample configuration file that controls the scheduling of an optimizer:
+    
+    <para>
+        Here is an example of a configuration of the default optimizer to run with <literal>20</literal> maximum number of segments, and work in a scheduled manner with an interval of 90 seconds (default is 10 seconds):
 <programlisting><![CDATA[<compass name="default">
 
   <connection>
@@ -645,43 +643,17 @@ session.getSettings().setSetting(LuceneEnvironment.Transaction.Processor.TYPE,
   </connection>
 
   <searchEngine>
-    <optimizer scheduleInterval="90" schedule="true" />
+    <optimizer scheduleInterval="90" schedule="true" maxNumberOfSegments="20" />
   </searchEngine>
 </compass>
 ]]></programlisting>
-      </para>
+<programlisting><![CDATA[compass.engine.connection=target/test-index
+compass.engine.optimizer.schedule=true
+compass.engine.optimizer.schedule.period=90
+compass.engine.optimizer.maxNumberOfSegments=20
+]]></programlisting>
+    </para>
 
-    </sect2>
-
-    <sect2 id="core-searchengine-optimizers-aggressiveOptimizer">
-      <title>Aggressive Optimizer</title>
-
-      <para>
-        The <classname>AggressiveOptimizer</classname> uses Lucene optimization feature to optimize the index. Lucene optimization merges all the segments into one segment. You can set the limit of the number of segments, after which the index is considered to need optimization (the aggressive optimizer merge factor).
-      </para>
-
-      <para>
-        Since this optimizer causes all the segments in the index to be optimized into a single segment, the optimization process might take a long time to happen. This means that for large indexes, the optimizer will block other dirty operations for a long time in order to perform the index optimization. It also means that the index will be fully optimized after it, which means that search operations will execute faster. For most cases, the <classname>AdaptiveOptimizer</classname> should be the one used.
-      </para>
-    </sect2>
-
-    <sect2 id="core-searchengine-optimizers-adaptiveOptimizer">
-      <title>Adaptive Optimizer</title>
-
-      <para>
-        The <classname>AdaptiveOptimizer</classname> optimizes the segments while trying to keep the optimization time at bay. As an example, when we have a large segment in our index (for example, after we batched indexed the data), and we perform several interactive transactions, the aggressive optimizer will then merge all the segments together, while the adaptive optimizer will only merge the new small segments. You can set the limit of the number of segments, after which the index is considered to need optimization (the adaptive optimizer merge factor).
-      </para>
-
-    </sect2>
-
-    <sect2 id="core-searchengine-optimizers-nullOptimizer">
-      <title>Null Optimizer</title>
-
-      <para>
-        Compass also comes with a <classname>NullOptimizer</classname>, which performs no optimizations. It is mainly there if the hosting application developed it's own optimization which is maintained by other means than the <classname>SearchEngineOptimizer</classname>. It also makes sense to use it when configuring a <classname>Compass</classname> instance with a <literal>batch_insert</literal> transaction. It can also be used when the index was built offline and has been fully optimized, and later it is only used for search/read operations.
-      </para>
-
-    </sect2>
   </sect1>
 
   <sect1 id="core-searchengine-merge">

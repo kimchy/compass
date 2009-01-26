@@ -7,7 +7,6 @@
     <compass>
     
         <setting name="compass.engine.connection">target/testindex</setting>
-        <setting name="compass.engine.optimizer">org.compass.core.lucene.engine.optimizer.type.NullOptimizer</setting>
         <setting name="compass.engine.optimizer.schedule">false</setting>
         
         <meta-data resource="org/compass/core/test/metadata/test.cmd.xml" />

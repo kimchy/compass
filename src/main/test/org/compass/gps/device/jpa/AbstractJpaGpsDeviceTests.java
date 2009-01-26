@@ -28,7 +28,6 @@ import org.compass.annotations.config.CompassAnnotationsConfiguration;
 import org.compass.core.Compass;
 import org.compass.core.config.CompassConfiguration;
 import org.compass.core.lucene.LuceneEnvironment;
-import org.compass.core.lucene.engine.optimizer.NullOptimizer;
 import org.compass.gps.CompassGps;
 import org.compass.gps.impl.SingleCompassGps;
 
@@ -79,7 +78,8 @@ public abstract class AbstractJpaGpsDeviceTests extends TestCase {
 
     protected void setUpCompass() throws Exception {
         CompassConfiguration cpConf = new CompassAnnotationsConfiguration()
-                .setConnection("target/test-index").setSetting(LuceneEnvironment.Optimizer.TYPE, NullOptimizer.class.getName());
+                .setConnection("target/test-index");
+        cpConf.getSettings().setBooleanSetting(LuceneEnvironment.Optimizer.SCHEDULE, false);
         File testPropsFile = new File("compass.test.properties");
         if (testPropsFile.exists()) {
             Properties testProps = new Properties();

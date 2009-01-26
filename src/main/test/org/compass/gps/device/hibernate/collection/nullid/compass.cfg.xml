@@ -16,8 +16,7 @@
         </mappings>
 
         <settings>
-            <setting name="compass.engine.optimizer.type"
-                     value="org.compass.core.lucene.engine.optimizer.NullOptimizer"/>
+            <setting name="compass.engine.optimizer.schedule" value="false" />
         </settings>
     </compass>
 

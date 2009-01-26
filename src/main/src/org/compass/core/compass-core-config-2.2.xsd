@@ -638,42 +638,13 @@
                     </xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
-                    <xsd:attribute name="type" use="optional">
+                    <xsd:attribute name="type" use="optional" type="xsd:string">
                         <xsd:annotation>
                             <xsd:documentation>
                                 Sets the type of the optimizer that will be used by the Compass instance. Defaults to
-                                the adaptive optimizer.
+                                Compass default optimizer.
                             </xsd:documentation>
                         </xsd:annotation>
-                        <xsd:simpleType>
-                            <xsd:restriction base="xsd:string">
-                                <xsd:enumeration value="org.compass.core.lucene.engine.optimizer.AdaptiveOptimizer">
-                                    <xsd:annotation>
-                                        <xsd:documentation>
-                                            When the number of segments exceeds that specified mergeFactor, the segments
-                                            will be merged from the last segment, until a segment with a higher resource
-                                            count will be encountered.
-                                        </xsd:documentation>
-                                    </xsd:annotation>
-                                </xsd:enumeration>
-                                <xsd:enumeration value="org.compass.core.lucene.engine.optimizer.AggressiveOptimizer">
-                                    <xsd:annotation>
-                                        <xsd:documentation>
-                                            When the number of segments exceeds that specified mergeFactor, all the
-                                            segments are merged into a single segment.
-                                        </xsd:documentation>
-                                    </xsd:annotation>
-                                </xsd:enumeration>
-                                <xsd:enumeration value="org.compass.core.lucene.engine.optimizer.NullOptimizer">
-                                    <xsd:annotation>
-                                        <xsd:documentation>
-                                            Performs no optimization. Will not be scheduled even if the scheduled flag
-                                            is true.
-                                        </xsd:documentation>
-                                    </xsd:annotation>
-                                </xsd:enumeration>
-                            </xsd:restriction>
-                        </xsd:simpleType>
                     </xsd:attribute>
                     <xsd:attribute name="schedule" type="booleanType" use="optional" default="true">
                         <xsd:annotation>
@@ -690,7 +661,7 @@
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>
-                    <xsd:attribute name="mergeFactor" type="xsd:positiveInteger" use="optional">
+                    <xsd:attribute name="maxNumberOfSegments" type="xsd:positiveInteger" use="optional">
                         <xsd:annotation>
                             <xsd:documentation>
                                 The merge factor for Adaptive and Aggressive optimizers.

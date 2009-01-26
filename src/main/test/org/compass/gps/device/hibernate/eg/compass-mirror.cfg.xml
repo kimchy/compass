@@ -7,7 +7,6 @@
     <compass>
     
         <setting name="compass.engine.connection">target/test-index-mirror</setting>
-        <setting name="compass.engine.optimizer">org.compass.core.lucene.engine.optimizer.type.NullOptimizer</setting>
         <setting name="compass.engine.optimizer.schedule">false</setting>
 
         <setting name="compass.transaction.factory">org.compass.core.transaction.JTASyncTransactionFactory</setting>

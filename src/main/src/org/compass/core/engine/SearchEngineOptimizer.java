@@ -19,10 +19,7 @@ package org.compass.core.engine;
 /**
  * Optimizes search engine index data.
  *
- * <p>Using it, one can controll the lifecycle of the optimizer using the
- * <code>start()</code> and <code>stop()</code> methods (note that does not
- * mean that it will start a scheduled optimizer, it depends on the
- * configuration supplied).
+ * Can control a scheduled optimizer that will run periodically using {@link #start()} and {@link #stop()}.
  *
  * @author kimchy
  */
@@ -30,51 +27,43 @@ public interface SearchEngineOptimizer {
 
     /**
      * Starts the given optimizer. Will start a scheduled optimizer if
-     * configured.
-     *
-     * @throws SearchEngineException
+     * configured. If not, does nothing.
      */
     void start() throws SearchEngineException;
 
     /**
      * Stops the given optimizer. Will stop the scheduled optimizer if
-     * configured.
+     * configured. If not, does nothing.
      *
      * <p>Note that if the optimizer is stopped while optimizing, it might take
      * some time till the optimizer will actually stop.
-     *
-     * @throws SearchEngineException
      */
     void stop() throws SearchEngineException;
 
     /**
-     * Returns <code>true</code> if the optimizer is running.
+     * Returns <code>true</code> if the optimizer is running a scheduled optimizer.
      */
     boolean isRunning();
 
     /**
-     * Optimizes the search engine index if it requires optimization.
-     *
-     * @throws SearchEngineException
+     * Optimizes the search engine index if it requires optimization. The optimization will be perfomed on all
+     * sub indexes and based on configuration. For example, the default optimizer will use the configured
+     * <code>maxNumberOfSegments</code> in order to perform the optimization.
      */
     void optimize() throws SearchEngineException;
 
     /**
-     * Optimzies the search engine regardless if it required optimization or not.
+     * Optimizes all the sub indexes down to the required maximum number of segments.
      */
-    void forceOptimize() throws SearchEngineException;
+    void optimize(int maxNumberOfSegments) throws SearchEngineException;
 
     /**
-     * Optimizes the sub index if it requires optimization.
-     *
-     * @param subIndex The sub index to optimize
+     * Optimizes the sub index does to a configured max number of segments.
      */
     void optimize(String subIndex) throws SearchEngineException;
 
     /**
-     * Optimzies the sub index regardless if it required optimization or not.
-     *
-     * @param subIndex The sub index to optimize
+     * Optimizes a specific sub index down to a required maximum number of segments.
      */
-    void forceOptimize(String subIndex) throws SearchEngineException;
+    void optimize(String subIndex, int maxNumberOfSegments) throws SearchEngineException;
 }

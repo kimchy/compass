@@ -9,7 +9,7 @@
         </connection>
 
         <searchEngine>
-        	<optimizer type="org.compass.core.lucene.engine.optimizer.NullOptimizer" scheduleInterval="90" schedule="true" />
+        	<optimizer scheduleInterval="90" schedule="true" maxNumberOfSegments="2" />
         </searchEngine>
     </compass>
 

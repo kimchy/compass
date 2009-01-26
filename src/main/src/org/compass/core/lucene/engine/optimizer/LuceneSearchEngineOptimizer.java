@@ -16,23 +16,41 @@
 
 package org.compass.core.lucene.engine.optimizer;
 
-import org.compass.core.engine.SearchEngineOptimizer;
-import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
+import org.compass.core.engine.SearchEngineException;
 
 /**
- * Responsible for optimizing the search engine.
+ * An internal Lucene interface for managing index optimizations. 
  *
  * @author kimchy
  */
-public interface LuceneSearchEngineOptimizer extends SearchEngineOptimizer {
-
-    /**
-     * Injected with the actual search engine factory upon construction or Compass startup.
-     */
-    void setSearchEngineFactory(LuceneSearchEngineFactory searchEngineFactory);
+public interface LuceneSearchEngineOptimizer {
 
     /**
      * Can the optimizer be scheduled or not.
      */
     boolean canBeScheduled();
+
+    /**
+     * Optimizes the search engine index if it requires optimization.
+     *
+     * @throws org.compass.core.engine.SearchEngineException
+     */
+    void optimize() throws SearchEngineException;
+
+    /**
+     * Forces an optimization to occur and maintain to the number of "mergeFactor" segments.
+     */
+    void optimize(int maxNumberOfSegments) throws SearchEngineException;
+
+    /**
+     * Optimizes the sub index if it requires optimization.
+     *
+     * @param subIndex The sub index to optimize
+     */
+    void optimize(String subIndex) throws SearchEngineException;
+
+    /**
+     * Forces an optimization to occur for the specific sub index and maintain to the number of "mergeFactor" segments.
+     */
+    void optimize(String subIndex, int maxNumberOfSegments) throws SearchEngineException;
 }

@@ -4,6 +4,16 @@ COMPASS UPGRADE DOCUMENTATION (Please see Compass JIRA for a complete change-log
 VERSION 2.2.0 M2
 ================
 
+1. Optimizer Refactoring:
+    a. Removed AdaptiveOptimizer, it is the defualt (and only) optimizer in the system now.
+    b. Removed AgressiveOptimizer. Same as the the default optimizer with maxNumOfSegments set to 1.
+    c. Removed NullOptimizer. The NullOptimizer was usually used to disable scheduled optimization, but instead the
+       preferred way is to set the optimizer schedule flag to false. This allows for API level optimization to still
+       have meaning.
+    c. Changed xsd configuration of optimizer from 'mergeFactor' to 'maxNumberOfSegments'.
+    d. Changed Adaptive configuraion 'compass.engine.optimizer.adaptive.mergeFactor' to
+       'compass.engine.optimizer.maxNumberOfSegments'. The setting apply to the defualt optimizer.
+
 VERSION 2.2.0 M1 (11 January, 2009)
 ===================================
 

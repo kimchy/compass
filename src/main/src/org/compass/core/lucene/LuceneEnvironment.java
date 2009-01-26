@@ -783,34 +783,15 @@ public class LuceneEnvironment {
 
         /**
          * Determines the how often the optimizer will kick in (in seconds).
-         * <p/> Default is 10 seconds. Can be float number.
+         * Default is 10 seconds. Can be float number.
          */
         public static final String SCHEDULE_PERIOD = "compass.engine.optimizer.schedule.period";
 
-        public abstract class Aggressive {
-
-            /**
-             * Determines how often the aggressive optimizer will optimize the
-             * index. <p/> Defaults to 10.
-             */
-            public static final String MERGE_FACTOR = "compass.engine.optimizer.aggressive.mergeFactor";
-
-        }
-
         /**
-         * Set of environment settings for the adaptive optimizer.
-         *
-         * @author kimchy
+         * Controls the maximum number of segments during the optimization process (to remain). Defaults
+         * to <code>10</code>.
          */
-        public abstract class Adaptive {
-
-            /**
-             * Determines how often the adaptive optimizer will optimize the
-             * index. <p/> Defaults to 10.
-             */
-            public static final String MERGE_FACTOR = "compass.engine.optimizer.adaptive.mergeFactor";
-        }
-
+        public static final String MAX_NUMBER_OF_SEGMENTS = "compass.engine.optimizer.maxNumberOfSegments";
     }
 
     public static abstract class SpellCheck {
