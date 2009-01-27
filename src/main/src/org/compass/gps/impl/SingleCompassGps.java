@@ -87,6 +87,8 @@ public class SingleCompassGps extends AbstractCompassGps {
         if (indexCompassSettings.getSetting(LuceneEnvironment.Transaction.Processor.TYPE) == null) {
             indexCompassSettings.setSetting(LuceneEnvironment.Transaction.Processor.TYPE, LuceneEnvironment.Transaction.Processor.Lucene.NAME);
         }
+        // no need to async load the cache
+        indexCompassSettings.setBooleanSetting(LuceneEnvironment.SearchEngineIndex.CACHE_ASYNC_INVALIDATION, false);
         indexCompassSettings.setBooleanSetting(CompassEnvironment.Transaction.DISABLE_AUTO_JOIN_SESSION, true);
         this.compassTemplate = new CompassTemplate(compass);
 
