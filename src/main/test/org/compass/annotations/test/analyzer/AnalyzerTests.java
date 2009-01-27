@@ -56,12 +56,11 @@ public class AnalyzerTests extends AbstractAnnotationsTestCase {
         a.analyzer = null;
         try {
             session.save(a);
-            tr.commit();
             fail();
         } catch (SearchEngineException e) {
 
         }
-
+        tr.commit();
         session.close();
     }
 
