@@ -119,9 +119,9 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         if (log.isDebugEnabled()) {
             log.debug("Creating index " + searchEngineStore);
         }
-        clearCache();
         searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Object>() {
             public Object doInTransaction() throws CompassException {
+                clearCache();
                 searchEngineStore.createIndex();
                 return null;
             }
