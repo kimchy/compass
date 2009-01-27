@@ -29,6 +29,7 @@ import org.compass.core.CompassHits;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTemplate;
 import org.compass.core.config.CompassConfiguration;
+import org.compass.core.lucene.LuceneEnvironment;
 
 /**
  * Base class for simple concurrency tests for Compass. Starts several threads, each reads and writes data.
@@ -46,6 +47,7 @@ public abstract class AbstractMultiLoadTests extends AbstractAnnotationsTestCase
     @Override
     protected void addExtraConf(CompassConfiguration conf) {
         conf.addClass(A.class);
+        conf.getSettings().setSetting(LuceneEnvironment.Transaction.LOCK_TIMEOUT, "30s");
     }
 
     /**
