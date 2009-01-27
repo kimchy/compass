@@ -132,7 +132,7 @@ public class LuceneSettings {
             log.debug("Using default search property [" + defaultSearchPropery + "]");
         }
         // lucene specifics parameters
-        transactionLockTimout = settings.getSettingAsLong(LuceneEnvironment.Transaction.LOCK_TIMEOUT, 10) * 1000;
+        transactionLockTimout = settings.getSettingAsTimeInSeconds(LuceneEnvironment.Transaction.LOCK_TIMEOUT, 10) * 1000;
         if (log.isDebugEnabled()) {
             log.debug("Using transaction lock timeout [" + transactionLockTimout + "ms]");
         }

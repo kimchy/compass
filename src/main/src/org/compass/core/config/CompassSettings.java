@@ -238,6 +238,25 @@ public class CompassSettings {
         return Boolean.valueOf(sValue);
     }
 
+    public long getSettingAsTimeInSeconds(String setting, long defaultValue) {
+        String sValue = getSetting(setting);
+        if (sValue == null) {
+            return defaultValue;
+        }
+        if (sValue.endsWith("S")) {
+            throw new IllegalArgumentException("Expected time in seconds, does not support millis");
+        } else if (sValue.endsWith("millis")) {
+            throw new IllegalArgumentException("Expected time in seconds, does not support millis");
+        } else if (sValue.endsWith("s")) {
+            return (long) (Double.parseDouble(sValue.substring(0, sValue.length() - 1)));
+        } else if (sValue.endsWith("m")) {
+            return (long) (Double.parseDouble(sValue.substring(0, sValue.length() - 1)) * 60);
+        } else if (sValue.endsWith("H")) {
+            return (long) (Double.parseDouble(sValue.substring(0, sValue.length() - 1)) * 60 * 60);
+        }
+        return Long.parseLong(sValue);
+    }
+
     public long getSettingAsTimeInMillis(String setting, long defaultValue) {
         String sValue = getSetting(setting);
         if (sValue == null) {

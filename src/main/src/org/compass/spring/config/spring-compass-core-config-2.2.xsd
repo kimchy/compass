@@ -1393,11 +1393,11 @@
                 </xsd:documentation>
             </xsd:annotation>
         </xsd:attribute>
-        <xsd:attribute name="lockTimeout" type="xsd:positiveInteger" use="optional">
+        <xsd:attribute name="lockTimeout" type="xsd:string" use="optional">
             <xsd:annotation>
                 <xsd:documentation>
                     The amount of time a transaction will wait in order to obtain it's specific lock (in seconds) for
-                    dirty operations. Defaults to 10 seconds.
+                    dirty operations. Defaults to 10 seconds. Accepts Compass time format values.
                 </xsd:documentation>
             </xsd:annotation>
         </xsd:attribute>

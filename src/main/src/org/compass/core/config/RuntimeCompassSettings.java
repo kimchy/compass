@@ -121,6 +121,14 @@ public class RuntimeCompassSettings extends CompassSettings {
         return globalSettings.getSettingAsBoolean(setting, defaultValue);
     }
 
+    public long getSettingAsTimeInSeconds(String setting, long defaultValue) {
+        String value = runtimeSettings.getSetting(setting);
+        if (value != null) {
+            return runtimeSettings.getSettingAsTimeInSeconds(setting, defaultValue);
+        }
+        return globalSettings.getSettingAsTimeInSeconds(setting, defaultValue);
+    }
+
     public long getSettingAsTimeInMillis(String setting, long defaultValue) {
         String value = runtimeSettings.getSetting(setting);
         if (value != null) {

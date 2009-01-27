@@ -522,7 +522,7 @@ public class LuceneEnvironment {
 
         /**
          * The amount of time a transaction will wait in order to obtain it's
-         * specific lock (in seconds). Defaults to 10 seconds.
+         * specific lock (in Compass time format). Defaults to <code>10s</code>.
          */
         public static final String LOCK_TIMEOUT = "compass.transaction.lockTimeout";
 
