@@ -198,6 +198,7 @@ public abstract class AbstractMultiLoadTests extends AbstractAnnotationsTestCase
                 totalTime = System.currentTimeMillis() - totalTime;
                 logger.info("FINISHED RUN [" + runId + "] TOOK [" + totalTime + "]");
             } catch (Exception e) {
+                error = true;
                 logger.error("FAILURE RUN [" + runId + "], THREAD ABORTED...", e);
             }
         }
