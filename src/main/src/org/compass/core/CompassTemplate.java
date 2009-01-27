@@ -19,6 +19,8 @@ package org.compass.core;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.compass.core.config.CompassSettings;
+import org.compass.core.impl.ExistingCompassSession;
+import org.compass.core.spi.InternalCompassSession;
 
 /**
  * Helper class that simplifies the Compass access code using the template
@@ -127,7 +129,7 @@ public class CompassTemplate implements CompassOperations {
         CompassTransaction tx = null;
         try {
             tx = session.beginTransaction();
-            T result = action.doInCompass(session);
+            T result = action.doInCompass(new ExistingCompassSession((InternalCompassSession) session));
             tx.commit();
             return result;
         } catch (RuntimeException e) {

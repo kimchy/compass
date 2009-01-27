@@ -56,6 +56,8 @@ public interface InternalCompassSession extends CompassSession {
 
     void addDelegateClose(InternalSessionDelegateClose delegateClose);
 
+    void unbindTransaction();
+
     // context operations
 
     void create(String alias, Object object, DirtyOperationContext context) throws CompassException;

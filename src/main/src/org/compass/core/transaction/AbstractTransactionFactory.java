@@ -51,15 +51,14 @@ public abstract class AbstractTransactionFactory implements TransactionFactory {
 
     }
 
-    public boolean tryJoinExistingTransaction(InternalCompassSession session) throws CompassException {
+    public CompassTransaction tryJoinExistingTransaction(InternalCompassSession session) throws CompassException {
         if (disableAutoJoinSession) {
-            return false;
+            return null;
         }
         if (!isWithinExistingTransaction(session)) {
-            return false;
+            return null;
         }
-        beginTransaction(session);
-        return true;
+        return beginTransaction(session);
     }
 
     protected abstract boolean isWithinExistingTransaction(InternalCompassSession session) throws CompassException;

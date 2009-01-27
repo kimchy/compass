@@ -20,28 +20,52 @@ import org.compass.core.config.CompassSettings;
 
 /**
  * The main interface between a Java application and Compass.
- * <p>
- * Provides the basic operations with semantic mapped objects (save, delete, and
+ *
+ * <p>Provides the basic operations with semantic mapped objects (save, delete, and
  * load/get). The session provides operations on both the objects levels and
  * Resource levels (indexed object model). The CompassSession operations are
  * delegated to the underlying SearchEngine, so no direct access to the
  * SearchEngine is needed.
- * </p>
  *
- * <p>
- * Implementations will not be thread safe, Instead each thread/transaction
+ * <p>Implementations will not be thread safe, Instead each thread/transaction
  * should obtain its own instance from a Compass.
- * </p>
  *
- * <p>
- * If the CompassSession throws an exception, the transaction must be rolled
+ * <p>If the CompassSession throws an exception, the transaction must be rolled
  * back and the session discarded. The internal state of the CompassSession
  * might not be consistent with the search engine if discarded.
- * </p>
  *
- * <p>
- * Please see the CompassTemplate class for easier programmatic control using
- * the template design pattern.
+ * <p>Using the session depends on how transaction managemnet should be done (also see
+ * {@link org.compass.core.Compass#openSession()}. The simplest form looks like this:
+ *
+ * <pre>
+ * CompassSession session = compass.openSession();
+ * try {
+ *      // do operations with the session
+ *      session.commit(); // same as session.close()
+ * } catch (Exception e) {
+ *      session.rollback();
+ * }
+ * </pre>
+ *
+ * <p>A more complex form includes explicit control using {@link org.compass.core.CompassTransaction}:
+ *
+ * <pre>
+ * CompassSession session = compass.openSession();
+ * CompassTransaction tx = null;
+ * try {
+ * 	  tx = session.beginTransaction();
+ * 	  Object result = compassCallback.doInCompass(session);
+ * 	  tx.commit();
+ * 	  return result;
+ * } catch (RuntimeException e) {
+ * 	  if (tx != null) {
+ * 		  tx.rollback();
+ * 	  }
+ * 	  throw e;
+ * } finally {
+ * 	  session.close();
+ * }
+ * </pre>
  *
  * @author kimchy
  * @see org.compass.core.Resource
@@ -59,9 +83,15 @@ public interface CompassSession extends CompassOperations {
     /**
      * Returns <code>true</code> if the session is read only.
      *
-     * @see #setReadOnly() 
+     * @see #setReadOnly()
      */
     boolean isReadOnly();
+
+    /**
+     * When not using the {@link org.compass.core.CompassTransaction} interface, will begin a local transaction
+     * instead of the configured transaction.
+     */
+    CompassSession useLocalTransaction();
 
     /**
      * Returns a resource factory allowing to create resources and properties.
@@ -141,8 +171,23 @@ public interface CompassSession extends CompassOperations {
     CompassAnalyzerHelper analyzerHelper() throws CompassException;
 
     /**
+     * When not using explicit {@link org.compass.core.CompassTransaction} in order to manage transactions, can be called
+     * to rollback the current running transaction. Effectively also closes the session.
+     */
+    void rollback() throws CompassException;
+
+    /**
+     * Same as {@link CompassSession#close()}.
+     */
+    void commit() throws CompassException;
+
+    /**
      * Closes the CompassSession. Note, if this session is "contained" within another session,
      * it won't actually be closed, and defer closing the session to the other session.
+     *
+     * <p>If there is an on going transaction associated with the session that has not been committed
+     * / rolledback yet, will commit the transaction (and in case of failure, will roll it back). Failed
+     * commits will throw an exception from the close method.
      *
      * @throws CompassException
      * @see org.compass.core.Compass#openSession()

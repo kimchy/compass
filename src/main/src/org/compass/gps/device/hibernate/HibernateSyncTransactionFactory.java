@@ -16,8 +16,8 @@
 
 package org.compass.gps.device.hibernate;
 
-import java.util.Hashtable;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.compass.core.CompassException;
 import org.compass.core.CompassSession;
@@ -53,7 +53,7 @@ public class HibernateSyncTransactionFactory extends AbstractTransactionFactory 
 
     private SessionFactory sessionFactory;
 
-    private transient Map<Transaction, CompassSession> currentSessionMap = new Hashtable<Transaction, CompassSession>();
+    private transient Map<Transaction, CompassSession> currentSessionMap = new ConcurrentHashMap<Transaction, CompassSession>();
 
     public static void setSessionFactory(SessionFactory sessionFactory) {
         sessionFactoryHolder.set(sessionFactory);
@@ -100,7 +100,8 @@ public class HibernateSyncTransactionFactory extends AbstractTransactionFactory 
         currentSessionMap.put(sessionFactory.getCurrentSession().getTransaction(), session);
     }
 
-    public void unbindSessionFromTransaction(Transaction transaction) {
+    public void unbindSessionFromTransaction(Transaction transaction, CompassSession session) {
+        ((InternalCompassSession) session).unbindTransaction();
         currentSessionMap.remove(transaction);
     }
 

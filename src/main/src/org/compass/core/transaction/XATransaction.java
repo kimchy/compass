@@ -104,8 +104,10 @@ public class XATransaction extends AbstractJTATransaction {
                 case TMSUSPEND:
                     break;
                 case TMFAIL:
+                    session.unbindTransaction();
                     break;
                 case TMSUCCESS:
+                    session.unbindTransaction();
                     break;
             }
         }
@@ -133,6 +135,8 @@ public class XATransaction extends AbstractJTATransaction {
             } catch (Exception e) {
                 log.error("Failed to commit transaction [" + xid + "]", e);
                 throw new XAException(e.getMessage());
+            } finally {
+                session.unbindTransaction();
             }
         }
 
@@ -142,6 +146,8 @@ public class XATransaction extends AbstractJTATransaction {
             } catch (Exception e) {
                 log.error("Failed to rollback transaction [" + xid + "]", e);
                 throw new XAException(e.getMessage());
+            } finally {
+                session.unbindTransaction();
             }
         }
     }

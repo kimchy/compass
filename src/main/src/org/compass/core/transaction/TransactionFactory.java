@@ -54,6 +54,9 @@ public interface TransactionFactory {
      * <p>Note, this might end up working as if {@link org.compass.core.CompassSession#beginTransaction()}
      * was called, commit/rollback will not be called afterwards. Actually, beginTransaction might be
      * called again for the same session.
+     *
+     * <p>If a transaction is joined, the transcation will be returned. If there is no existing transaction,
+     * <code>null</code> will be returned.
      */
-    boolean tryJoinExistingTransaction(InternalCompassSession session) throws CompassException;
+    CompassTransaction tryJoinExistingTransaction(InternalCompassSession session) throws CompassException;
 }

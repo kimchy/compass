@@ -5,7 +5,7 @@
     <compass name="default">
 
         <connection>
-            <file path="target/testindex" />
+            <file path="target/test-index" />
         </connection>
 
         <transaction factory="org.compass.core.transaction.XATransactionFactory" />

@@ -254,7 +254,7 @@ public class SpringSyncTransaction extends AbstractTransaction {
                 log.error("Exception occured when sync with transaction", e);
                 // TODO swallow??????
             } finally {
-                ((SpringSyncTransactionFactory) transactionFactory).unbindSessionFromTransaction(this);
+                ((SpringSyncTransactionFactory) transactionFactory).unbindSessionFromTransaction(this, session);
                 session.evictAll();
                 // close the session AFTER we cleared it from the transaction,
                 // so it will be actually closed. Also close it only if we do

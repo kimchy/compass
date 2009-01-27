@@ -16,9 +16,9 @@
 
 package org.compass.spring.transaction;
 
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.compass.core.CompassException;
 import org.compass.core.CompassSession;
@@ -40,7 +40,7 @@ public class SpringSyncTransactionFactory extends AbstractTransactionFactory {
 
     private PlatformTransactionManager transactionManager;
 
-    private transient Map<TransactionSynchronization, CompassSession> currentSessionMap = new Hashtable<TransactionSynchronization, CompassSession>();
+    private transient Map<TransactionSynchronization, CompassSession> currentSessionMap = new ConcurrentHashMap<TransactionSynchronization, CompassSession>();
 
     public static void setTransactionManager(PlatformTransactionManager transactionManager) {
         transactionManagerHolder.set(transactionManager);
@@ -94,7 +94,8 @@ public class SpringSyncTransactionFactory extends AbstractTransactionFactory {
         currentSessionMap.put(sync, session);
     }
 
-    public void unbindSessionFromTransaction(TransactionSynchronization sync) {
+    public void unbindSessionFromTransaction(TransactionSynchronization sync, CompassSession session) {
+        ((InternalCompassSession) session).unbindTransaction();
         currentSessionMap.remove(sync);
     }
 

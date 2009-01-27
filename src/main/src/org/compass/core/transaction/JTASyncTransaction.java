@@ -104,7 +104,7 @@ public class JTASyncTransaction extends AbstractJTATransaction {
                 log.error("Exception occured when sync with transaction", e);
             } finally {
                 session.evictAll();
-                ((JTASyncTransactionFactory) transactionFactory).unbindSessionFromTransaction(tx);
+                ((JTASyncTransactionFactory) transactionFactory).unbindSessionFromTransaction(tx, session);
                 // close the session AFTER we cleared it from the transaction,
                 // so it will be actually closed (and only if we are not
                 // controlling the trnasction)

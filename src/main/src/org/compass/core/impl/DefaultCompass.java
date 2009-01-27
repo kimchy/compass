@@ -53,6 +53,7 @@ import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.metadata.CompassMetaData;
 import org.compass.core.spi.InternalCompass;
+import org.compass.core.spi.InternalCompassSession;
 import org.compass.core.transaction.InternalCompassTransaction;
 import org.compass.core.transaction.LocalTransactionFactory;
 import org.compass.core.transaction.TransactionException;
@@ -236,7 +237,7 @@ public class DefaultCompass implements InternalCompass {
         CompassSession session = transactionFactory.getTransactionBoundSession();
 
         if (session != null) {
-            return session;
+            return new ExistingCompassSession((InternalCompassSession) session);
         }
 
         if (!allowCreate) {

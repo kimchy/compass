@@ -53,6 +53,7 @@ import org.compass.core.spi.InternalCompassSession;
 import org.compass.core.spi.InternalResource;
 import org.compass.core.spi.InternalSessionDelegateClose;
 import org.compass.core.spi.ResourceKey;
+import org.compass.core.transaction.LocalTransaction;
 import org.compass.core.transaction.LocalTransactionFactory;
 import org.compass.core.transaction.TransactionFactory;
 
@@ -84,6 +85,10 @@ public class DefaultCompassSession implements InternalCompassSession {
 
     private CascadingManager cascadingManager;
 
+    private boolean localTransaction;
+
+    private CompassTransaction transaction;
+
     private final List<InternalSessionDelegateClose> delegateClose = new ArrayList<InternalSessionDelegateClose>();
 
     public DefaultCompassSession(RuntimeCompassSettings runtimeSettings, InternalCompass compass, SearchEngine searchEngine,
@@ -96,11 +101,10 @@ public class DefaultCompassSession implements InternalCompassSession {
         this.runtimeSettings = runtimeSettings;
         this.searchEngine = searchEngine;
         this.firstLevelCache = firstLevelCache;
-        this.marshallingStrategy = new DefaultMarshallingStrategy(mapping, searchEngine, compass.getConverterLookup(),
-                this);
+        this.marshallingStrategy = new DefaultMarshallingStrategy(mapping, searchEngine, compass.getConverterLookup(), this);
         this.cascadingManager = new CascadingManager(this);
 
-        transactionFactory.tryJoinExistingTransaction(this);
+        transaction = transactionFactory.tryJoinExistingTransaction(this);
     }
 
     public ResourceFactory resourceFactory() {
@@ -130,7 +134,7 @@ public class DefaultCompassSession implements InternalCompassSession {
         return compass.queryFilterBuilder();
     }
 
-    public CompassTermFreqsBuilder termFreqsBuilder(String ... names) throws CompassException {
+    public CompassTermFreqsBuilder termFreqsBuilder(String... names) throws CompassException {
         checkClosed();
         return new DefaultCompassTermFreqsBuilder(this, names);
     }
@@ -141,12 +145,21 @@ public class DefaultCompassSession implements InternalCompassSession {
         return new DefaultCompassAnalyzerHelper(analyzerHelper, this);
     }
 
+    public CompassSession useLocalTransaction() {
+        if (transaction != null && !(transaction instanceof LocalTransaction)) {
+            throw new IllegalStateException("There is already a transaction bounded to this session, and it is not a local one");
+        }
+        this.localTransaction = true;
+        return this;
+    }
+
     public CompassTransaction beginTransaction() throws CompassException {
         checkClosed();
         if (LuceneEnvironment.Transaction.Processor.Lucene.NAME.equalsIgnoreCase(getSettings().getSetting(LuceneEnvironment.Transaction.Processor.TYPE))) {
             firstLevelCache = new NullFirstLevelCache();
         }
-        return transactionFactory.beginTransaction(this);
+        transaction = transactionFactory.beginTransaction(this);
+        return transaction;
     }
 
     public CompassTransaction beginLocalTransaction() throws CompassException {
@@ -154,7 +167,8 @@ public class DefaultCompassSession implements InternalCompassSession {
         if (LuceneEnvironment.Transaction.Processor.Lucene.NAME.equalsIgnoreCase(getSettings().getSetting(LuceneEnvironment.Transaction.Processor.TYPE))) {
             firstLevelCache = new NullFirstLevelCache();
         }
-        return localTransactionFactory.beginTransaction(this);
+        transaction = localTransactionFactory.beginTransaction(this);
+        return transaction;
     }
 
     public void flush() throws CompassException {
@@ -168,6 +182,7 @@ public class DefaultCompassSession implements InternalCompassSession {
 
     public Resource getResource(Class clazz, Object id) throws CompassException {
         checkClosed();
+        startTransactionIfNeeded();
         Resource idResource = marshallingStrategy.marshallIds(clazz, id);
         if (idResource == null) {
             return null;
@@ -181,6 +196,7 @@ public class DefaultCompassSession implements InternalCompassSession {
 
     public Resource getResource(String alias, Object id) throws CompassException {
         checkClosed();
+        startTransactionIfNeeded();
         Resource idResource = marshallingStrategy.marshallIds(alias, id);
         if (idResource == null) {
             return null;
@@ -190,6 +206,7 @@ public class DefaultCompassSession implements InternalCompassSession {
 
     public Resource getResourceByIdResource(Resource idResource) {
         checkClosed();
+        startTransactionIfNeeded();
         ResourceKey key = ((InternalResource) idResource).getResourceKey();
         Resource cachedValue = firstLevelCache.getResource(key);
         if (cachedValue != null) {
@@ -204,6 +221,7 @@ public class DefaultCompassSession implements InternalCompassSession {
 
     public Resource getResourceByIdResourceNoCache(Resource idResource) {
         checkClosed();
+        startTransactionIfNeeded();
         return searchEngine.get(idResource);
     }
 
@@ -212,7 +230,6 @@ public class DefaultCompassSession implements InternalCompassSession {
     }
 
     public <T> T get(Class<T> clazz, Object id) throws CompassException {
-        checkClosed();
         Resource resource = getResource(clazz, id);
         if (resource == null) {
             return null;
@@ -227,6 +244,7 @@ public class DefaultCompassSession implements InternalCompassSession {
 
     public Object get(String alias, Object id) throws CompassException {
         checkClosed();
+        startTransactionIfNeeded();
         Resource resource = getResource(alias, id);
         if (resource == null) {
             return null;
@@ -250,6 +268,7 @@ public class DefaultCompassSession implements InternalCompassSession {
 
     public Object getByResource(Resource resource, MarshallingContext context) {
         checkClosed();
+        startTransactionIfNeeded();
         ResourceKey key = ((InternalResource) resource).getResourceKey();
         Object cachedValue = firstLevelCache.get(key);
         if (cachedValue != null) {
@@ -271,6 +290,7 @@ public class DefaultCompassSession implements InternalCompassSession {
 
     public Resource loadResource(Class clazz, Object id) throws CompassException {
         checkClosed();
+        startTransactionIfNeeded();
         Resource idResource = marshallingStrategy.marshallIds(clazz, id);
         return loadResourceByIdResource(idResource);
     }
@@ -281,12 +301,14 @@ public class DefaultCompassSession implements InternalCompassSession {
 
     public Resource loadResource(String alias, Object id) throws CompassException {
         checkClosed();
+        startTransactionIfNeeded();
         Resource idResource = marshallingStrategy.marshallIds(alias, id);
         return loadResourceByIdResource(idResource);
     }
 
     public Resource loadResourceByIdResource(Resource idResource) {
         checkClosed();
+        startTransactionIfNeeded();
         ResourceKey key = ((InternalResource) idResource).getResourceKey();
         Resource cachedValue = firstLevelCache.getResource(key);
         if (cachedValue != null) {
@@ -303,6 +325,7 @@ public class DefaultCompassSession implements InternalCompassSession {
 
     public <T> T load(Class<T> clazz, Object id) throws CompassException {
         checkClosed();
+        startTransactionIfNeeded();
         Resource resource = loadResource(clazz, id);
         //noinspection unchecked
         return (T) getByResource(resource);
@@ -314,17 +337,20 @@ public class DefaultCompassSession implements InternalCompassSession {
 
     public Object load(String alias, Object id) throws CompassException {
         checkClosed();
+        startTransactionIfNeeded();
         Resource resource = loadResource(alias, id);
         return getByResource(resource);
     }
 
     public CompassHits find(String query) throws CompassException {
         checkClosed();
+        startTransactionIfNeeded();
         return queryBuilder().queryString(query).toQuery().hits();
     }
 
     public void create(String alias, Object object) throws CompassException {
         checkClosed();
+        startTransactionIfNeeded();
         create(alias, object, new DirtyOperationContext());
     }
 
@@ -358,6 +384,7 @@ public class DefaultCompassSession implements InternalCompassSession {
 
     public void create(Object object) throws CompassException {
         checkClosed();
+        startTransactionIfNeeded();
         create(object, new DirtyOperationContext());
     }
 
@@ -399,6 +426,7 @@ public class DefaultCompassSession implements InternalCompassSession {
 
     public void save(String alias, Object object) throws CompassException {
         checkClosed();
+        startTransactionIfNeeded();
         save(alias, object, new DirtyOperationContext());
     }
 
@@ -432,6 +460,7 @@ public class DefaultCompassSession implements InternalCompassSession {
 
     public void save(Object object) throws CompassException {
         checkClosed();
+        startTransactionIfNeeded();
         save(object, new DirtyOperationContext());
     }
 
@@ -475,6 +504,7 @@ public class DefaultCompassSession implements InternalCompassSession {
 
     public void delete(String alias, Object obj) throws CompassException {
         checkClosed();
+        startTransactionIfNeeded();
         delete(alias, obj, new DirtyOperationContext());
     }
 
@@ -523,6 +553,7 @@ public class DefaultCompassSession implements InternalCompassSession {
 
     public void delete(Class clazz, Object obj) throws CompassException {
         checkClosed();
+        startTransactionIfNeeded();
         delete(clazz, obj, new DirtyOperationContext());
     }
 
@@ -569,6 +600,7 @@ public class DefaultCompassSession implements InternalCompassSession {
 
     public void delete(Object obj) throws CompassException {
         checkClosed();
+        startTransactionIfNeeded();
         delete(obj, new DirtyOperationContext());
     }
 
@@ -615,6 +647,7 @@ public class DefaultCompassSession implements InternalCompassSession {
 
     public void delete(Resource resource) throws CompassException {
         checkClosed();
+        startTransactionIfNeeded();
         firstLevelCache.evict(((InternalResource) resource).getResourceKey());
         if (compass.getEventManager().onPreDelete(resource) == FilterOperation.YES) {
             return;
@@ -625,11 +658,13 @@ public class DefaultCompassSession implements InternalCompassSession {
 
     public void delete(CompassQuery query) throws CompassException {
         checkClosed();
+        startTransactionIfNeeded();
         query.delete();
     }
 
     public void evict(Object obj) {
         checkClosed();
+        startTransactionIfNeeded();
         Resource idResource = marshallingStrategy.marshallIds(obj.getClass(), obj);
         ResourceKey key = ((InternalResource) idResource).getResourceKey();
         firstLevelCache.evict(key);
@@ -637,6 +672,7 @@ public class DefaultCompassSession implements InternalCompassSession {
 
     public void evict(String alias, Object id) {
         checkClosed();
+        startTransactionIfNeeded();
         Resource idResource = marshallingStrategy.marshallIds(alias, id);
         ResourceKey key = ((InternalResource) idResource).getResourceKey();
         firstLevelCache.evict(key);
@@ -656,11 +692,46 @@ public class DefaultCompassSession implements InternalCompassSession {
     public void addDelegateClose(InternalSessionDelegateClose delegateClose) {
         this.delegateClose.add(delegateClose);
     }
-    
+
+    public void unbindTransaction() {
+        transaction = null;
+    }
+
+    private boolean rolledback;
+
+    public void rollback() throws CompassException {
+        if (transaction != null) {
+            rolledback = true;
+            try {
+                transaction.rollback();
+            } finally {
+                close();
+            }
+        }
+    }
+
+    public void commit() throws CompassException {
+        close();
+    }
+
     public void close() throws CompassException {
         if (closed) {
             return;
         }
+        CompassException commitException = null;
+        if (transaction != null && !rolledback) {
+            try {
+                transaction.commit();
+            } catch (CompassException e) {
+                commitException = e;
+                try {
+                    transaction.rollback();
+                } catch (CompassException re) {
+                    // ignore
+                }
+            }
+        }
+
         for (InternalSessionDelegateClose delegateClose : this.delegateClose) {
             delegateClose.close();
         }
@@ -669,6 +740,10 @@ public class DefaultCompassSession implements InternalCompassSession {
             closed = true;
             firstLevelCache.evictAll();
             searchEngine.close();
+        }
+
+        if (commitException != null) {
+            throw commitException;
         }
     }
 
@@ -698,6 +773,19 @@ public class DefaultCompassSession implements InternalCompassSession {
 
     public CompassMetaData getMetaData() {
         return compassMetaData;
+    }
+
+    private void startTransactionIfNeeded() {
+        if (rolledback) {
+            throw new CompassException("Transaction already rolled back");
+        }
+        if (transaction == null) {
+            if (localTransaction) {
+                transaction = beginLocalTransaction();
+            } else {
+                transaction = beginTransaction();
+            }
+        }
     }
 
     private void checkClosed() throws IllegalStateException {

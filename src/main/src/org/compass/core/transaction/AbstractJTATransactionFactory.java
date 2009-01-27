@@ -122,7 +122,8 @@ public abstract class AbstractJTATransactionFactory extends AbstractTransactionF
         }
     }
 
-    public void unbindSessionFromTransaction(Transaction tx) {
+    public void unbindSessionFromTransaction(Transaction tx, CompassSession session) {
+        ((InternalCompassSession) session).unbindTransaction();
         currentSessionMap.remove(tx);
     }
 

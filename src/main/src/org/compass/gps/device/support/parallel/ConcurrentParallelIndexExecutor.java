@@ -30,7 +30,6 @@ import org.apache.commons.logging.LogFactory;
 import org.compass.core.CompassCallbackWithoutResult;
 import org.compass.core.CompassException;
 import org.compass.core.CompassSession;
-import org.compass.core.spi.InternalCompassSession;
 import org.compass.core.util.concurrent.SingleThreadThreadFactory;
 import org.compass.gps.CompassGpsException;
 import org.compass.gps.spi.CompassGpsInterfaceDevice;
@@ -103,7 +102,7 @@ public class ConcurrentParallelIndexExecutor implements ParallelIndexExecutor {
                         compassGps.executeForIndex(new CompassCallbackWithoutResult() {
                             protected void doInCompassWithoutResult(CompassSession session) throws CompassException {
                                 indexEntitiesIndexer.performIndex(session, indexEntities);
-                                ((InternalCompassSession) session).flush();
+                                session.flush();
                             }
                         });
                         return null;

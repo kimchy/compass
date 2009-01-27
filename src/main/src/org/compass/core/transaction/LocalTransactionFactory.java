@@ -50,7 +50,7 @@ public class LocalTransactionFactory extends AbstractTransactionFactory {
     protected void doConfigure(CompassSettings settings) {
         disableThreadBoundTx = settings.getSettingAsBoolean(CompassEnvironment.Transaction.DISABLE_THREAD_BOUND_LOCAL_TRANSATION, false);
     }
-
+                                                               
     protected boolean isWithinExistingTransaction(InternalCompassSession session) throws CompassException {
         return getTransactionBoundSession() == session;
     }
@@ -80,6 +80,7 @@ public class LocalTransactionFactory extends AbstractTransactionFactory {
     }
 
     public void unbindSessionFromTransaction(LocalTransaction tr, CompassSession session) {
+        ((InternalCompassSession) session).unbindTransaction();
         if (disableThreadBoundTx) {
             return;
         }

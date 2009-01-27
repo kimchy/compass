@@ -21,7 +21,6 @@ import javax.transaction.UserTransaction;
 import junit.framework.TestCase;
 import org.compass.core.Compass;
 import org.compass.core.CompassSession;
-import org.compass.core.CompassTransaction;
 import org.compass.core.config.CompassConfiguration;
 import org.compass.core.impl.ExistingCompassSession;
 import org.compass.spring.transaction.SpringSyncTransactionFactory;
@@ -35,7 +34,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 /**
  * @author kimchy
  */
-public class SpringSyncTransactionTests extends TestCase {
+public class SpringSyncNoExplicitTransactionTests extends TestCase {
 
     private Compass compass;
 
@@ -107,23 +106,19 @@ public class SpringSyncTransactionTests extends TestCase {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             protected void doInTransactionWithoutResult(TransactionStatus status) {
                 CompassSession session = compass.openSession();
-                CompassTransaction tr = session.beginTransaction();
                 A a = new A();
                 a.setId(id);
                 session.save(a);
                 a = session.get(A.class, id);
                 assertNotNull(a);
-                tr.commit();
                 session.close();
 
                 CompassSession oldSession = session;
                 session = compass.openSession();
                 assertTrue(session instanceof ExistingCompassSession);
                 assertTrue(oldSession == ((ExistingCompassSession) session).getActualSession());
-                tr = session.beginTransaction();
                 a = session.get(A.class, id);
                 assertNotNull(a);
-                tr.commit();
                 session.close();
             }
         });
@@ -131,10 +126,8 @@ public class SpringSyncTransactionTests extends TestCase {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             protected void doInTransactionWithoutResult(TransactionStatus status) {
                 CompassSession session = compass.openSession();
-                CompassTransaction tr = session.beginTransaction();
                 A a = session.get(A.class, id);
                 assertNotNull(a);
-                tr.commit();
                 session.close();
             }
         });
@@ -148,23 +141,19 @@ public class SpringSyncTransactionTests extends TestCase {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             protected void doInTransactionWithoutResult(TransactionStatus status) {
                 CompassSession session = compass.openSession();
-                CompassTransaction tr = session.beginTransaction();
                 A a = new A();
                 a.setId(id);
                 session.save(a);
                 a = session.get(A.class, id);
                 assertNotNull(a);
-                tr.commit();
                 session.close();
 
                 CompassSession oldSession = session;
                 session = compass.openSession();
                 assertTrue(session instanceof ExistingCompassSession);
                 assertTrue(oldSession == ((ExistingCompassSession) session).getActualSession());
-                tr = session.beginTransaction();
                 a = session.get(A.class, id);
                 assertNotNull(a);
-                tr.commit();
                 session.close();
 
                 status.setRollbackOnly();
@@ -174,10 +163,8 @@ public class SpringSyncTransactionTests extends TestCase {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             protected void doInTransactionWithoutResult(TransactionStatus status) {
                 CompassSession session = compass.openSession();
-                CompassTransaction tr = session.beginTransaction();
                 A a = session.get(A.class, id);
                 assertNull(a);
-                tr.commit();
                 session.close();
             }
         });
@@ -191,13 +178,11 @@ public class SpringSyncTransactionTests extends TestCase {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             protected void doInTransactionWithoutResult(TransactionStatus status) {
                 final CompassSession session = compass.openSession();
-                CompassTransaction tr = session.beginTransaction();
                 A a = new A();
                 a.setId(id);
                 session.save(a);
                 a = session.get(A.class, id);
                 assertNotNull(a);
-                tr.commit();
                 session.close();
 
                 // start a new transaction
@@ -207,10 +192,8 @@ public class SpringSyncTransactionTests extends TestCase {
                     protected void doInTransactionWithoutResult(TransactionStatus status) {
                         CompassSession innerSession = compass.openSession();
                         assertTrue(session != innerSession);
-                        CompassTransaction tr = innerSession.beginTransaction();
                         A a = innerSession.get(A.class, id);
                         assertNull(a);
-                        tr.commit();
                         innerSession.close();
                     }
                 });

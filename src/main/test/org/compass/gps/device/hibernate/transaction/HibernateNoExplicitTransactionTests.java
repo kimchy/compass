@@ -19,7 +19,6 @@ package org.compass.gps.device.hibernate.transaction;
 import junit.framework.TestCase;
 import org.compass.core.Compass;
 import org.compass.core.CompassSession;
-import org.compass.core.CompassTransaction;
 import org.compass.core.config.CompassConfiguration;
 import org.compass.core.impl.ExistingCompassSession;
 import org.compass.gps.device.hibernate.HibernateSyncTransactionFactory;
@@ -32,7 +31,7 @@ import org.hibernate.cfg.Environment;
 /**
  * @author kimchy
  */
-public class HibernateTransactionTests extends TestCase {
+public class HibernateNoExplicitTransactionTests extends TestCase {
 
     private Compass compass;
 
@@ -62,7 +61,6 @@ public class HibernateTransactionTests extends TestCase {
 
     public void testInnerHibernateManagement() throws Exception {
         CompassSession session = compass.openSession();
-        CompassTransaction tr = session.beginTransaction();
 
         // save a new instance of A
         long id = 1;
@@ -78,22 +76,18 @@ public class HibernateTransactionTests extends TestCase {
         CompassSession newSession = compass.openSession();
         assertTrue(newSession instanceof ExistingCompassSession);
         assertTrue(session == ((ExistingCompassSession) newSession).getActualSession());
-        CompassTransaction newTr = session.beginTransaction();
         a = session.get(A.class, id);
         assertNotNull(a);
-        // this one should not commit the jta transaction since the out
+        // this one should not commit the hibernate transaction since the out
         // controlls it
-        newTr.commit();
         newSession.close();
-
-        tr.commit();
+        session.close();
 
         // verify that the instance was saved
-        tr = session.beginTransaction();
+        session = compass.openSession();
         a = session.get(A.class, id);
         assertNotNull(a);
 
-        tr.commit();
         session.close();
     }
 
@@ -102,33 +96,27 @@ public class HibernateTransactionTests extends TestCase {
         Transaction hibernateTr = hibernateSession.beginTransaction();
 
         CompassSession session = compass.openSession();
-        CompassTransaction tr = session.beginTransaction();
         long id = 1;
         A a = new A();
         a.id = id;
         session.save(a);
         a = session.get(A.class, id);
         assertNotNull(a);
-        tr.commit();
         session.close();
 
         CompassSession oldSession = session;
         session = compass.openSession();
         assertTrue(session instanceof ExistingCompassSession);
         assertTrue(oldSession == ((ExistingCompassSession) session).getActualSession());
-        tr = session.beginTransaction();
         a = session.get(A.class, id);
         assertNotNull(a);
-        tr.commit();
         session.close();
 
         hibernateTr.commit();
 
         session = compass.openSession();
-        tr = session.beginTransaction();
         a = session.get(A.class, id);
         assertNotNull(a);
-        tr.commit();
         session.close();
     }
 
@@ -157,10 +145,8 @@ public class HibernateTransactionTests extends TestCase {
         // here we do need explicit session/transaciton mangement
         // just cause we are lazy and want to let Comapss to manage JTA
         session = compass.openSession();
-        CompassTransaction tr = session.beginTransaction();
         a = session.get(A.class, id);
         assertNotNull(a);
-        tr.commit();
         session.close();
     }
 
@@ -169,26 +155,23 @@ public class HibernateTransactionTests extends TestCase {
         Transaction hibernateTr = hibernateSession.beginTransaction();
 
         CompassSession session = compass.openSession();
-        CompassTransaction tr = session.beginTransaction();
         long id = 1;
         A a = new A();
         a.id = id;
         session.save(a);
         a = session.get(A.class, id);
         assertNotNull(a);
-        tr.commit();
+        session.close();
         session = compass.openSession();
-        tr = session.beginTransaction();
         a = session.get(A.class, id);
         assertNotNull(a);
-        tr.commit();
+        session.close();
 
         hibernateTr.rollback();
 
         session = compass.openSession();
-        tr = session.beginTransaction();
         a = session.get(A.class, id);
         assertNull(a);
-        tr.commit();
+        session.close();
     }
 }
