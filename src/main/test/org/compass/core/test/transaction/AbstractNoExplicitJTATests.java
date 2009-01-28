@@ -26,7 +26,9 @@ import junit.framework.TestCase;
 import org.compass.core.Compass;
 import org.compass.core.CompassSession;
 import org.compass.core.config.CompassConfiguration;
+import org.compass.core.config.CompassEnvironment;
 import org.compass.core.impl.ExistingCompassSession;
+import org.compass.core.spi.InternalCompass;
 import org.objectweb.jotm.Current;
 import org.objectweb.jotm.Jotm;
 
@@ -57,6 +59,7 @@ public abstract class AbstractNoExplicitJTATests extends TestCase {
 
         CompassConfiguration conf = new CompassConfiguration()
                 .configure(getCompassConfig());
+        conf.getSettings().setBooleanSetting(CompassEnvironment.DEBUG, true);
         compass = conf.buildCompass();
         compass.getSearchEngineIndexManager().deleteIndex();
         compass.getSearchEngineIndexManager().verifyIndex();
@@ -64,6 +67,7 @@ public abstract class AbstractNoExplicitJTATests extends TestCase {
 
     protected void tearDown() throws Exception {
         compass.close();
+        ((InternalCompass) compass).debugVerifyClosed();
         compass.getSearchEngineIndexManager().deleteIndex();
         jotm.stop();
     }

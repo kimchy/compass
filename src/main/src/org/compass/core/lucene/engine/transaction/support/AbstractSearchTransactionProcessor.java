@@ -50,7 +50,7 @@ public abstract class AbstractSearchTransactionProcessor extends AbstractTransac
     protected LuceneSearchEngineHits performFind(LuceneSearchEngineQuery query) throws SearchEngineException {
         LuceneSearchEngineInternalSearch internalSearch = internalSearch(query.getSubIndexes(), query.getAliases());
         if (internalSearch.isEmpty()) {
-            return new EmptyLuceneSearchEngineHits();
+            return new EmptyLuceneSearchEngineHits(searchEngine, internalSearch);
         }
         Filter qFilter = null;
         if (query.getFilter() != null) {

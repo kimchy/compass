@@ -22,7 +22,9 @@ import junit.framework.TestCase;
 import org.compass.core.Compass;
 import org.compass.core.CompassSession;
 import org.compass.core.config.CompassConfiguration;
+import org.compass.core.config.CompassEnvironment;
 import org.compass.core.impl.ExistingCompassSession;
+import org.compass.core.spi.InternalCompass;
 import org.compass.spring.transaction.SpringSyncTransactionFactory;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
@@ -52,6 +54,7 @@ public class SpringSyncNoExplicitTransactionTests extends TestCase {
 
         CompassConfiguration conf = new CompassConfiguration()
                 .configure("/org/compass/spring/test/transaction/compass.springsync.cfg.xml");
+        conf.getSettings().setBooleanSetting(CompassEnvironment.DEBUG, true);
         SpringSyncTransactionFactory.setTransactionManager(transactionManager);
         compass = conf.buildCompass();
         compass.getSearchEngineIndexManager().deleteIndex();
@@ -60,6 +63,7 @@ public class SpringSyncNoExplicitTransactionTests extends TestCase {
 
     protected void tearDown() throws Exception {
         compass.close();
+        ((InternalCompass) compass).debugVerifyClosed();
         compass.getSearchEngineIndexManager().deleteIndex();
 
         jotmFactoryBean.destroy();

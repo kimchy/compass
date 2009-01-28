@@ -16,16 +16,21 @@
 
 package org.compass.core.lucene.engine.manager;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.IndexSearcher;
+import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 
 /**
  * @author kimchy
  */
 public class LuceneIndexHolder {
 
+    private final LuceneSearchEngineFactory searchEngineFactory;
+
     private final String subIndex;
-    
+
     private final IndexSearcher indexSearcher;
 
     private final IndexReader indexReader;
@@ -40,10 +45,22 @@ public class LuceneIndexHolder {
 
     private boolean closed;
 
-    public LuceneIndexHolder(String subIndex, IndexSearcher indexSearcher) {
+    public LuceneIndexHolder(LuceneSearchEngineFactory searchEngineFactory, String subIndex, IndexSearcher indexSearcher) {
+        this.searchEngineFactory = searchEngineFactory;
         this.subIndex = subIndex;
         this.indexSearcher = indexSearcher;
         this.indexReader = indexSearcher.getIndexReader();
+        if (searchEngineFactory.isDebug()) {
+            AtomicInteger count = searchEngineFactory.getDebugHoldersCount().get(subIndex);
+            if (count == null) {
+                AtomicInteger newCount = new AtomicInteger();
+                count = searchEngineFactory.getDebugHoldersCount().putIfAbsent(subIndex, newCount);
+                if (count == null) {
+                    count = newCount;
+                }
+            }
+            count.incrementAndGet();
+        }
     }
 
     public IndexSearcher getIndexSearcher() {
@@ -86,6 +103,9 @@ public class LuceneIndexHolder {
 
     private void checkIfCanClose() {
         if (markForClose && count <= 0 && !closed) {
+            if (searchEngineFactory.isDebug()) {
+                searchEngineFactory.getDebugHoldersCount().get(subIndex).decrementAndGet();
+            }
             closed = true;
             try {
                 indexSearcher.close();

@@ -550,6 +550,10 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         return searchEngineFactory.getTransactionContext();
     }
 
+    public LuceneSearchEngineFactory getSearchEngineFactory() {
+        return searchEngineFactory;
+    }
+
     private static class ScheduledIndexManagerRunnable implements Runnable {
 
         private LuceneSearchEngineIndexManager indexManager;

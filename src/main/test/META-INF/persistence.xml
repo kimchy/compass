@@ -44,6 +44,7 @@
                       value="org.compass.gps.device.jpa.embedded.eclipselink.CompassSessionCustomizer"/>
 
             <property name="compass.engine.connection" value="target/test-index"/>
+            <property name="compass.debug" value="true" />
         </properties>
     </persistence-unit>
     <persistence-unit name="toplink" transaction-type="RESOURCE_LOCAL">
@@ -88,6 +89,7 @@
                       value="org.compass.gps.device.jpa.embedded.toplink.CompassSessionCustomizer"/>
 
             <property name="compass.engine.connection" value="target/test-index"/>
+            <property name="compass.debug" value="true" />
         </properties>
     </persistence-unit>
     <persistence-unit name="hibernate" transaction-type="RESOURCE_LOCAL">
@@ -124,6 +126,7 @@
             <property name="hibernate.hbm2ddl.auto" value="create"/>
 
             <property name="compass.engine.connection" value="target/test-index"/>
+            <property name="compass.debug" value="true" />
         </properties>
     </persistence-unit>
     <persistence-unit name="openjpa" transaction-type="RESOURCE_LOCAL">
@@ -159,6 +162,7 @@
             <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema"/>
 
             <property name="compass.engine.connection" value="target/test-index"/>
+            <property name="compass.debug" value="true" />
         </properties>
     </persistence-unit>
 </persistence>

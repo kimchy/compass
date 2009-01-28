@@ -12,6 +12,7 @@
         <property name="hibernate.connection.password"></property>
 
         <property name="compass.engine.connection">target/test-index</property>
+        <property name="compass.debug">true</property>
 
         <mapping resource="org/compass/gps/device/hibernate/simple/Simple.hbm.xml"/>
         <mapping resource="org/compass/gps/device/hibernate/simple/SimpleEx.hbm.xml"/>

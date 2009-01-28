@@ -35,8 +35,9 @@ public class LuceneSearchEngineInternalSearch implements SearchEngineInternalSea
 
     private boolean closed;
 
-    public LuceneSearchEngineInternalSearch(LuceneSearchEngine searchEngine) {
+    public LuceneSearchEngineInternalSearch(LuceneSearchEngine searchEngine, List<LuceneIndexHolder> indexHolders) {
         this.searchEngine = searchEngine;
+        this.indexHoldersToClose = indexHolders;
     }
 
     public LuceneSearchEngineInternalSearch(LuceneSearchEngine searchEngine, MultiSearcher searcher, List<LuceneIndexHolder> indexHolders) {

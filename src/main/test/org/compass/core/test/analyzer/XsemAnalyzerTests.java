@@ -110,6 +110,7 @@ public class XsemAnalyzerTests extends AbstractAnalyzerTests {
         assertEquals(1, query.hits().length());
 
         tr.commit();
+        session.close();
     }
 
     public void testXmlObjectAnalyzerSetForProperty() throws Exception {
@@ -127,6 +128,7 @@ public class XsemAnalyzerTests extends AbstractAnalyzerTests {
         assertEquals(1, hits.getLength());
 
         tr.commit();
+        session.close();
     }
 
     public void testXmlObjectAnalyzerSetForResourceAndProperty() throws Exception {
@@ -141,6 +143,7 @@ public class XsemAnalyzerTests extends AbstractAnalyzerTests {
         assertEquals(1, hits.getLength());
 
         tr.commit();
+        session.close();
     }
 
     public void testXmlObjectAnalyzerController() throws Exception {
@@ -154,11 +157,14 @@ public class XsemAnalyzerTests extends AbstractAnalyzerTests {
 
         try {
             session.save(buildAliasedXmlObject("g", XML_DATA));
+            session.flush();
             tr.commit();
             fail();
         } catch (SearchEngineException e) {
-
+            tr.rollback();
         }
+
+        session.close();
     }
 
     public void testXmlObjectAnalyzerControllerWithNullAnalyzer() throws Exception {
@@ -178,6 +184,7 @@ public class XsemAnalyzerTests extends AbstractAnalyzerTests {
         assertEquals(2, hits.getLength());
 
         tr.commit();
+        session.close();
     }
 
     public void testXmlObjectAnalyzerControllerWithNullAnalyzerAndPropertyAnalyzer() throws Exception {
@@ -190,6 +197,7 @@ public class XsemAnalyzerTests extends AbstractAnalyzerTests {
         assertEquals(0, hits.getLength());
 
         tr.commit();
+        session.close();
     }
 
 }

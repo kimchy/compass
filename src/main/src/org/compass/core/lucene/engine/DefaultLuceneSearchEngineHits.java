@@ -32,15 +32,15 @@ import org.compass.core.lucene.LuceneResource;
 
 public class DefaultLuceneSearchEngineHits implements LuceneSearchEngineHits {
 
-    private LuceneSearchEngine searchEngine;
+    private final LuceneSearchEngine searchEngine;
 
-    private LuceneSearchEngineQuery query;
+    private final LuceneSearchEngineQuery query;
 
     private LuceneSearchEngineInternalSearch internalSearch;
 
     private SearchEngineHighlighter highlighter;
 
-    private Hits hits;
+    private final Hits hits;
 
     public DefaultLuceneSearchEngineHits(Hits hits, LuceneSearchEngine searchEngine,
                                          LuceneSearchEngineQuery query, LuceneSearchEngineInternalSearch internalSearch) {

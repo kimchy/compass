@@ -34,6 +34,8 @@ import org.compass.core.CompassHits;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
 import org.compass.core.config.CompassConfiguration;
+import org.compass.core.config.CompassEnvironment;
+import org.compass.core.spi.InternalCompass;
 import org.compass.gps.device.jdbc.datasource.SingleConnectionDataSource;
 import org.compass.gps.impl.SingleCompassGps;
 
@@ -80,6 +82,7 @@ public class SqlMapClientTests extends TestCase {
 
         CompassConfiguration cpConf = new CompassConfiguration()
                 .configure("/org/compass/gps/device/ibatis/compass.cfg.xml");
+        cpConf.getSettings().setBooleanSetting(CompassEnvironment.DEBUG, true);
         compass = cpConf.buildCompass();
         compass.getSearchEngineIndexManager().deleteIndex();
         compass.getSearchEngineIndexManager().verifyIndex();
@@ -94,6 +97,7 @@ public class SqlMapClientTests extends TestCase {
     protected void tearDown() throws Exception {
         compassGps.stop();
         compass.close();
+        ((InternalCompass) compass).debugVerifyClosed();
         tearDownDB();
         dataSource.destroy();
     }

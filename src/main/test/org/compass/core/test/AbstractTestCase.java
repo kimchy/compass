@@ -60,7 +60,7 @@ public abstract class AbstractTestCase extends ExtendedTestCase {
 
     protected void setUp() throws Exception {
         compass.getSearchEngineIndexManager().clearCache();
-        verifyNoHandlers();
+        compass.debugVerifyClosed();
         try {
             compass.getSearchEngineIndexManager().deleteIndex();
         } catch (Exception e) {
@@ -78,7 +78,6 @@ public abstract class AbstractTestCase extends ExtendedTestCase {
 
     protected void tearDown() throws Exception {
         compass.getSearchEngineIndexManager().clearCache();
-        verifyNoHandlers();
         try {
             compass.getSearchEngineIndexManager().deleteIndex();
         } catch (Exception e) {
@@ -96,6 +95,7 @@ public abstract class AbstractTestCase extends ExtendedTestCase {
 
     protected void afterTestCase() throws Exception {
         compass.close();
+        compass.debugVerifyClosed();
         verifyNoHandlers();
     }
 
@@ -117,6 +117,7 @@ public abstract class AbstractTestCase extends ExtendedTestCase {
             conf.addResource(getPackagePrefix() + mapping, AbstractTestCase.class.getClassLoader());
         }
         conf.getSettings().setSetting(CompassEnvironment.Cache.FirstLevel.TYPE, NullFirstLevelCache.class.getName());
+        conf.getSettings().setBooleanSetting(CompassEnvironment.DEBUG, true);
         addSettings(conf.getSettings());
         addExtraConf(conf);
         return conf;

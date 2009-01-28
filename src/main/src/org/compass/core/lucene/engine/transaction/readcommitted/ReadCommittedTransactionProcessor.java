@@ -206,7 +206,7 @@ public class ReadCommittedTransactionProcessor extends AbstractConcurrentTransac
                 }
             }
             if (searchers.size() == 0) {
-                return new LuceneSearchEngineInternalSearch(searchEngine);
+                return new LuceneSearchEngineInternalSearch(searchEngine, indexHoldersToClose);
             }
             MultiSearcher indexSeracher = indexManager.openMultiSearcher(searchers.toArray(new Searcher[searchers.size()]));
             return new LuceneSearchEngineInternalSearch(searchEngine, indexSeracher, indexHoldersToClose);
@@ -221,7 +221,7 @@ public class ReadCommittedTransactionProcessor extends AbstractConcurrentTransac
     protected LuceneSearchEngineHits doFind(LuceneSearchEngineQuery query) throws SearchEngineException {
         LuceneSearchEngineInternalSearch internalSearch = internalSearch(query.getSubIndexes(), query.getAliases());
         if (internalSearch.isEmpty()) {
-            return new EmptyLuceneSearchEngineHits();
+            return new EmptyLuceneSearchEngineHits(searchEngine, internalSearch);
         }
         Filter qFilter = null;
         if (filter.hasDeletes()) {
@@ -347,10 +347,15 @@ public class ReadCommittedTransactionProcessor extends AbstractConcurrentTransac
     private Term markDeleted(ResourceKey resourceKey) {
         LuceneIndexHolder indexHolder = indexHoldersBySubIndex.get(resourceKey.getSubIndex());
         if (indexHolder == null) {
-            // make sure we have a clean cache...
-            indexManager.getIndexHoldersCache().refreshCache(resourceKey.getSubIndex());
-            indexHolder = indexManager.getIndexHoldersCache().getHolder(resourceKey.getSubIndex());
-            indexHoldersBySubIndex.put(resourceKey.getSubIndex(), indexHolder);
+            synchronized (indexHoldersBySubIndex) {
+                indexHolder = indexHoldersBySubIndex.get(resourceKey.getSubIndex());
+                if (indexHolder == null) {
+                    // make sure we have a clean cache...
+                    indexManager.getIndexHoldersCache().refreshCache(resourceKey.getSubIndex());
+                    indexHolder = indexManager.getIndexHoldersCache().getHolder(resourceKey.getSubIndex());
+                    indexHoldersBySubIndex.put(resourceKey.getSubIndex(), indexHolder);
+                }                
+            }
         }
 
         // mark the deleted term in the filter

@@ -91,7 +91,7 @@ public abstract class AbstractTransactionProcessor implements TransactionProcess
                     }
                 }
                 if (readers.size() == 0) {
-                    return new LuceneSearchEngineInternalSearch(searchEngine);
+                    return new LuceneSearchEngineInternalSearch(searchEngine, indexHoldersToClose);
                 }
                 // if we have just one reader, no need to create a multi reader on top of it
                 if (readers.size() == 1) {
@@ -112,7 +112,7 @@ public abstract class AbstractTransactionProcessor implements TransactionProcess
                     }
                 }
                 if (searchers.size() == 0) {
-                    return new LuceneSearchEngineInternalSearch(searchEngine);
+                    return new LuceneSearchEngineInternalSearch(searchEngine, indexHoldersToClose);
                 }
                 // if we have just one reader, no need to create a multi reader on top of it
                 if (searchers.size() == 1) {

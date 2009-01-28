@@ -16,7 +16,6 @@
 
 package org.compass.core.engine;
 
-import org.compass.core.Resource;
 import org.compass.core.ResourceFactory;
 import org.compass.core.config.RuntimeCompassSettings;
 import org.compass.core.engine.event.SearchEngineEventManager;
@@ -129,9 +128,4 @@ public interface SearchEngineFactory {
      * Returns the compass mappings.
      */
     CompassMapping getMapping();
-
-    /**
-     * Attach the given resoruce to this search engine factory instance.
-     */
-    void attach(Resource resource);
 }

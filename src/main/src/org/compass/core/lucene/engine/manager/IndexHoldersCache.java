@@ -268,7 +268,7 @@ public class IndexHoldersCache {
             }
             if (reader != indexHolder.getIndexReader()) {
                 LuceneIndexHolder origHolder = indexHolder;
-                indexHolder = new LuceneIndexHolder(subIndex, indexManager.openIndexSearcher(reader));
+                indexHolder = new LuceneIndexHolder(indexManager.getSearchEngineFactory(), subIndex, indexManager.openIndexSearcher(reader));
                 // since not synchronized, we need to mark the one we replaced as closed
                 LuceneIndexHolder oldHolder = indexHolders.put(subIndex, indexHolder);
                 if (oldHolder != null) {
@@ -284,7 +284,7 @@ public class IndexHoldersCache {
         } else {
             try {
                 IndexReader reader = IndexReader.open(indexManager.getDirectory(subIndex), true);
-                indexHolder = new LuceneIndexHolder(subIndex, indexManager.openIndexSearcher(reader));
+                indexHolder = new LuceneIndexHolder(indexManager.getSearchEngineFactory(), subIndex, indexManager.openIndexSearcher(reader));
             } catch (IOException e) {
                 throw new SearchEngineException("Failed to open sub index cache [" + subIndex + "]", e);
             }

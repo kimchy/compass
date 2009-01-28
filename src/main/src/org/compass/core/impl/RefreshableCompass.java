@@ -91,6 +91,10 @@ public class RefreshableCompass implements InternalCompass {
 
     // Delegate Methods
 
+    public void debugVerifyClosed() {
+        compass.debugVerifyClosed();
+    }
+    
     public void start() {
         compass.start();
     }

@@ -179,8 +179,10 @@ public class ResourceAnalyzerTests extends AbstractAnalyzerTests {
             tr.commit();
             fail();
         } catch (SearchEngineException e) {
-
+            tr.rollback();
         }
+
+        session.close();
     }
 
     public void testResourceAnalyzerControllerWithNullAnalyzer() {

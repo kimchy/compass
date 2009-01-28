@@ -27,6 +27,15 @@ import org.compass.core.engine.SearchEngineHighlighter;
  */
 public class EmptyLuceneSearchEngineHits implements LuceneSearchEngineHits {
 
+    private final LuceneSearchEngine searchEngine;
+
+    private LuceneSearchEngineInternalSearch internalSearch;
+
+    public EmptyLuceneSearchEngineHits(LuceneSearchEngine searchEngine, LuceneSearchEngineInternalSearch internalSearch) {
+        this.searchEngine = searchEngine;
+        this.internalSearch = internalSearch;
+    }
+
     public Resource getResource(int n) throws SearchEngineException {
         throw new IndexOutOfBoundsException("No resource for hit [" + n + "], length is [0]");
     }
@@ -40,12 +49,25 @@ public class EmptyLuceneSearchEngineHits implements LuceneSearchEngineHits {
         throw new IndexOutOfBoundsException("No highlighter for empty hits");
     }
 
-    public void close() throws SearchEngineException {
-        // do nothing
+    public void closeDelegate() throws SearchEngineException {
+        close(false);
     }
 
-    public void closeDelegate() throws SearchEngineException {
-        // do nothing
+    public void close() throws SearchEngineException {
+        close(true);
+    }
+
+    private void close(boolean removeDelegate) throws SearchEngineException {
+        if (internalSearch != null) {
+            try {
+                internalSearch.close();
+            } finally {
+                internalSearch = null;
+                if (removeDelegate) {
+                    searchEngine.removeDelegatedClose(this);
+                }
+            }
+        }
     }
 
     public float score(int i) throws SearchEngineException {

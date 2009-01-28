@@ -946,4 +946,6 @@ public class CompassEnvironment {
          */
         public static final String ASM = "asm";
     }
+
+    public static final String DEBUG = "compass.debug";
 }

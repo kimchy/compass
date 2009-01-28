@@ -88,8 +88,8 @@ public class LocalTransaction extends AbstractTransaction {
         }
 
         session.evictAll();
-        ((LocalTransactionFactory) transactionFactory).unbindSessionFromTransaction(this, session);
         session.getSearchEngine().commit(true);
+        ((LocalTransactionFactory) transactionFactory).unbindSessionFromTransaction(this, session);
         state = COMMIT;
     }
 

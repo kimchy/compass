@@ -24,6 +24,8 @@ import java.util.Properties;
 import junit.framework.TestCase;
 import org.compass.core.Compass;
 import org.compass.core.config.CompassConfiguration;
+import org.compass.core.config.CompassEnvironment;
+import org.compass.core.spi.InternalCompass;
 import org.compass.gps.CompassGps;
 import org.compass.gps.device.hibernate.HibernateGpsDevice;
 import org.compass.gps.impl.SingleCompassGps;
@@ -58,6 +60,8 @@ public abstract class AbstractHibernateGpsDeviceTests extends TestCase {
         compass.close();
         sessionFactory.close();
 
+        ((InternalCompass) compass).debugVerifyClosed();
+
         try {
             compass.getSearchEngineIndexManager().deleteIndex();
         } catch (Exception e) {
@@ -90,6 +94,7 @@ public abstract class AbstractHibernateGpsDeviceTests extends TestCase {
             cpConf.getSettings().addSettings(testProps);
         }
         setUpCoreCompass(cpConf);
+        cpConf.getSettings().setBooleanSetting(CompassEnvironment.DEBUG, true);
         compass = cpConf.buildCompass();
         compass.getSearchEngineIndexManager().deleteIndex();
         compass.getSearchEngineIndexManager().verifyIndex();

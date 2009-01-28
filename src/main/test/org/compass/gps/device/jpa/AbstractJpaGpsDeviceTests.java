@@ -27,7 +27,9 @@ import junit.framework.TestCase;
 import org.compass.annotations.config.CompassAnnotationsConfiguration;
 import org.compass.core.Compass;
 import org.compass.core.config.CompassConfiguration;
+import org.compass.core.config.CompassEnvironment;
 import org.compass.core.lucene.LuceneEnvironment;
+import org.compass.core.spi.InternalCompass;
 import org.compass.gps.CompassGps;
 import org.compass.gps.impl.SingleCompassGps;
 
@@ -58,6 +60,8 @@ public abstract class AbstractJpaGpsDeviceTests extends TestCase {
         compass.close();
         entityManagerFactory.close();
 
+        ((InternalCompass) compass).debugVerifyClosed();
+
         try {
             compass.getSearchEngineIndexManager().deleteIndex();
         } catch (Exception e) {
@@ -79,6 +83,7 @@ public abstract class AbstractJpaGpsDeviceTests extends TestCase {
     protected void setUpCompass() throws Exception {
         CompassConfiguration cpConf = new CompassAnnotationsConfiguration()
                 .setConnection("target/test-index");
+        cpConf.getSettings().setBooleanSetting(CompassEnvironment.DEBUG, true);
         cpConf.getSettings().setBooleanSetting(LuceneEnvironment.Optimizer.SCHEDULE, false);
         File testPropsFile = new File("compass.test.properties");
         if (testPropsFile.exists()) {

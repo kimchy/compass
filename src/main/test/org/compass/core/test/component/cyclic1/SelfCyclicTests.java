@@ -87,8 +87,11 @@ public class SelfCyclicTests extends AbstractTestCase {
         session.save(selfCycle1);
         session.save(selfCycle2);
 
-        selfCycle1 = (SelfCycle) session.load(SelfCycle.class, new Long(1));
+        selfCycle1 = session.load(SelfCycle.class, new Long(1));
         assertEquals(System.identityHashCode(selfCycle1),
                 System.identityHashCode(selfCycle1.getSelfCycle().getSelfCycle()));
+
+        tr.commit();
+        session.close();
     }
 }

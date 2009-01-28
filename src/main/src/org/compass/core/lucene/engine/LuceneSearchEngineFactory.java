@@ -16,11 +16,16 @@
 
 package org.compass.core.lucene.engine;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.compass.core.Resource;
 import org.compass.core.ResourceFactory;
 import org.compass.core.config.CompassConfigurable;
+import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.config.RuntimeCompassSettings;
 import org.compass.core.engine.SearchEngine;
@@ -35,7 +40,6 @@ import org.compass.core.engine.spellcheck.SearchEngineSpellCheckManager;
 import org.compass.core.engine.spi.InternalSearchEngineFactory;
 import org.compass.core.executor.ExecutorManager;
 import org.compass.core.lucene.LuceneEnvironment;
-import org.compass.core.lucene.LuceneResource;
 import org.compass.core.lucene.LuceneResourceFactory;
 import org.compass.core.lucene.engine.analyzer.LuceneAnalyzerManager;
 import org.compass.core.lucene.engine.highlighter.LuceneHighlighterManager;
@@ -53,7 +57,6 @@ import org.compass.core.lucene.engine.store.DefaultLuceneSearchEngineStore;
 import org.compass.core.lucene.engine.store.LuceneSearchEngineStore;
 import org.compass.core.lucene.engine.transaction.TransactionProcessorManager;
 import org.compass.core.mapping.CompassMapping;
-import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.transaction.context.TransactionContext;
 import org.compass.core.util.ClassUtils;
 
@@ -98,6 +101,12 @@ public class LuceneSearchEngineFactory implements InternalSearchEngineFactory {
 
     private SearchEngineEventManager eventManager = new SearchEngineEventManager();
 
+    // debug holders
+
+    private final boolean debug;
+
+    private final ConcurrentMap<String, AtomicInteger> debugOpenHoldersCount;
+
     public LuceneSearchEngineFactory(PropertyNamingStrategy propertyNamingStrategy, CompassSettings settings,
                                      CompassMapping mapping, ExecutorManager executorManager) {
         this.propertyNamingStrategy = propertyNamingStrategy;
@@ -106,42 +115,7 @@ public class LuceneSearchEngineFactory implements InternalSearchEngineFactory {
         this.settings = settings;
         this.luceneSettings = new LuceneSettings();
         luceneSettings.configure(settings);
-        configure(settings, mapping);
-    }
 
-    public void close() throws SearchEngineException {
-        transactionProcessorManager.close();
-        if (spellCheckManager != null) {
-            spellCheckManager.close();
-        }
-        indexManager.close();
-    }
-
-    public SearchEngine openSearchEngine(RuntimeCompassSettings runtimeSettings) {
-        return new LuceneSearchEngine(runtimeSettings, this);
-    }
-
-    public SearchEngineQueryBuilder queryBuilder() throws SearchEngineException {
-        return new LuceneSearchEngineQueryBuilder(this);
-    }
-
-    public SearchEngineQueryFilterBuilder queryFilterBuilder() throws SearchEngineException {
-        return new LuceneSearchEngineQueryFilterBuilder();
-    }
-
-    public TransactionContext getTransactionContext() {
-        return transactionContext;
-    }
-
-    public ExecutorManager getExecutorManager() {
-        return this.executorManager;
-    }
-
-    public void setTransactionContext(TransactionContext transactionContext) {
-        this.transactionContext = transactionContext;
-    }
-
-    private void configure(CompassSettings settings, CompassMapping mapping) {
         resourceFactory = new LuceneResourceFactory(this);
 
         // build the analyzers
@@ -183,12 +157,72 @@ public class LuceneSearchEngineFactory implements InternalSearchEngineFactory {
 
         // build the transaction processor manager
         transactionProcessorManager = new TransactionProcessorManager(this);
+
+        // init debug
+        debug = settings.getSettingAsBoolean(CompassEnvironment.DEBUG, false);
+        if (debug) {
+            debugOpenHoldersCount = new ConcurrentHashMap<String, AtomicInteger>();
+        } else {
+            debugOpenHoldersCount = null;
+        }
     }
 
-    public void attach(Resource resource) {
-        LuceneResource luceneResource = (LuceneResource) resource;
-        ResourceMapping resourceMapping = mapping.getRootMappingByAlias(luceneResource.getAlias());
+    public void close() throws SearchEngineException {
+        transactionProcessorManager.close();
+        if (spellCheckManager != null) {
+            spellCheckManager.close();
+        }
+        indexManager.close();
+    }
 
+    // DEBUG START
+
+    public void debugVerifyClosed() {
+        boolean failed = false;
+        StringBuilder message = new StringBuilder();
+        for (Map.Entry<String, AtomicInteger> entry : debugOpenHoldersCount.entrySet()) {
+            if (entry.getValue().get() > 0) {
+                failed = true;
+                message.append("[CACHE HOLDER] Sub Index [").append(entry.getKey()).append("] has [").append(entry.getValue()).append("] holder(s) open\n");
+            }
+        }
+        if (failed) {
+            throw new IllegalStateException(message.toString());
+        }
+    }
+
+    public boolean isDebug() {
+        return debug;
+    }
+
+    public ConcurrentMap<String, AtomicInteger> getDebugHoldersCount() {
+        return debugOpenHoldersCount;
+    }
+
+    // DEBUG END
+
+    public SearchEngine openSearchEngine(RuntimeCompassSettings runtimeSettings) {
+        return new LuceneSearchEngine(runtimeSettings, this);
+    }
+
+    public SearchEngineQueryBuilder queryBuilder() throws SearchEngineException {
+        return new LuceneSearchEngineQueryBuilder(this);
+    }
+
+    public SearchEngineQueryFilterBuilder queryFilterBuilder() throws SearchEngineException {
+        return new LuceneSearchEngineQueryFilterBuilder();
+    }
+
+    public TransactionContext getTransactionContext() {
+        return transactionContext;
+    }
+
+    public ExecutorManager getExecutorManager() {
+        return this.executorManager;
+    }
+
+    public void setTransactionContext(TransactionContext transactionContext) {
+        this.transactionContext = transactionContext;
     }
 
     public void start() {
