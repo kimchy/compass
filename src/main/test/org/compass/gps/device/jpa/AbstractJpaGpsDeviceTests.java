@@ -29,7 +29,6 @@ import org.compass.core.Compass;
 import org.compass.core.config.CompassConfiguration;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.lucene.LuceneEnvironment;
-import org.compass.core.spi.InternalCompass;
 import org.compass.gps.CompassGps;
 import org.compass.gps.impl.SingleCompassGps;
 
@@ -59,8 +58,6 @@ public abstract class AbstractJpaGpsDeviceTests extends TestCase {
         compassGps.stop();
         compass.close();
         entityManagerFactory.close();
-
-        ((InternalCompass) compass).debugVerifyClosed();
 
         try {
             compass.getSearchEngineIndexManager().deleteIndex();

@@ -30,7 +30,6 @@ import org.compass.core.CompassSession;
 import org.compass.core.CompassTemplate;
 import org.compass.core.config.CompassConfiguration;
 import org.compass.core.lucene.LuceneEnvironment;
-import org.compass.core.spi.InternalCompass;
 
 /**
  * Base class for simple concurrency tests for Compass. Starts several threads, each reads and writes data.
@@ -108,7 +107,6 @@ public abstract class AbstractMultiLoadTests extends AbstractAnnotationsTestCase
 
         for (int i = 0; i < getNumberOfCompassInstances(); i++) {
             templates[i].getCompass().close();
-            ((InternalCompass) templates[i].getCompass()).debugVerifyClosed();
         }
 
         logger.info("VERIFYING INDEX USING NEW COMPASS INSTANCE");

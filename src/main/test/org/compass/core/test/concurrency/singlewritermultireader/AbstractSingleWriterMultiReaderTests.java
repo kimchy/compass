@@ -108,8 +108,8 @@ public abstract class AbstractSingleWriterMultiReaderTests extends AbstractTestC
             }
         }
 
-//        if (error) {
-//            fail("Single writer multi writer test failed, see logs...");
-//        }
+        if (error) {
+            fail("Single writer multi writer test failed, see logs...");
+        }
     }
 }

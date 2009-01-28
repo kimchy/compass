@@ -106,6 +106,8 @@ public class DefaultCompass implements InternalCompass {
 
     private volatile boolean closed = false;
 
+    private final boolean debug;
+
     public DefaultCompass(CompassMapping mapping, ConverterLookup converterLookup, CompassMetaData compassMetaData,
                           PropertyNamingStrategy propertyNamingStrategy, ExecutorManager executorManager,
                           CompassSettings settings) throws CompassException {
@@ -170,6 +172,8 @@ public class DefaultCompass implements InternalCompass {
             }
             Runtime.getRuntime().addShutdownHook(shutdownThread);
         }
+
+        this.debug = settings.getSettingAsBoolean(CompassEnvironment.DEBUG, false);
     }
 
     public CompassConfiguration getConfig() {
@@ -286,6 +290,10 @@ public class DefaultCompass implements InternalCompass {
         }
 
         logger.info("Closed Compass [" + name + "]");
+
+        if (debug) {
+            debugVerifyClosed();
+        }
     }
 
     public boolean isClosed() {

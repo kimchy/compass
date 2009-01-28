@@ -71,6 +71,7 @@ public class SpringSyncGpsIndexTests extends TestCase {
         conf.setSetting(LuceneEnvironment.Optimizer.SCHEDULE, "false");
         conf.setSetting(LuceneEnvironment.SearchEngineIndex.INDEX_MANAGER_SCHEDULE_INTERVAL, "-1");
         conf.addClass(MockIndexGpsDeviceObject.class);
+        conf.getSettings().setBooleanSetting(CompassEnvironment.DEBUG, true);
         compass = conf.buildCompass();
 
         device = new MockIndexGpsDevice();

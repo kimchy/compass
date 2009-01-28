@@ -29,7 +29,6 @@ import org.compass.core.CompassTransaction;
 import org.compass.core.config.CompassConfiguration;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.impl.ExistingCompassSession;
-import org.compass.core.spi.InternalCompass;
 import org.objectweb.jotm.Current;
 import org.objectweb.jotm.Jotm;
 
@@ -68,7 +67,6 @@ public abstract class AbstractJTATests extends TestCase {
 
     protected void tearDown() throws Exception {
         compass.close();
-        ((InternalCompass) compass).debugVerifyClosed();
         compass.getSearchEngineIndexManager().deleteIndex();
         jotm.stop();
     }

@@ -25,7 +25,6 @@ import org.compass.core.CompassTransaction;
 import org.compass.core.config.CompassConfiguration;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.impl.ExistingCompassSession;
-import org.compass.core.spi.InternalCompass;
 import org.compass.spring.transaction.SpringSyncTransactionFactory;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
@@ -64,7 +63,6 @@ public class SpringSyncTransactionTests extends TestCase {
 
     protected void tearDown() throws Exception {
         compass.close();
-        ((InternalCompass) compass).debugVerifyClosed();
         compass.getSearchEngineIndexManager().deleteIndex();
 
         jotmFactoryBean.destroy();

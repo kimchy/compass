@@ -35,7 +35,6 @@ import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
 import org.compass.core.config.CompassConfiguration;
 import org.compass.core.config.CompassEnvironment;
-import org.compass.core.spi.InternalCompass;
 import org.compass.gps.device.jdbc.datasource.SingleConnectionDataSource;
 import org.compass.gps.impl.SingleCompassGps;
 
@@ -97,7 +96,6 @@ public class SqlMapClientTests extends TestCase {
     protected void tearDown() throws Exception {
         compassGps.stop();
         compass.close();
-        ((InternalCompass) compass).debugVerifyClosed();
         tearDownDB();
         dataSource.destroy();
     }

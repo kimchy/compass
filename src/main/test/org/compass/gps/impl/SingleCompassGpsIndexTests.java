@@ -43,6 +43,7 @@ public class SingleCompassGpsIndexTests extends TestCase {
         CompassConfiguration conf = new CompassConfiguration();
         conf.setSetting(CompassEnvironment.CONNECTION, "target/test-index");
         conf.addClass(MockIndexGpsDeviceObject.class);
+        conf.getSettings().setBooleanSetting(CompassEnvironment.DEBUG, true);
         compass = conf.buildCompass();
 
         device = new MockIndexGpsDevice();
@@ -69,6 +70,7 @@ public class SingleCompassGpsIndexTests extends TestCase {
         CompassConfiguration conf = new CompassConfiguration();
         conf.setSetting(CompassEnvironment.CONNECTION, "target/test-index");
         conf.addClass(MockIndexGpsDeviceObject.class);
+        conf.getSettings().setBooleanSetting(CompassEnvironment.DEBUG, true);
         compass = conf.buildCompass();
         compass.getSearchEngineIndexManager().deleteIndex();
         compass.getSearchEngineIndexManager().createIndex();
