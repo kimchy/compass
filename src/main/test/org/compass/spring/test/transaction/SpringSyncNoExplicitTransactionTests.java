@@ -113,7 +113,7 @@ public class SpringSyncNoExplicitTransactionTests extends TestCase {
                 session.save(a);
                 a = session.get(A.class, id);
                 assertNotNull(a);
-                session.close();
+                session.commit();
 
                 CompassSession oldSession = session;
                 session = compass.openSession();
@@ -121,7 +121,7 @@ public class SpringSyncNoExplicitTransactionTests extends TestCase {
                 assertTrue(oldSession == ((ExistingCompassSession) session).getActualSession());
                 a = session.get(A.class, id);
                 assertNotNull(a);
-                session.close();
+                session.commit();
             }
         });
 
@@ -130,7 +130,7 @@ public class SpringSyncNoExplicitTransactionTests extends TestCase {
                 CompassSession session = compass.openSession();
                 A a = session.get(A.class, id);
                 assertNotNull(a);
-                session.close();
+                session.commit();
             }
         });
     }
@@ -148,7 +148,7 @@ public class SpringSyncNoExplicitTransactionTests extends TestCase {
                 session.save(a);
                 a = session.get(A.class, id);
                 assertNotNull(a);
-                session.close();
+                session.commit();
 
                 CompassSession oldSession = session;
                 session = compass.openSession();
@@ -156,7 +156,7 @@ public class SpringSyncNoExplicitTransactionTests extends TestCase {
                 assertTrue(oldSession == ((ExistingCompassSession) session).getActualSession());
                 a = session.get(A.class, id);
                 assertNotNull(a);
-                session.close();
+                session.commit();
 
                 status.setRollbackOnly();
             }
@@ -167,7 +167,7 @@ public class SpringSyncNoExplicitTransactionTests extends TestCase {
                 CompassSession session = compass.openSession();
                 A a = session.get(A.class, id);
                 assertNull(a);
-                session.close();
+                session.commit();
             }
         });
     }
@@ -185,7 +185,7 @@ public class SpringSyncNoExplicitTransactionTests extends TestCase {
                 session.save(a);
                 a = session.get(A.class, id);
                 assertNotNull(a);
-                session.close();
+                session.commit();
 
                 // start a new transaction
                 TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
@@ -196,7 +196,7 @@ public class SpringSyncNoExplicitTransactionTests extends TestCase {
                         assertTrue(session != innerSession);
                         A a = innerSession.get(A.class, id);
                         assertNull(a);
-                        innerSession.close();
+                        innerSession.commit();
                     }
                 });
             }

@@ -77,14 +77,14 @@ public abstract class AbstractNoExplicitJTATests extends TestCase {
         a.setId(1l);
         session.save(a);
 
-        session.close();
+        session.commit();
 
         session = compass.openSession().useLocalTransaction();
 
         a = session.load(A.class, 1);
         assertNotNull(a);
 
-        session.close();
+        session.commit();
     }
 
     public void testInnerUTManagement() throws Exception {
@@ -108,16 +108,16 @@ public abstract class AbstractNoExplicitJTATests extends TestCase {
         assertNotNull(a);
         // this one should not commit the jta transaction since the out
         // controlls it
-        newSession.close();
+        newSession.commit();
 
-        session.close();
+        session.commit();
 
         // verify that the instance was saved
         session = compass.openSession();
         a = session.get(A.class, id);
         assertNotNull(a);
 
-        session.close();
+        session.commit();
     }
 
     public void testOuterUTManagementWithCommit() throws Exception {
@@ -132,7 +132,7 @@ public abstract class AbstractNoExplicitJTATests extends TestCase {
         session.save(a);
         a = session.get(A.class, id);
         assertNotNull(a);
-        session.close();
+        session.commit();
 
         CompassSession oldSession = session;
         session = compass.openSession();
@@ -140,14 +140,14 @@ public abstract class AbstractNoExplicitJTATests extends TestCase {
         assertTrue(oldSession == ((ExistingCompassSession) session).getActualSession());
         a = session.get(A.class, id);
         assertNotNull(a);
-        session.close();
+        session.commit();
 
         ut.commit();
 
         session = compass.openSession();
         a = session.get(A.class, id);
         assertNotNull(a);
-        session.close();
+        session.commit();
     }
 
     public void testOuterUTManagementWithCommitAndNoSessionOrTransactionManagement() throws Exception {
@@ -178,7 +178,7 @@ public abstract class AbstractNoExplicitJTATests extends TestCase {
         session = compass.openSession();
         a = session.get(A.class, id);
         assertNotNull(a);
-        session.close();
+        session.commit();
     }
 
     public void testOuterUTManagementWithRollback() throws Exception {
@@ -193,19 +193,19 @@ public abstract class AbstractNoExplicitJTATests extends TestCase {
         session.save(a);
         a = session.get(A.class, id);
         assertNotNull(a);
-        session.close();
+        session.commit();
 
         session = compass.openSession();
         a = session.get(A.class, id);
         assertNotNull(a);
-        session.close();
+        session.commit();
 
         ut.rollback();
 
         session = compass.openSession();
         a = session.get(A.class, id);
         assertNull(a);
-        session.close();
+        session.commit();
     }
 
     public void testOuterUTManagementWithSuspend() throws Exception {
@@ -231,18 +231,18 @@ public abstract class AbstractNoExplicitJTATests extends TestCase {
         assertFalse(newSession instanceof ExistingCompassSession);
         a = newSession.get(A.class, id);
         assertNull(a);
-        newSession.close();
+        newSession.commit();
         newUt.commit();
 
         transactionManager.resume(jtaTrans);
 
-        session.close();
+        session.commit();
         ut.commit();
 
         session = compass.openSession();
         a = session.get(A.class, id);
         assertNotNull(a);
-        session.close();
+        session.commit();
     }
 
     public void testOuterUTManagementWithSuspendAndNoSessionOrTransactionManagement() throws Exception {
@@ -278,7 +278,7 @@ public abstract class AbstractNoExplicitJTATests extends TestCase {
         session = compass.openSession();
         a = session.get(A.class, id);
         assertNotNull(a);
-        session.close();
+        session.commit();
     }
 
 }

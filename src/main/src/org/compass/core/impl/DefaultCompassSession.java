@@ -19,6 +19,8 @@ package org.compass.core.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.compass.core.CompassAnalyzerHelper;
 import org.compass.core.CompassException;
 import org.compass.core.CompassHits;
@@ -62,6 +64,8 @@ import org.compass.core.transaction.TransactionFactory;
  */
 // TODO we need to support multiple resource with ResourceKey and first cache
 public class DefaultCompassSession implements InternalCompassSession {
+
+    private static final Log logger = LogFactory.getLog(DefaultCompassSession.class);
 
     private InternalCompass compass;
 
@@ -700,50 +704,48 @@ public class DefaultCompassSession implements InternalCompassSession {
     private boolean rolledback;
 
     public void rollback() throws CompassException {
-        if (transaction != null) {
-            rolledback = true;
-            try {
+        try {
+            if (transaction != null) {
+                rolledback = true;
                 transaction.rollback();
-            } finally {
-                close();
             }
+        } finally {
+            close();
         }
     }
 
     public void commit() throws CompassException {
-        close();
+        try {
+            if (transaction != null) {
+                transaction.commit();
+                transaction = null;
+            }
+        } finally {
+            close();
+        }
     }
 
     public void close() throws CompassException {
         if (closed) {
             return;
         }
-        CompassException commitException = null;
-        if (transaction != null && !rolledback) {
-            try {
-                transaction.commit();
-            } catch (CompassException e) {
-                commitException = e;
-                try {
-                    transaction.rollback();
-                } catch (CompassException re) {
-                    // ignore
-                }
-            }
-        }
-
         for (InternalSessionDelegateClose delegateClose : this.delegateClose) {
             delegateClose.close();
         }
         CompassSession transactionBoundSession = transactionFactory.getTransactionBoundSession();
         if (transactionBoundSession == null || transactionBoundSession != this) {
             closed = true;
+            if (transaction != null && !rolledback) {
+                logger.warn("Session close without being committed / rolledback, rolling back the transaction");
+                try {
+                    transaction.rollback();
+                } catch (CompassException e) {
+                    logger.debug("Failed to rollback un-committed transaction", e);
+                }
+            }
+
             firstLevelCache.evictAll();
             searchEngine.close();
-        }
-
-        if (commitException != null) {
-            throw commitException;
         }
     }
 

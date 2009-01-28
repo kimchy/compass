@@ -80,15 +80,15 @@ public class HibernateNoExplicitTransactionTests extends TestCase {
         assertNotNull(a);
         // this one should not commit the hibernate transaction since the out
         // controlls it
-        newSession.close();
-        session.close();
+        newSession.commit();
+        session.commit();
 
         // verify that the instance was saved
         session = compass.openSession();
         a = session.get(A.class, id);
         assertNotNull(a);
 
-        session.close();
+        session.commit();
     }
 
     public void testOuterHibernteManagementWithCommit() throws Exception {
@@ -102,7 +102,7 @@ public class HibernateNoExplicitTransactionTests extends TestCase {
         session.save(a);
         a = session.get(A.class, id);
         assertNotNull(a);
-        session.close();
+        session.commit();
 
         CompassSession oldSession = session;
         session = compass.openSession();
@@ -110,14 +110,14 @@ public class HibernateNoExplicitTransactionTests extends TestCase {
         assertTrue(oldSession == ((ExistingCompassSession) session).getActualSession());
         a = session.get(A.class, id);
         assertNotNull(a);
-        session.close();
+        session.commit();
 
         hibernateTr.commit();
 
         session = compass.openSession();
         a = session.get(A.class, id);
         assertNotNull(a);
-        session.close();
+        session.commit();
     }
 
     public void testOuterUTManagementWithCommitAndNoSessionOrTransactionManagement() throws Exception {
@@ -147,7 +147,7 @@ public class HibernateNoExplicitTransactionTests extends TestCase {
         session = compass.openSession();
         a = session.get(A.class, id);
         assertNotNull(a);
-        session.close();
+        session.commit();
     }
 
     public void testOuterUTManagementWithRollback() throws Exception {
@@ -161,17 +161,17 @@ public class HibernateNoExplicitTransactionTests extends TestCase {
         session.save(a);
         a = session.get(A.class, id);
         assertNotNull(a);
-        session.close();
+        session.commit();
         session = compass.openSession();
         a = session.get(A.class, id);
         assertNotNull(a);
-        session.close();
+        session.commit();
 
         hibernateTr.rollback();
 
         session = compass.openSession();
         a = session.get(A.class, id);
         assertNull(a);
-        session.close();
+        session.commit();
     }
 }

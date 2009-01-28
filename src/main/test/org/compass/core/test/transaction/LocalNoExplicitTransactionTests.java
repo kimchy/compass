@@ -42,19 +42,19 @@ public class LocalNoExplicitTransactionTests extends AbstractTestCase {
         assertTrue(session == ((ExistingCompassSession) nestedSession).getActualSession());
         a = nestedSession.get(A.class, id);
         assertNotNull(a);
-        nestedSession.close();
+        nestedSession.commit();
 
         a = session.get(A.class, id);
         assertNotNull(a);
 
-        session.close();
+        session.commit();
 
         session = openSession();
 
         a = session.get(A.class, id);
         assertNotNull(a);
 
-        session.close();
+        session.commit();
     }
 
     public void testNestedLocalTransactionsWithNestedRollback() throws Exception {
@@ -78,7 +78,7 @@ public class LocalNoExplicitTransactionTests extends AbstractTestCase {
         } catch (Exception e) {
             // do nothing
         }
-        session.close();
+        session.commit();
     }
 
     public void testNestedLocalTransacitonWithCommitsAndNoNestedBegin() throws Exception {
@@ -95,18 +95,18 @@ public class LocalNoExplicitTransactionTests extends AbstractTestCase {
         a = nestedSession.get(A.class, id);
         assertNotNull(a);
         // this actually might not be called as well
-        // nestedSession.close();
+        // nestedSession.commit();
 
         a = session.get(A.class, id);
         assertNotNull(a);
 
-        session.close();
+        session.commit();
 
         // verify that the instance was saved
         session = openSession();
         a = session.get(A.class, id);
         assertNotNull(a);
 
-        session.close();
+        session.commit();
     }
 }

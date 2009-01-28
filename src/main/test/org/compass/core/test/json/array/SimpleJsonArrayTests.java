@@ -78,6 +78,6 @@ public class SimpleJsonArrayTests extends AbstractTestCase {
         assertEquals("test1", resource.getValues("arr-value")[0]);
         assertEquals("test2", resource.getValues("arr-value")[1]);
 
-        session.close();
+        session.commit();
     }
 }
