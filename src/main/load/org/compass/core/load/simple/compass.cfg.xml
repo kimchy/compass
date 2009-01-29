@@ -65,15 +65,15 @@
         </cache>
 
         <searchEngine>
-            <optimizer type="org.compass.core.lucene.engine.optimizer.AdaptiveOptimizer" schedule="false"/>
+            <optimizer schedule="false"/>
             <indexDeletionPolicy>
                 <expirationTime expirationTimeSeconds="60"/>
             </indexDeletionPolicy>
         </searchEngine>
 
         <settings>
-            <setting name="compass.transaction.processor.tc.type" value="org.compass.needle.terracotta.transaction.processor.TerracottaTransactionProcessorFactory" />
-            <setting name="compass.transaction.processor.tc.process" value="false" />
+            <!--<setting name="compass.transaction.processor.tc.type" value="org.compass.needle.terracotta.transaction.processor.TerracottaTransactionProcessorFactory" />-->
+            <!--<setting name="compass.transaction.processor.tc.process" value="false" />-->
         </settings>
     </compass>
 

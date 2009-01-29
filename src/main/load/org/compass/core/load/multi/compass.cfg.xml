@@ -61,7 +61,7 @@
         </cache>
 
         <searchEngine useCompoundFile="true">
-            <optimizer type="org.compass.core.lucene.engine.optimizer.AdaptiveOptimizer" />
+            <optimizer />
         </searchEngine>
     </compass>
 

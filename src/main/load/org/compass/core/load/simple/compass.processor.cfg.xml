@@ -15,7 +15,7 @@
         </cache>
 
         <searchEngine>
-            <optimizer type="org.compass.core.lucene.engine.optimizer.AdaptiveOptimizer" schedule="false"/>
+            <optimizer schedule="false"/>
             <indexDeletionPolicy>
                 <expirationTime expirationTimeSeconds="60"/>
             </indexDeletionPolicy>

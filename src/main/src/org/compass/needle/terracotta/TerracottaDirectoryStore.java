@@ -184,19 +184,11 @@ public class TerracottaDirectoryStore extends AbstractDirectoryStore implements 
         return LuceneEnvironment.IndexDeletionPolicy.ExpirationTime.NAME;
     }
 
-    /**
-     * The terracotta index store should not commit on different threads since it should commit
-     * on the thread that owns the lock obtained when opening IndexOutputs.
-     */
     @Override
     public boolean supportsConcurrentCommits() {
         return false;
     }
 
-    /**
-     * The terracotta index store should not commit on different threads since it should commit
-     * on the thread that owns the lock obtained when opening IndexOutputs.
-     */
     @Override
     public boolean supportsConcurrentOperations() {
         return false;

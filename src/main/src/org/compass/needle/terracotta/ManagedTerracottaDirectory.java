@@ -96,26 +96,13 @@ public class ManagedTerracottaDirectory extends TerracottaDirectory {
 
     protected <T> T doWithWriteLock(WriteLockTask<T> task) throws IOException {
         boolean unlocked;
-        while (true) {
-            try {
-                rwl.readLock().unlock();
-                unlocked = true;
-            } catch (IllegalMonitorStateException e) {
-                unlocked = false;
-            }
-            try {
-                rwl.writeLock().lock();
-                break;
-            } catch (Exception e) {
-                // might get exception below, so we retry until we manage to get the write lock
-
-//                com.tc.exception.TCLockUpgradeNotSupportedError:
-//                *******************************************************************************
-//                Lock upgrade is not supported. The READ lock needs to be unlocked before a WRITE lock can be requested.
-//
-//                *******************************************************************************
-            }
+        try {
+            rwl.readLock().unlock();
+            unlocked = true;
+        } catch (IllegalMonitorStateException e) {
+            unlocked = false;
         }
+        rwl.writeLock().lock();
         try {
             return task.execute();
         } finally {

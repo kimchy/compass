@@ -55,7 +55,7 @@ class GigaSpaceMemIndexOutput extends IndexOutput {
     // seek occured, we only allow to work on the first bucket
     private boolean seekOccured;
 
-    private ArrayList<FileBucketEntry> flushBuckets;
+    private final ArrayList<FileBucketEntry> flushBuckets;
 
     public GigaSpaceMemIndexOutput(GigaSpaceDirectory dir, String fileName) throws IOException {
         this.dir = dir;

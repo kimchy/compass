@@ -68,6 +68,13 @@ final class TerracottaFile {
         return buffer.buffer.buffer;
     }
 
+    // same hear, no need to sync
+    final void addBuffers(byte[] ... newBuffers) {
+        for (byte[] buffer : newBuffers) {
+            buffers.add(new BufferWrapper(buffer));
+        }
+    }
+
     final void setFirstBuffer(byte[] buffer) {
         buffers.get(0).buffer.buffer = buffer;
     }
@@ -80,18 +87,7 @@ final class TerracottaFile {
         return buffers.size();
     }
 
-    /**
-     * Expert: allocate a new buffer.
-     * Subclasses can allocate differently.
-     *
-     * @param size size of allocated buffer.
-     * @return allocated buffer.
-     */
-    byte[] newBuffer(int size) {
-        return new byte[size];
-    }
-
-    private static class BufferWrapper {
+    public static class BufferWrapper {
         public final Buffer buffer;
 
         private BufferWrapper(byte[] buffer) {
@@ -103,7 +99,7 @@ final class TerracottaFile {
         }
     }
 
-    private static class Buffer {
+    public static class Buffer {
         public byte[] buffer;
 
         private Buffer(byte[] buffer) {
