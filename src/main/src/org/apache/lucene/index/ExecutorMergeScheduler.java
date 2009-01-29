@@ -199,7 +199,7 @@ public class ExecutorMergeScheduler extends MergeScheduler {
                         // suppressExceptions is normally only set during
                         // testing.
                         anyExceptions = true;
-                        throw new MergePolicy.MergeException(exc);
+                        throw new MergePolicy.MergeException(exc, dir);
                     }
                 }
             } finally {
