@@ -54,27 +54,19 @@ public class IndexWritersManager {
         return openIndexWriter(settings, indexManager.getDirectory(subIndex), false);
     }
 
-    public IndexWriter openIndexWriter(CompassSettings settings, String subIndex, boolean autoCommit) throws IOException {
-        return openIndexWriter(settings, indexManager.getDirectory(subIndex), autoCommit, false);
-    }
-
     public IndexWriter openIndexWriter(CompassSettings settings, Directory dir, boolean create) throws IOException {
-        return openIndexWriter(settings, dir, true, create);
+        return openIndexWriter(settings, dir, create, null);
     }
 
     public IndexWriter openIndexWriter(CompassSettings settings, Directory dir, IndexDeletionPolicy deletionPolicy) throws IOException {
-        return openIndexWriter(settings, dir, true, false, deletionPolicy);
+        return openIndexWriter(settings, dir, false, deletionPolicy);
     }
 
-    public IndexWriter openIndexWriter(CompassSettings settings, Directory dir, boolean autoCommit, boolean create) throws IOException {
-        return openIndexWriter(settings, dir, autoCommit, create, null);
+    public IndexWriter openIndexWriter(CompassSettings settings, Directory dir, boolean create, IndexDeletionPolicy deletionPolicy) throws IOException {
+        return openIndexWriter(settings, dir, create, deletionPolicy, null);
     }
 
-    public IndexWriter openIndexWriter(CompassSettings settings, Directory dir, boolean autoCommit, boolean create, IndexDeletionPolicy deletionPolicy) throws IOException {
-        return openIndexWriter(settings, dir, autoCommit, create, deletionPolicy, null);
-    }
-
-    public IndexWriter openIndexWriter(CompassSettings settings, Directory dir, boolean autoCommit, boolean create, IndexDeletionPolicy deletionPolicy, Analyzer analyzer) throws IOException {
+    public IndexWriter openIndexWriter(CompassSettings settings, Directory dir, boolean create, IndexDeletionPolicy deletionPolicy, Analyzer analyzer) throws IOException {
         if (deletionPolicy == null) {
             deletionPolicy = searchEngineFactory.getIndexDeletionPolicyManager().createIndexDeletionPolicy(dir);
         }
