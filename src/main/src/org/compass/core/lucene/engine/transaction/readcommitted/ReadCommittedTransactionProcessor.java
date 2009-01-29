@@ -392,7 +392,7 @@ public class ReadCommittedTransactionProcessor extends AbstractConcurrentTransac
         if (indexWriter != null) {
             return indexWriter;
         }
-        indexWriter = indexManager.openIndexWriter(searchEngine.getSettings(), subIndex, false);
+        indexWriter = indexManager.getIndexWritersManager().openIndexWriter(searchEngine.getSettings(), subIndex);
         indexWriterBySubIndex.put(subIndex, indexWriter);
         return indexWriter;
     }

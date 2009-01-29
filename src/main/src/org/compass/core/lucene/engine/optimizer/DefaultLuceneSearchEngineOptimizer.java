@@ -96,7 +96,7 @@ public class DefaultLuceneSearchEngineOptimizer implements LuceneSearchEngineOpt
         long time = System.currentTimeMillis();
         IndexWriter indexWriter;
         try {
-            indexWriter = searchEngineFactory.getLuceneIndexManager().openIndexWriter(settings, subIndex);
+            indexWriter = searchEngineFactory.getLuceneIndexManager().getIndexWritersManager().openIndexWriter(settings, subIndex);
         } catch (LockObtainFailedException e) {
             logger.debug("Failed to obtain lock in order to optimizer, will try next time...");
             return;

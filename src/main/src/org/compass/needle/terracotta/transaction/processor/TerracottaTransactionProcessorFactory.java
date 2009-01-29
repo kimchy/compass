@@ -218,7 +218,7 @@ public class TerracottaTransactionProcessorFactory implements TransactionProcess
 
                     IndexWriter writer;
                     try {
-                        writer = searchEngineFactory.getLuceneIndexManager().openIndexWriter(settings, subIndex);
+                        writer = searchEngineFactory.getLuceneIndexManager().getIndexWritersManager().openIndexWriter(settings, subIndex);
                     } catch (LockObtainFailedException e) {
                         // we failed to get a lock, probably another one running and getting it, which is bad!
                         logger.error("Another instance is running on the sub index, make sure it does not. Should not happen really...");

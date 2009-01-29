@@ -281,7 +281,7 @@ public class AsyncTransactionProcessorFactory implements TransactionProcessorFac
         // open index writers
         for (String subIndex : subIndexes) {
             try {
-                IndexWriter writer = indexManager.openIndexWriter(settings, subIndex, false);
+                IndexWriter writer = indexManager.getIndexWritersManager().openIndexWriter(settings, subIndex);
                 writers.put(subIndex, writer);
             } catch (Exception e) {
                 logger.warn("Failed to open index writer for sub index [" + subIndex + "]", e);

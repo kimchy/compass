@@ -22,8 +22,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.index.IndexDeletionPolicy;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.LuceneUtils;
@@ -33,15 +31,12 @@ import org.apache.lucene.search.Searchable;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.Lock;
 import org.compass.core.CompassException;
-import org.compass.core.config.CompassSettings;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineIndexManager;
 import org.compass.core.executor.ExecutorManager;
 import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.lucene.engine.LuceneSettings;
-import org.compass.core.lucene.engine.merge.policy.MergePolicyFactory;
-import org.compass.core.lucene.engine.merge.scheduler.MergeSchedulerFactory;
 import org.compass.core.lucene.engine.store.LuceneSearchEngineStore;
 import org.compass.core.transaction.context.TransactionContext;
 import org.compass.core.transaction.context.TransactionContextCallback;
@@ -61,6 +56,8 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
 
     private final IndexHoldersCache indexHoldersCache;
 
+    private final IndexWritersManager indexWritersManager;
+
     private long waitForCacheInvalidationBeforeSecondStep = 0;
 
     private volatile boolean isRunning = false;
@@ -73,6 +70,7 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         this.searchEngineStore = searchEngineStore;
         this.luceneSettings = searchEngineFactory.getLuceneSettings();
         this.indexHoldersCache = new IndexHoldersCache(this);
+        this.indexWritersManager = new IndexWritersManager(this);
     }
 
     public void start() {
@@ -330,6 +328,7 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
     public synchronized void close() {
         stop();
         clearCache();
+        indexWritersManager.close();
         searchEngineStore.close();
     }
 
@@ -388,56 +387,6 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         indexHoldersCache.checkAndClearIfNotifiedAllToClearCache();
     }
 
-    public IndexWriter openIndexWriter(CompassSettings settings, String subIndex) throws IOException {
-        return openIndexWriter(settings, searchEngineStore.openDirectory(subIndex), false);
-    }
-
-    public IndexWriter openIndexWriter(CompassSettings settings, String subIndex, boolean autoCommit) throws IOException {
-        return openIndexWriter(settings, searchEngineStore.openDirectory(subIndex), autoCommit, false);
-    }
-
-    public IndexWriter openIndexWriter(CompassSettings settings, Directory dir, boolean create) throws IOException {
-        return openIndexWriter(settings, dir, true, create);
-    }
-
-    public IndexWriter openIndexWriter(CompassSettings settings, Directory dir, IndexDeletionPolicy deletionPolicy) throws IOException {
-        return openIndexWriter(settings, dir, true, false, deletionPolicy);
-    }
-
-    public IndexWriter openIndexWriter(CompassSettings settings, Directory dir, boolean autoCommit, boolean create) throws IOException {
-        return openIndexWriter(settings, dir, autoCommit, create, null);
-    }
-
-    public IndexWriter openIndexWriter(CompassSettings settings, Directory dir, boolean autoCommit, boolean create, IndexDeletionPolicy deletionPolicy) throws IOException {
-        return openIndexWriter(settings, dir, autoCommit, create, deletionPolicy, null);
-    }
-
-    public IndexWriter openIndexWriter(CompassSettings settings, Directory dir, boolean autoCommit, boolean create, IndexDeletionPolicy deletionPolicy, Analyzer analyzer) throws IOException {
-        if (deletionPolicy == null) {
-            deletionPolicy = searchEngineFactory.getIndexDeletionPolicyManager().createIndexDeletionPolicy(dir);
-        }
-        if (analyzer == null) {
-            analyzer = searchEngineFactory.getAnalyzerManager().getDefaultAnalyzer();
-        }
-        IndexWriter indexWriter = new IndexWriter(dir, analyzer, create, deletionPolicy, new IndexWriter.MaxFieldLength(luceneSettings.getMaxFieldLength()));
-
-        indexWriter.setMergePolicy(MergePolicyFactory.createMergePolicy(settings));
-        indexWriter.setMergeScheduler(MergeSchedulerFactory.create(this, settings));
-
-        indexWriter.setMaxMergeDocs(settings.getSettingAsInt(LuceneEnvironment.SearchEngineIndex.MAX_MERGE_DOCS, luceneSettings.getMaxMergeDocs()));
-        indexWriter.setMergeFactor(settings.getSettingAsInt(LuceneEnvironment.SearchEngineIndex.MERGE_FACTOR, luceneSettings.getMergeFactor()));
-        indexWriter.setRAMBufferSizeMB(settings.getSettingAsDouble(LuceneEnvironment.SearchEngineIndex.RAM_BUFFER_SIZE, luceneSettings.getRamBufferSize()));
-        indexWriter.setMaxBufferedDocs(settings.getSettingAsInt(LuceneEnvironment.SearchEngineIndex.MAX_BUFFERED_DOCS, luceneSettings.getMaxBufferedDocs()));
-        indexWriter.setMaxBufferedDeleteTerms(settings.getSettingAsInt(LuceneEnvironment.SearchEngineIndex.MAX_BUFFERED_DELETED_TERMS, luceneSettings.getMaxBufferedDeletedTerms()));
-        indexWriter.setUseCompoundFile(searchEngineStore.isUseCompoundFile());
-        indexWriter.setMaxFieldLength(luceneSettings.getMaxFieldLength());
-        indexWriter.setTermIndexInterval(luceneSettings.getTermIndexInterval());
-
-        indexWriter.setSimilarity(searchEngineFactory.getSimilarityManager().getIndexSimilarity());
-
-        return indexWriter;
-    }
-
     public IndexSearcher openIndexSearcher(IndexReader reader) {
         IndexSearcher searcher = new IndexSearcher(reader);
         searcher.setSimilarity(searchEngineFactory.getSimilarityManager().getSearchSimilarity());
@@ -456,6 +405,10 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
 
     public IndexHoldersCache getIndexHoldersCache() {
         return this.indexHoldersCache;
+    }
+
+    public IndexWritersManager getIndexWritersManager() {
+        return indexWritersManager;
     }
 
     public Directory getDirectory(String subIndex) {

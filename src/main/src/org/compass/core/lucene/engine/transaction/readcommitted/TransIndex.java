@@ -92,7 +92,7 @@ public class TransIndex implements CompassConfigurable {
             // since this is single threaded access, there is no need to have locks
             directory.setLockFactory(NoLockFactory.getNoLockFactory());
             // create an index writer with autoCommit=true since we want it to be visible to readers (still need to flush)
-            indexWriter = searchEngineFactory.getLuceneIndexManager().openIndexWriter(settings, directory, true, true,
+            indexWriter = searchEngineFactory.getLuceneIndexManager().getIndexWritersManager().openIndexWriter(settings, directory, true, true,
                     new KeepOnlyLastCommitDeletionPolicy());
             // TODO what about merge policy, which one is better? Default is async operations, so good to have merges in the backgournd
             optimize = settings.getSettingAsBoolean(LuceneEnvironment.Transaction.Processor.ReadCommitted.TransLog.OPTIMIZE_TRANS_LOG, true);

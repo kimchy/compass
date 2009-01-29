@@ -437,7 +437,7 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
                 try {
                     LuceneSearchEngineInternalSearch search = (LuceneSearchEngineInternalSearch) tr.getSearchEngine().internalSearch(new String[]{subIndex}, null);
                     if (search.getSearcher() != null) {
-                        writer = searchEngineFactory.getLuceneIndexManager().openIndexWriter(spellCheckSettings, dir,
+                        writer = searchEngineFactory.getLuceneIndexManager().getIndexWritersManager().openIndexWriter(spellCheckSettings, dir,
                                 true, true, null, new WhitespaceAnalyzer());
                         for (String property : properties.get(subIndex)) {
                             spellChecker.indexDictionary(writer, new HighFrequencyDictionary(search.getReader(), property, defaultDictionaryThreshold));
