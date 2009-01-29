@@ -51,19 +51,14 @@ gps.start();
 			<sect3 id="dep-hibernate-configuration">
 				<title>Configuration</title>
 
-			    <para>When configuring the Hibernate device, one must instantiate either <literal>Hibernate2GpsDevice</literal> (for Hibernate 2 version) or <literal>Hibernate3GpsDevice</literal> (for Hibernate 3 version). After instantiating the device, it must be initialized by either a Hibernate <literal>Configuration</literal> or a Hibernate <literal>SessionFactory</literal>. When configuring the device with Hibernate <literal>Configuration</literal>, a new <literal>SessionFactory</literal> is created when the device is started.</para>
-
-			    <para>It is more preferable to configure the device with the <literal>SessionFactory</literal> that the actual application will use, especially since data mirroring will only work when both the device and the application will use the same <literal>SessionFactory</literal>.</para>
+			    <para>When configuring the Hibernate device, one need to instantiate <literal>HibernateGpsDevice</literal>. The device requires the Hibernate <literal>SessionFactory</literal> and a logical "name".
+		        </para>
 
 			    <para>
 			    	Here is a code sample of how to configure the hibernate device:
 <programlisting><![CDATA[Compass compass = ... // set compass instance
 SingleCompassGps gps = new SingleCompassGps(compass);
-CompassGpsDevice hibernateDevice =
-// If Hibernate 2
-     new Hibernate2GpsDevice("hibernate", sessionFactory);
-// If Hibernate 3
-     new Hibernate3GpsDevice("hibernate", sessionFactory);
+CompassGpsDevice hibernateDevice = new HibernateGpsDevice("hibernate", sessionFactory);
 gps.addDevice(hibernateDevice);
 .... // configure other devices
 gps.start();
@@ -95,19 +90,15 @@ gps.start();
       <title>Real Time Data Mirroring</title>
 
       <para>
-        The Hibernate Gps Device, with Hibernate 3 new event system, provides support for real time data mirroring. Data changes via Hibernate are reflected in the Compass index. There is no need to configure anything in order to enable the feature, the device takes care for it all.
+        The Hibernate Gps Device, with Hibernate 3 event system, provides support for real time data mirroring. Data changes via Hibernate are reflected in the Compass index. There is no need to configure anything in order to enable the feature, the device takes care for it all.
       </para>
 
       <para>
-        An important point when configuring the hibernate device is that both the application and the hibernate device must use the same <literal>SessionFactory</literal>. Which means that the device must be configured with a <literal>SessionFactory</literal> and not a <literal>Configuration</literal>.
+        An important point when configuring the hibernate device is that both the application and the hibernate device must use the same <literal>SessionFactory</literal>.
       </para>
 
       <para>
-        Note on Hibernate 2 and <literal>Interceptor</literal>s. When using generated ids with Hibernate 2, the id in the interceptor is <literal>null</literal>, which means that when creating new objects and persisting them to the database, the device has no way to index the object. If Hibernate 2 is a must, one possible solution is to use aspects.
-      </para>
-
-      <para>
-        If using Hibernate 3 and the Spring Framework, please see the <link linkend="spring-hibernate">SpringHibernate3GpsDevice</link>
+        If using Hibernate and the Spring Framework, please see the <link linkend="spring-hibernate">SpringHibernate3GpsDevice</link>
       </para>
 
     </sect1>
