@@ -195,6 +195,11 @@ public class TerracottaDirectoryStore extends AbstractDirectoryStore implements 
     }
 
     @Override
+    public boolean requiresAsyncTransactionalContext() {
+        return false;
+    }
+
+    @Override
     public void registerEventListeners(SearchEngine searchEngine, SearchEngineEventManager eventManager) {
         if (managed) {
             eventManager.registerLifecycleListener(new SearchEngineLifecycleEventListener() {
