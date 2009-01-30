@@ -7,9 +7,9 @@
     <para>
         As we explained in the overview page, Compass provides an abstraction layer on top of the actual transaction handling using the <literal>CompassTransaction</literal> interface. Compass has a transaction handling framework in place to support different transaction strategies and comes built in with LocalTranasction and JTA synchronization support.
     </para>
-
+    
     <para>
-        As oppose to transaction handling based on JDBC data source or JCA based resources (and until compass will implement something similar to JCA), you have to use the <literal>CompassTransaction</literal> abstraction. Note, that it is made much simpler when using <literal>CompassTemplate</literal> and <literal>CompassCallback</literal> classes since both the session management and the transaction management is done by the template class.
+        The <literal>CompassTransaction</literal> API is completely optional and can be managed by Compass automatically. This means that once a session is obtained, you can start and work with it (and it will automatically start a transaction if needed, internally using the <literal>CompassTransaction</literal>), and then calling <literal>CompassSession#commit()</literal> or <literal>CompassSession#rollback()</literal>. It is usually much simpler to just use the session API.
     </para>
 
   </sect1>

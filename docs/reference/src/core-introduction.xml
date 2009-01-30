@@ -15,7 +15,7 @@
     </sidebar>
 
     <para>
-      Compass is built using a layered architecture. Applications interacts with the underlying Search Engine through three main Compass interfaces: <classname>Compass</classname>, <classname>CompassSession</classname> and <classname>CompassTransaction</classname>. These interfaces hide the implementation details of Compass Search Engine abstraction layer.
+      Compass is built using a layered architecture. Applications interacts with the underlying Search Engine through three main Compass interfaces: <classname>Compass</classname>, <classname>CompassSession</classname> and optionally <classname>CompassTransaction</classname>. These interfaces hide the implementation details of Compass Search Engine abstraction layer.
     </para>
 
     <para>
@@ -23,15 +23,35 @@
     </para>
 
     <para>
-      <emphasis>CompassSession</emphasis> as the name suggests, represents a working lightweight session within Compass (it is non thread safe). With a <classname>CompassSession</classname>, applications can save and retrieve any searchable data (declared in Compass mapping files) from the Search Engine. Applications work with <classname>CompassSession</classname> at either the Object level or Compass Resource level to save and retrieve data.  In order to work with Objects within Compass, they must be specified using either OSEM or XSEM (with XSEM <classname>XmlObject</classname>). In order to work with Resources, they must be specified using RSEM (Resource can still be used with OSEM/RSEM to display search results, since Objects/Xml end up being converted to Resources). Compass will then retrieve the declared searchable data from the Object automatically when saving Objects within Compass. When querying the Search Engine, Compass provides a <classname>CompassHits</classname> interface which one can use to work with the search engine results (getting scores, resources and mapped objects).
+      <emphasis>CompassSession</emphasis> as the name suggests, represents a working lightweight session within Compass (it is non thread safe). With a <classname>CompassSession</classname>, applications can save and retrieve any searchable data (declared in Compass mapping files) from the Search Engine. Applications work with <classname>CompassSession</classname> at either the Object level or Compass Resource level to save and retrieve data.  In order to work with Objects within Compass, they must be specified using either OSEM, XSEM (with XSEM <classname>XmlObject</classname>) or JSEM. In order to work with Resources, they must be specified using RSEM (Resource can still be used with OSEM/XSEM/JSEM to display search results, since Objects/Xml/Json end up being converted to Resources). Compass will then retrieve the declared searchable data from the Object automatically when saving Objects within Compass. When querying the Search Engine, Compass provides a <classname>CompassHits</classname> interface which one can use to work with the search engine results (getting scores, resources and mapped objects).
     </para>
 
     <para>
-      <emphasis>CompassTransaction</emphasis>, retrieved from the <classname>CompassSession</classname> and is used to manage transactions within Compass. You can configure Compass Core to use either local transactions or JTA synchronization. Note, that unlike JDBC, automatic transaction registration will not happen, so we strongly recommend using the <classname>CompassTransaction</classname> abstraction for easy (configuration based) replacement of the transaction strategy.
+      Here is how the <classname>CompassSession</classname> can be used:
+<programlisting><![CDATA[CompassConfiguration conf =
+    new CompassConfiguration().configure().addClass(Author.class);
+Compass compass = conf.buildCompass();
+CompassSession session = compass.openSession();
+try {
+    ...
+    session.save(author);
+    CompassHits hits = session.find("jack london");
+    Author a = (Author) hits.data(0);
+    Resource r = hits.resource(0);
+    ...
+    session.commit();
+} catch (CompassException ce) {
+    session.rollback();
+}
+]]></programlisting>
     </para>
 
     <para>
-      After so many words, lets see a code snippet that shows the usage of the main compass interfaces:
+      <emphasis>CompassTransaction</emphasis>, retrieved from the <classname>CompassSession</classname> and is used to optionally manage transactions within Compass (if it is not used, as in the above example, they will be managed automatically). You can configure Compass Core to use either local transactions JTA synchronization, XA, Spring synchronization, or embedded JPA providers synchronization (Hibernate, OpenJPA, EclipseLink, TopLink). Note, <classname>CompassTransaction</classname> is completely optional and used when fine grained transactional control is required.
+    </para>
+
+    <para>
+      Here is a code snippet showing the use of <classname>CompassTransaction</classname>:
 <programlisting><![CDATA[CompassConfiguration conf =
     new CompassConfiguration().configure().addClass(Author.class);
 Compass compass = conf.buildCompass();
@@ -60,7 +80,7 @@ try {
     <title>Session Lifecycle</title>
 
     <para>
-      Compass::Core <literal>Compass</literal> interface manages the creation of <literal>CompassSession</literal> using the <literal>openSession()</literal> method. When <literal>beginTransaction()</literal> is called on the <literal>CompassTransaction</literal>, the session is bound to the created transaction (JTA, Spring or Local) and used throughout the life-cycle of the transaction. It means that if an additional session is opened within the current transaction, the originating session will be returned by the <literal>openSession()</literal> method.
+      Compass::Core <literal>Compass</literal> interface manages the creation of <literal>CompassSession</literal> using the <literal>openSession()</literal> method. When <literal>beginTransaction()</literal> is called on the <literal>CompassTransaction</literal> (or the first operation is performed on the session, when not explicit transaction is used), the session is bound to the created transaction (JTA, Spring or Local) and used throughout the life-cycle of the transaction. It means that if an additional session is opened within the current transaction, the originating session will be returned by the <literal>openSession()</literal> method.
     </para>
 
     <para>
