@@ -64,6 +64,8 @@ public class CommitCallable implements Callable {
                 logger.warn("Failed to check for locks or unlock failed commit for sub index [" + subIndex + "]", e);
             }
             throw new SearchEngineException("Failed commit transaction sub index [" + subIndex + "]", e);
+        } finally {
+            indexManager.getIndexWritersManager().trackCloseIndexWriter(subIndex, indexWriter);
         }
         if (invalidateCacheOnCommit) {
             if (logger.isTraceEnabled()) {

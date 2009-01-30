@@ -1039,6 +1039,11 @@ public class LuceneEnvironment {
          * the same as the {@link #INDEX_MANAGER_SCHEDULE_INTERVAL}.
          */
         public static final String WAIT_FOR_CACHE_INVALIDATION_ON_INDEX_OPERATION = "compass.engine.waitForCacheInvalidationOnIndexOperation";
+
+        /**
+         * Tracks opened index writers. Will make sure to rollback any open index writer when Compass closes.
+         */
+        public static final String TRACK_OPENED_INDEX_WRITERS = "compass.engine.trackOpenedIndexWriters";
     }
 
     /**

@@ -174,6 +174,8 @@ public class ReadCommittedTransactionProcessor extends AbstractConcurrentTransac
                     logger.warn("Failed to check for locks or unlock failed commit for sub index [" + entry.getKey() + "]", e);
                 }
                 lastException = new SearchEngineException("Failed to rollback sub index [" + entry.getKey() + "]", e);
+            } finally {
+                indexManager.getIndexWritersManager().trackCloseIndexWriter(entry.getKey(), entry.getValue());
             }
         }
         if (lastException != null) {
@@ -394,6 +396,7 @@ public class ReadCommittedTransactionProcessor extends AbstractConcurrentTransac
         }
         indexWriter = indexManager.getIndexWritersManager().openIndexWriter(searchEngine.getSettings(), subIndex);
         indexWriterBySubIndex.put(subIndex, indexWriter);
+        indexManager.getIndexWritersManager().trackOpenIndexWriter(subIndex, indexWriter);
         return indexWriter;
     }
 
@@ -457,6 +460,8 @@ public class ReadCommittedTransactionProcessor extends AbstractConcurrentTransac
                     logger.warn("Failed to check for locks or unlock failed commit for sub index [" + subIndex + "]", e);
                 }
                 throw new SearchEngineException("Failed to add transaction index to sub index [" + subIndex + "]", e);
+            } finally {
+                indexManager.getIndexWritersManager().trackCloseIndexWriter(subIndex, indexWriter);
             }
             if (isInvalidateCacheOnCommit()) {
                 if (logger.isTraceEnabled()) {

@@ -282,6 +282,7 @@ public class AsyncTransactionProcessorFactory implements TransactionProcessorFac
         for (String subIndex : subIndexes) {
             try {
                 IndexWriter writer = indexManager.getIndexWritersManager().openIndexWriter(settings, subIndex);
+                indexManager.getIndexWritersManager().trackOpenIndexWriter(subIndex, writer);
                 writers.put(subIndex, writer);
             } catch (Exception e) {
                 logger.warn("Failed to open index writer for sub index [" + subIndex + "]", e);
@@ -348,7 +349,7 @@ public class AsyncTransactionProcessorFactory implements TransactionProcessorFac
     private void closeWriters(Map<String, IndexWriter> writers) {
         for (Map.Entry<String, IndexWriter> entry : writers.entrySet()) {
             try {
-                entry.getValue().rollback();
+                entry.getValue().close();
             } catch (AlreadyClosedException e) {
                 if (logger.isTraceEnabled()) {
                     logger.trace("Failed to close transaction for sub index [" + entry.getKey() + "] since it is alreayd closed");
@@ -363,6 +364,8 @@ public class AsyncTransactionProcessorFactory implements TransactionProcessorFac
                     logger.warn("Failed to check for locks or unlock failed commit for sub index [" + entry.getKey() + "]", e);
                 }
                 logger.warn("Failed to close index writer for sub index [" + entry.getKey() + "]", e);
+            } finally {
+                searchEngineFactory.getLuceneIndexManager().getIndexWritersManager().trackCloseIndexWriter(entry.getKey(), entry.getValue());
             }
         }
         writers.clear();
@@ -390,6 +393,8 @@ public class AsyncTransactionProcessorFactory implements TransactionProcessorFac
                     logger.warn("Failed to check for locks or unlock failed commit for sub index [" + entry.getKey() + "]", e);
                 }
                 exception = new SearchEngineException("Failed to rollback transaction for sub index [" + entry.getKey() + "]", e);
+            } finally {
+                searchEngineFactory.getLuceneIndexManager().getIndexWritersManager().trackCloseIndexWriter(entry.getKey(), entry.getValue());
             }
         }
         writers.clear();

@@ -109,6 +109,7 @@ public class LuceneSearchEngineFactory implements InternalSearchEngineFactory {
 
     public LuceneSearchEngineFactory(PropertyNamingStrategy propertyNamingStrategy, CompassSettings settings,
                                      CompassMapping mapping, ExecutorManager executorManager) {
+        this.debug = settings.getSettingAsBoolean(CompassEnvironment.DEBUG, false);
         this.propertyNamingStrategy = propertyNamingStrategy;
         this.mapping = mapping;
         this.executorManager = executorManager;
@@ -159,7 +160,6 @@ public class LuceneSearchEngineFactory implements InternalSearchEngineFactory {
         transactionProcessorManager = new TransactionProcessorManager(this);
 
         // init debug
-        debug = settings.getSettingAsBoolean(CompassEnvironment.DEBUG, false);
         if (debug) {
             debugOpenHoldersCount = new ConcurrentHashMap<String, AtomicInteger>();
         } else {

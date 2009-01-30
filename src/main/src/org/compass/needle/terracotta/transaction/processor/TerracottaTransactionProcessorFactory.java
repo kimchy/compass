@@ -219,6 +219,7 @@ public class TerracottaTransactionProcessorFactory implements TransactionProcess
                     IndexWriter writer;
                     try {
                         writer = searchEngineFactory.getLuceneIndexManager().getIndexWritersManager().openIndexWriter(settings, subIndex);
+                        searchEngineFactory.getLuceneIndexManager().getIndexWritersManager().trackOpenIndexWriter(subIndex, writer);
                     } catch (LockObtainFailedException e) {
                         // we failed to get a lock, probably another one running and getting it, which is bad!
                         logger.error("Another instance is running on the sub index, make sure it does not. Should not happen really...");
@@ -246,6 +247,8 @@ public class TerracottaTransactionProcessorFactory implements TransactionProcess
                             writer.close();
                         } catch (IOException e) {
                             logger.warn("Failed to close writer, ignoring", e);
+                        } finally {
+                            searchEngineFactory.getLuceneIndexManager().getIndexWritersManager().trackOpenIndexWriter(subIndex, writer);
                         }
                     }
                 } finally {

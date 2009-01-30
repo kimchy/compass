@@ -97,6 +97,7 @@ public class DefaultLuceneSearchEngineOptimizer implements LuceneSearchEngineOpt
         IndexWriter indexWriter;
         try {
             indexWriter = searchEngineFactory.getLuceneIndexManager().getIndexWritersManager().openIndexWriter(settings, subIndex);
+            searchEngineFactory.getLuceneIndexManager().getIndexWritersManager().trackOpenIndexWriter(subIndex, indexWriter);
         } catch (LockObtainFailedException e) {
             logger.debug("Failed to obtain lock in order to optimizer, will try next time...");
             return;
@@ -120,6 +121,8 @@ public class DefaultLuceneSearchEngineOptimizer implements LuceneSearchEngineOpt
                 indexWriter.close();
             } catch (Exception e) {
                 // ignore
+            } finally {
+                searchEngineFactory.getLuceneIndexManager().getIndexWritersManager().trackCloseIndexWriter(subIndex, indexWriter);
             }
         }
         long optimizeTime = System.currentTimeMillis() - time;

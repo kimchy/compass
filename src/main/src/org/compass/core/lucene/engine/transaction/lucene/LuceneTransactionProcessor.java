@@ -87,6 +87,8 @@ public class LuceneTransactionProcessor extends AbstractConcurrentTransactionPro
                     logger.warn("Failed to check for locks or unlock failed commit for sub index [" + entry.getKey() + "]", e);
                 }
                 exception = new SearchEngineException("Failed to rollback transaction for sub index [" + entry.getKey() + "]", e);
+            } finally {
+                indexManager.getIndexWritersManager().trackCloseIndexWriter(entry.getKey(), entry.getValue());
             }
         }
         if (exception != null) {
@@ -194,6 +196,7 @@ public class LuceneTransactionProcessor extends AbstractConcurrentTransactionPro
         }
         indexWriter = indexManager.getIndexWritersManager().openIndexWriter(searchEngine.getSettings(), subIndex);
         indexWriterBySubIndex.put(subIndex, indexWriter);
+        indexManager.getIndexWritersManager().trackOpenIndexWriter(subIndex, indexWriter);
         return indexWriter;
     }
 

@@ -17,7 +17,12 @@
 package org.compass.core.lucene.engine.manager;
 
 import java.io.IOException;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.IndexDeletionPolicy;
 import org.apache.lucene.index.IndexWriter;
@@ -30,9 +35,18 @@ import org.compass.core.lucene.engine.merge.policy.MergePolicyFactory;
 import org.compass.core.lucene.engine.merge.scheduler.MergeSchedulerFactory;
 
 /**
+ * A manager responsible for opening {@link org.apache.lucene.index.IndexWriter}. Also provides tracking
+ * of opened {@link org.apache.lucene.index.IndexWriter} if enabled and if used by other components.
+ *
+ * <p>Other components, in order to use tracking, should call {@link #trackOpenIndexWriter(String, org.apache.lucene.index.IndexWriter)}
+ * once an index writer is opened, and {@link #trackCloseIndexWriter(String, org.apache.lucene.index.IndexWriter)} once
+ * the index writer is closed or rolled back.
+ *
  * @author kimchy
  */
 public class IndexWritersManager {
+
+    private static final Log logger = LogFactory.getLog(IndexWritersManager.class);
 
     private final LuceneSearchEngineIndexManager indexManager;
 
@@ -40,14 +54,53 @@ public class IndexWritersManager {
 
     private LuceneSettings luceneSettings;
 
+    private final ConcurrentMap<String, IndexWriter> trackedOpenIndexWriters;
+
+    private final boolean trackOpenIndexWriters;
+
     public IndexWritersManager(LuceneSearchEngineIndexManager indexManager) {
         this.indexManager = indexManager;
         this.searchEngineFactory = indexManager.getSearchEngineFactory();
         this.luceneSettings = indexManager.getSettings();
+        trackOpenIndexWriters = luceneSettings.getSettings().getSettingAsBoolean(LuceneEnvironment.SearchEngineIndex.TRACK_OPENED_INDEX_WRITERS, true);
+        if (trackOpenIndexWriters) {
+            trackedOpenIndexWriters = new ConcurrentHashMap<String, IndexWriter>();
+        } else {
+            trackedOpenIndexWriters = null;
+        }
     }
 
     public void close() {
-        
+        if (trackOpenIndexWriters) {
+            for (Map.Entry<String, IndexWriter> entry : trackedOpenIndexWriters.entrySet()) {
+                logger.error("[INDEX WRITER] Sub Index [" + entry.getKey() + "] is still open, rolling back");
+                try {
+                    entry.getValue().rollback();
+                } catch (Exception e) {
+                    // do nothing, ignore
+                }
+            }
+        }
+    }
+
+    public void trackOpenIndexWriter(String subIndex, IndexWriter indexWriter) {
+        if (trackOpenIndexWriters) {
+            IndexWriter oldValue = trackedOpenIndexWriters.put(subIndex, indexWriter);
+            if (oldValue != null) {
+                logger.error("Illegal state, marking an index writer as open, while another is marked as open for sub index [" + subIndex + "]");
+            }
+        }
+    }
+
+    public void trackCloseIndexWriter(String subIndex, IndexWriter indexWriter) {
+        if (trackOpenIndexWriters) {
+            IndexWriter value = trackedOpenIndexWriters.remove(subIndex);
+            if (value == null) {
+                logger.error("Illegal state, marking an index writer as closed, but none was opened before (or closed twice) for sub index [" + subIndex + "]");
+            } else if (value != indexWriter) {
+                logger.error("Illegal state, marking an index writer as closed, but a different was opened before for sub index [" + subIndex + "]");
+            }
+        }
     }
 
     public IndexWriter openIndexWriter(CompassSettings settings, String subIndex) throws IOException {
