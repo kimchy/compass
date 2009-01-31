@@ -24,7 +24,6 @@ import org.apache.commons.logging.LogFactory;
 import org.compass.core.CompassCallbackWithoutResult;
 import org.compass.core.CompassException;
 import org.compass.core.CompassSession;
-import org.compass.core.spi.InternalCompassSession;
 import org.compass.gps.CompassGps;
 import org.compass.gps.CompassGpsDevice;
 import org.compass.gps.CompassGpsException;
@@ -92,7 +91,7 @@ public abstract class AbstractGpsDevice implements CompassGpsDevice {
         compassGps.executeForIndex(new CompassCallbackWithoutResult() {
             protected void doInCompassWithoutResult(CompassSession session) throws CompassException {
                 doIndex(session, indexPlan);
-                ((InternalCompassSession) session).flush();
+                session.flush();
             }
         });
     }
