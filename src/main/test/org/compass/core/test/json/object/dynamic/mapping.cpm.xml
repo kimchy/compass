@@ -15,5 +15,9 @@
         <json-id name="id" />
     </root-json-object>
 
+    <root-json-object alias="c" dynamic="true" dynamic-naming-type="full">
+        <json-id name="id" />
+    </root-json-object>
+
 </compass-core-mapping>
     

@@ -41,11 +41,14 @@ public class RootJsonObjectMapping extends AbstractResourceMapping implements Js
 
     private boolean dynamic = false;
 
+    private Naming dynamicNaming; // can be null, which means its not set
+
     public Mapping copy() {
         RootJsonObjectMapping copy = new RootJsonObjectMapping();
         super.copy(copy);
         copy.setFullPath(getFullPath());
         copy.setDynamic(isDynamic());
+        copy.setDynamicNaming(getDynamicNaming());
         return copy;
     }
 
@@ -54,6 +57,7 @@ public class RootJsonObjectMapping extends AbstractResourceMapping implements Js
         super.shallowCopy(copy);
         copy.setFullPath(getFullPath());
         copy.setDynamic(isDynamic());
+        copy.setDynamicNaming(getDynamicNaming());
         return copy;
     }
 
@@ -71,6 +75,14 @@ public class RootJsonObjectMapping extends AbstractResourceMapping implements Js
 
     public void setDynamic(boolean dynamic) {
         this.dynamic = dynamic;
+    }
+
+    public Naming getDynamicNaming() {
+        return dynamicNaming;
+    }
+
+    public void setDynamicNaming(Naming dynamicNaming) {
+        this.dynamicNaming = dynamicNaming;
     }
 
     public int addMapping(Mapping mapping) {

@@ -39,7 +39,7 @@ public class JsonPropertyMapping extends AbstractResourcePropertyMapping impleme
 
     private String fullPath;
 
-    private Naming namingType = Naming.PLAIN;
+    private Naming namingType; // null value means nothing is set, need to be taken into account
 
     private boolean dynamic = false;
 

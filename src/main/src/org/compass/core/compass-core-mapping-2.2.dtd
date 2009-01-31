@@ -36,6 +36,7 @@
     <!ATTLIST root-json-object analyzer CDATA #IMPLIED>
     <!ATTLIST root-json-object boost CDATA #IMPLIED>
     <!ATTLIST root-json-object dynamic (true|false) #IMPLIED>
+    <!ATTLIST root-json-object dynamic-naming-type (plain|full) #IMPLIED>
     <!ATTLIST root-json-object spell-check (include|exclude|na) "na">
 
 <!ELEMENT json-object (
@@ -44,6 +45,7 @@
     <!ATTLIST json-object name CDATA #IMPLIED>
     <!ATTLIST json-object converter CDATA #IMPLIED>
     <!ATTLIST json-object dynamic (true|false) #IMPLIED>
+    <!ATTLIST json-object dynamic-naming-type (plain|full) #IMPLIED>
 
 <!ELEMENT json-array (
     (json-property|json-object|json-array)?
@@ -52,6 +54,7 @@
     <!ATTLIST json-array index-name CDATA #IMPLIED>
     <!ATTLIST json-array converter CDATA #IMPLIED>
     <!ATTLIST json-array dynamic (true|false) #IMPLIED>
+    <!ATTLIST json-array dynamic-naming-type (plain|full) #IMPLIED>
 
 <!ELEMENT json-id EMPTY
 >

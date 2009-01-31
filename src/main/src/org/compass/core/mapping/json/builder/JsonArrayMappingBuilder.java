@@ -18,12 +18,13 @@ package org.compass.core.mapping.json.builder;
 
 import org.compass.core.engine.naming.StaticPropertyPath;
 import org.compass.core.mapping.json.JsonArrayMapping;
+import org.compass.core.mapping.json.Naming;
 
 /**
  * A builder allowing to constrcut json array mapping definition.
  *
  * @author kimchy
- * @see JSEM#array(String) 
+ * @see JSEM#array(String)
  */
 public class JsonArrayMappingBuilder {
 
@@ -57,9 +58,18 @@ public class JsonArrayMappingBuilder {
     }
 
     /**
+     * Sets how dynamic objects, arrays and properties added through this object will have their respective
+     * property names named.
+     */
+    public JsonArrayMappingBuilder dynamicNaming(Naming dynamicNaming) {
+        mapping.setDynamicNaming(dynamicNaming);
+        return this;
+    }
+
+    /**
      * Sets the array json element to a json property mapping definition.
      *
-     * @see JSEM#property() 
+     * @see JSEM#property()
      */
     public JsonArrayMappingBuilder element(JsonPropertyMappingBuilder builder) {
         if (builder.mapping.getName() == null) {

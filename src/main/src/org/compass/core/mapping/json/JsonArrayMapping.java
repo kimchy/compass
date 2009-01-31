@@ -30,6 +30,8 @@ public class JsonArrayMapping extends AbstractMapping implements JsonMapping {
 
     private boolean dynamic;
 
+    private Naming dynamicNaming; // can be null, which means its not set
+
     public Mapping copy() {
         JsonArrayMapping copy = new JsonArrayMapping();
         super.copy(copy);
@@ -38,6 +40,7 @@ public class JsonArrayMapping extends AbstractMapping implements JsonMapping {
         }
         copy.setFullPath(getFullPath());
         copy.setDynamic(isDynamic());
+        copy.setDynamicNaming(getDynamicNaming());
         return copy;
     }
 
@@ -63,5 +66,13 @@ public class JsonArrayMapping extends AbstractMapping implements JsonMapping {
 
     public void setDynamic(boolean dynamic) {
         this.dynamic = dynamic;
+    }
+
+    public Naming getDynamicNaming() {
+        return dynamicNaming;
+    }
+
+    public void setDynamicNaming(Naming dynamicNaming) {
+        this.dynamicNaming = dynamicNaming;
     }
 }

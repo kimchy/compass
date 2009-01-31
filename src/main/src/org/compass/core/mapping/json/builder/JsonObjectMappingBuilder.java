@@ -17,6 +17,7 @@
 package org.compass.core.mapping.json.builder;
 
 import org.compass.core.engine.naming.StaticPropertyPath;
+import org.compass.core.mapping.json.Naming;
 import org.compass.core.mapping.json.PlainJsonObjectMapping;
 
 /**
@@ -47,6 +48,15 @@ public class JsonObjectMappingBuilder {
      */
     public JsonObjectMappingBuilder dynamic(boolean dynamic) {
         mapping.setDynamic(dynamic);
+        return this;
+    }
+
+    /**
+     * Sets how dynamic objects, arrays and properties added through this object will have their respective
+     * property names named.
+     */
+    public JsonObjectMappingBuilder dynamicNaming(Naming dynamicNaming) {
+        mapping.setDynamicNaming(dynamicNaming);
         return this;
     }
 

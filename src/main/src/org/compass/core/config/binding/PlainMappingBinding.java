@@ -209,6 +209,7 @@ public abstract class PlainMappingBinding extends AbstractConfigurationHelperMap
         bindConverter(jsonObjectConf, rootJsonObjectMapping);
 
         rootJsonObjectMapping.setDynamic(jsonObjectConf.getAttributeAsBoolean("dynamic", false));
+        rootJsonObjectMapping.setDynamicNaming(Naming.fromString(jsonObjectConf.getAttribute("dynamic-naming-type", Naming.PLAIN.toString())));
 
         bindJsonChildren(jsonObjectConf, rootJsonObjectMapping);
     }
@@ -286,6 +287,7 @@ public abstract class PlainMappingBinding extends AbstractConfigurationHelperMap
         jsonArrayMapping.setPath((indexName == null ? null : new StaticPropertyPath(indexName)));
 
         jsonArrayMapping.setDynamic(jsonArrayConf.getAttributeAsBoolean("dynamic", false));
+        jsonArrayMapping.setDynamicNaming(Naming.fromString(jsonArrayConf.getAttribute("dynamic-naming-type", Naming.PLAIN.toString())));
 
         bindConverter(jsonArrayConf, jsonArrayMapping);
 
@@ -342,6 +344,7 @@ public abstract class PlainMappingBinding extends AbstractConfigurationHelperMap
         bindConverter(jsonObjectConf, jsonObjectMapping);
 
         jsonObjectMapping.setDynamic(jsonObjectConf.getAttributeAsBoolean("dynamic", false));
+        jsonObjectMapping.setDynamicNaming(Naming.fromString(jsonObjectConf.getAttribute("dynamic-naming-type", Naming.PLAIN.toString())));
 
         for (ConfigurationHelper prop : jsonObjectConf.getChildren("json-property")) {
             JsonPropertyMapping jsonPropertyMapping = new JsonPropertyMapping();

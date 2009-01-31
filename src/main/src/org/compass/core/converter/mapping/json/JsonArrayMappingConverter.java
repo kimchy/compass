@@ -22,6 +22,7 @@ import org.compass.core.engine.naming.PropertyPath;
 import org.compass.core.json.JsonArray;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.json.JsonArrayMapping;
+import org.compass.core.mapping.json.Naming;
 import org.compass.core.marshall.MarshallingContext;
 
 /**
@@ -53,7 +54,15 @@ public class JsonArrayMappingConverter extends AbstractDynamicJsonMappingConvert
                 value = null;
             }
             if (jsonArrayMapping.isDynamic()) {
+                Naming oldNaming = null;
+                if (jsonArrayMapping.getDynamicNaming() != null) {
+                    oldNaming = (Naming) context.setAttribute(DYNAMIC_NAMING, jsonArrayMapping.getDynamicNaming());
+                }
                 store |= doConvertDynamicValue(resource, propertyName, value, context);
+                if (jsonArrayMapping.getDynamicNaming() != null) {
+                    // set the original naming
+                    context.setAttribute(DYNAMIC_NAMING, oldNaming);
+                }
             } else {
                 store |= elementMapping.getConverter().marshall(resource, value, elementMapping, context);
             }

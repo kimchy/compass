@@ -26,4 +26,8 @@ public interface JsonObjectMapping extends MultipleMapping, JsonMapping {
     boolean isDynamic();
 
     void setDynamic(boolean dyanmic);
+
+    Naming getDynamicNaming();
+
+    void setDynamicNaming(Naming dynamicNaming);
 }

@@ -31,11 +31,14 @@ public class PlainJsonObjectMapping extends AbstractMultipleMapping implements J
 
     private boolean dynamic;
 
+    private Naming dynamicNaming; // can be null, which means its not set
+
     public Mapping copy() {
         PlainJsonObjectMapping copy = new PlainJsonObjectMapping();
         super.copy(copy);
         copy.setFullPath(getFullPath());
         copy.setDynamic(isDynamic());
+        copy.setDynamicNaming(getDynamicNaming());
         return copy;
     }
 
@@ -53,6 +56,14 @@ public class PlainJsonObjectMapping extends AbstractMultipleMapping implements J
 
     public void setDynamic(boolean dynamic) {
         this.dynamic = dynamic;
+    }
+
+    public Naming getDynamicNaming() {
+        return dynamicNaming;
+    }
+
+    public void setDynamicNaming(Naming dynamicNaming) {
+        this.dynamicNaming = dynamicNaming;
     }
 
     public int addMapping(Mapping mapping) {

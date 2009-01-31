@@ -33,6 +33,8 @@ public abstract class AbstractDynamicJsonMappingConverter implements Converter {
 
     public static final String DYNAMIC_PATH_CONTEXT_KEY = "$jsonDynamicPath";
 
+    public static final String DYNAMIC_NAMING = "$jsonDynamicNaming";
+
     private JsonPropertyMappingConverter propertyMappingConverter;
 
     private JsonPropertyMapping propertyMapping;

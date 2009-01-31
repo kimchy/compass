@@ -21,6 +21,7 @@ import org.compass.core.engine.subindex.SubIndexHash;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.ResourceMappingProvider;
 import org.compass.core.mapping.SpellCheck;
+import org.compass.core.mapping.json.Naming;
 import org.compass.core.mapping.json.RootJsonObjectMapping;
 
 /**
@@ -113,6 +114,15 @@ public class JsonMappingBuilder implements ResourceMappingProvider {
      */
     public JsonMappingBuilder dynamic(boolean dynamic) {
         mapping.setDynamic(dynamic);
+        return this;
+    }
+
+    /**
+     * Sets how dynamic objects, arrays and properties added through this object will have their respective
+     * property names named.
+     */
+    public JsonMappingBuilder dynamicNaming(Naming dynamicNaming) {
+        mapping.setDynamicNaming(dynamicNaming);
         return this;
     }
 

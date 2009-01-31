@@ -17,6 +17,7 @@
 package org.compass.core.test.json.object.dynamic;
 
 import org.compass.core.config.CompassConfiguration;
+import org.compass.core.mapping.json.Naming;
 import static org.compass.core.mapping.json.builder.JSEM.*;
 
 /**
@@ -39,6 +40,10 @@ public class SimpleJsonDynamicObjectBuilderTests extends SimpleJsonDynamicObject
         );
         conf.addMapping(
                 json("b").dynamic(true)
+                        .add(id("id"))
+        );
+        conf.addMapping(
+                json("c").dynamic(true).dynamicNaming(Naming.FULL)
                         .add(id("id"))
         );
     }

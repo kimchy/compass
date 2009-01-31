@@ -21,7 +21,7 @@ import org.compass.core.Resource;
 import org.compass.core.converter.ConversionException;
 import org.compass.core.converter.Converter;
 import org.compass.core.converter.mapping.ResourcePropertyConverter;
-import org.compass.core.converter.mapping.json.AbstractJsonObjectMappingConverter;
+import org.compass.core.converter.mapping.json.AbstractDynamicJsonMappingConverter;
 import org.compass.core.engine.naming.PropertyPath;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
@@ -56,14 +56,28 @@ public class SimpleJsonValueConverter implements Converter {
             sValue = toString(root, jsonPropertyMapping, context);
         }
         String propertyName;
-        if (jsonPropertyMapping.getNamingType() == Naming.FULL) {
-            propertyName = ((JsonFullPathHolder) context.getAttribute(JsonFullPathHolder.CONTEXT_KEY)).calculatePath();
-        } else {
-            PropertyPath path = jsonPropertyMapping.getPath();
-            if (path == null) {
-                propertyName = (String) context.getAttribute(AbstractJsonObjectMappingConverter.DYNAMIC_PATH_CONTEXT_KEY);
+        if (jsonPropertyMapping.isDynamic()) {
+            Naming dynamicNaming = (Naming) context.getAttribute(AbstractDynamicJsonMappingConverter.DYNAMIC_NAMING);
+            if (dynamicNaming != null && dynamicNaming == Naming.FULL) {
+                propertyName = ((JsonFullPathHolder) context.getAttribute(JsonFullPathHolder.CONTEXT_KEY)).calculatePath();
             } else {
-                propertyName = path.getPath();
+                PropertyPath path = jsonPropertyMapping.getPath();
+                if (path == null) {
+                    propertyName = (String) context.getAttribute(AbstractDynamicJsonMappingConverter.DYNAMIC_PATH_CONTEXT_KEY);
+                } else {
+                    propertyName = path.getPath();
+                }
+            }
+        } else {
+            if (jsonPropertyMapping.getNamingType() == Naming.FULL) {
+                propertyName = ((JsonFullPathHolder) context.getAttribute(JsonFullPathHolder.CONTEXT_KEY)).calculatePath();
+            } else {
+                PropertyPath path = jsonPropertyMapping.getPath();
+                if (path == null) {
+                    propertyName = (String) context.getAttribute(AbstractDynamicJsonMappingConverter.DYNAMIC_PATH_CONTEXT_KEY);
+                } else {
+                    propertyName = path.getPath();
+                }
             }
         }
         Property property;

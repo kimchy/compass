@@ -209,6 +209,7 @@ session.save(jsonObject);
       alias="aliasName"
       analyzer="name of the analyzer"
       dynamic="false|true"
+      dynamic-naming-type="plain|full"
       spell-check="optional spell check setting"
 />
     all?,
@@ -309,6 +310,7 @@ session.save(jsonObject);
 <programlisting><![CDATA[<json-property
     name="the name of the json id element"
     index-name="the name it will be store under, default to the element name"
+    naming-type="plain|full"
     store="yes|no|compress"
     index="analyzed|not_analyzed|no"
     omit=-norms="false|true"
@@ -397,6 +399,7 @@ session.save(jsonObject);
     name="the name of the json object element"
     converter="optional converter lookup name"
     dynamic="false|true"
+    dynamic-naming-type="plain|full"
 />
     (json-property|json-array|json-object)*
 ]]></programlisting>
@@ -438,6 +441,7 @@ session.save(jsonObject);
     index-name="optional, the name of the internal mapping will be stored under"
     converter="optional converter lookup name"
     dynamic="false|true"
+    dynamic-naming-type="plain|full"
 />
     (json-property|json-array|json-object)*
 ]]></programlisting>

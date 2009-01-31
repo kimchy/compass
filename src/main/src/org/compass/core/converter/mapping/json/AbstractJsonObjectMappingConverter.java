@@ -22,6 +22,7 @@ import org.compass.core.Resource;
 import org.compass.core.json.JsonObject;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.json.JsonObjectMapping;
+import org.compass.core.mapping.json.Naming;
 import org.compass.core.marshall.MarshallingContext;
 
 /**
@@ -45,7 +46,15 @@ public abstract class AbstractJsonObjectMappingConverter extends AbstractDynamic
             for (Iterator<String> keyIt = jsonObject.keys(); keyIt.hasNext();) {
                 String key = keyIt.next();
                 if (mapping.getMapping(key) == null) {
+                    Naming oldNaming = null;
+                    if (mapping.getDynamicNaming() != null) {
+                        oldNaming = (Naming) context.setAttribute(DYNAMIC_NAMING, mapping.getDynamicNaming());
+                    }
                     doConvertDynamicValue(resource, key, jsonObject.opt(key), context);
+                    if (mapping.getDynamicNaming() != null) {
+                        // set the original naming
+                        context.setAttribute(DYNAMIC_NAMING, oldNaming);
+                    }
                 }
             }
         }
