@@ -338,6 +338,11 @@ public class ReadCommittedTransactionProcessor extends AbstractConcurrentTransac
         }
     }
 
+    /**
+     * Just open an index writer here on the same calling thread so we maintain ordering of operations as well
+     * as no need for double check if we created it or not using expensive global locking.
+     */
+    @Override
     protected void prepareBeforeAsyncDirtyOperation(TransactionJob job) throws SearchEngineException {
         try {
             openIndexWriterIfNeeded(job.getSubIndex());
@@ -356,7 +361,7 @@ public class ReadCommittedTransactionProcessor extends AbstractConcurrentTransac
                     indexManager.getIndexHoldersCache().refreshCache(resourceKey.getSubIndex());
                     indexHolder = indexManager.getIndexHoldersCache().getHolder(resourceKey.getSubIndex());
                     indexHoldersBySubIndex.put(resourceKey.getSubIndex(), indexHolder);
-                }                
+                }
             }
         }
 

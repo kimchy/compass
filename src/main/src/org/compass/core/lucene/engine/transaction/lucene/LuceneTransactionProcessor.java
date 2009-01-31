@@ -181,6 +181,7 @@ public class LuceneTransactionProcessor extends AbstractConcurrentTransactionPro
      * Just open an index writer here on the same calling thread so we maintain ordering of operations as well
      * as no need for double check if we created it or not using expensive global locking.
      */
+    @Override
     protected void prepareBeforeAsyncDirtyOperation(TransactionJob job) throws SearchEngineException {
         try {
             getOrCreateIndexWriter(job.getSubIndex());
