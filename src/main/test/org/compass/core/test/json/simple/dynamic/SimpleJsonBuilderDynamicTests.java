@@ -25,6 +25,7 @@ import static org.compass.core.mapping.json.builder.JSEM.json;
  */
 public class SimpleJsonBuilderDynamicTests extends SimpleJsonDynamicTests {
 
+    @Override
     protected String[] getMappings() {
         return new String[0];
     }
