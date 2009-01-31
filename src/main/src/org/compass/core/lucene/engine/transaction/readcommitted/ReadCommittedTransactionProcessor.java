@@ -97,10 +97,12 @@ public class ReadCommittedTransactionProcessor extends AbstractConcurrentTransac
         return LuceneEnvironment.Transaction.Processor.ReadCommitted.NAME;
     }
 
+    @Override
     public void begin() throws SearchEngineException {
         this.filter.clear();
     }
 
+    @Override
     protected void doPrepare() throws SearchEngineException {
         releaseHolders();
         if (indexManager.supportsConcurrentCommits()) {
@@ -128,6 +130,7 @@ public class ReadCommittedTransactionProcessor extends AbstractConcurrentTransac
         }
     }
 
+    @Override
     protected void doCommit(boolean onePhase) throws SearchEngineException {
         releaseHolders();
         // here, we issue doPrepare since if only one of the sub indexes failed with it, then
@@ -154,6 +157,7 @@ public class ReadCommittedTransactionProcessor extends AbstractConcurrentTransac
         }
     }
 
+    @Override
     protected void doRollback() throws SearchEngineException {
         releaseHolders();
         SearchEngineException lastException = null;
@@ -183,6 +187,7 @@ public class ReadCommittedTransactionProcessor extends AbstractConcurrentTransac
         }
     }
 
+    @Override
     protected LuceneSearchEngineInternalSearch doInternalSearch(String[] subIndexes, String[] aliases) throws SearchEngineException {
         // if there are no ongoing dirty operations, simply return the default one which is faster
         if (indexHoldersBySubIndex.isEmpty() && !transIndexManager.hasTransactions()) {
@@ -220,6 +225,7 @@ public class ReadCommittedTransactionProcessor extends AbstractConcurrentTransac
         }
     }
 
+    @Override
     protected LuceneSearchEngineHits doFind(LuceneSearchEngineQuery query) throws SearchEngineException {
         LuceneSearchEngineInternalSearch internalSearch = internalSearch(query.getSubIndexes(), query.getAliases());
         if (internalSearch.isEmpty()) {
@@ -241,6 +247,7 @@ public class ReadCommittedTransactionProcessor extends AbstractConcurrentTransac
         return new DefaultLuceneSearchEngineHits(hits, searchEngine, query, internalSearch);
     }
 
+    @Override
     protected Resource[] doGet(ResourceKey resourceKey) throws SearchEngineException {
         Searcher indexSearcher = null;
         IndexReader indexReader = null;
@@ -315,6 +322,7 @@ public class ReadCommittedTransactionProcessor extends AbstractConcurrentTransac
         }
     }
 
+    @Override
     protected void doProcessJob(TransactionJob job) throws SearchEngineException {
         try {
             IndexWriter indexWriter = openIndexWriterIfNeeded(job.getSubIndex());

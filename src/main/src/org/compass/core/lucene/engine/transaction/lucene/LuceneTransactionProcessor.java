@@ -68,6 +68,7 @@ public class LuceneTransactionProcessor extends AbstractConcurrentTransactionPro
         return LuceneEnvironment.Transaction.Processor.Lucene.NAME;
     }
 
+    @Override
     protected void doRollback() throws SearchEngineException {
         SearchEngineException exception = null;
         for (Map.Entry<String, IndexWriter> entry : indexWriterBySubIndex.entrySet()) {
@@ -96,6 +97,7 @@ public class LuceneTransactionProcessor extends AbstractConcurrentTransactionPro
         }
     }
 
+    @Override
     protected void doPrepare() throws SearchEngineException {
         if (indexWriterBySubIndex.isEmpty()) {
             return;
@@ -119,6 +121,7 @@ public class LuceneTransactionProcessor extends AbstractConcurrentTransactionPro
         }
     }
 
+    @Override
     protected void doCommit(boolean onePhase) throws SearchEngineException {
         if (indexWriterBySubIndex.isEmpty()) {
             return;
@@ -156,6 +159,7 @@ public class LuceneTransactionProcessor extends AbstractConcurrentTransactionPro
         }
     }
 
+    @Override
     protected void doProcessJob(TransactionJob job) throws SearchEngineException {
         try {
             IndexWriter indexWriter = getOrCreateIndexWriter(job.getSubIndex());
@@ -165,14 +169,17 @@ public class LuceneTransactionProcessor extends AbstractConcurrentTransactionPro
         }
     }
 
+    @Override
     protected LuceneSearchEngineHits doFind(LuceneSearchEngineQuery query) throws SearchEngineException {
         return performFind(query);
     }
 
+    @Override
     protected LuceneSearchEngineInternalSearch doInternalSearch(String[] subIndexes, String[] aliases) throws SearchEngineException {
         return performInternalSearch(subIndexes, aliases);
     }
 
+    @Override
     protected Resource[] doGet(ResourceKey resourceKey) throws SearchEngineException {
         return performGet(resourceKey);
     }

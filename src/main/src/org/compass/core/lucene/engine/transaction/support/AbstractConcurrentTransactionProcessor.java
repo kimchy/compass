@@ -112,7 +112,7 @@ public abstract class AbstractConcurrentTransactionProcessor extends AbstractSea
     }
 
     /**
-     * Base classes should implement this. Behaviour should be the same as {@link #prepare()}.
+     * Sub classes should implement this. Behaviour should be the same as {@link #prepare()}.
      */
     protected abstract void doPrepare() throws SearchEngineException;
 
@@ -124,7 +124,7 @@ public abstract class AbstractConcurrentTransactionProcessor extends AbstractSea
     }
 
     /**
-     * Base classes should implement this. Behaviour should be the same as {@link #commit(boolean)}.
+     * Sub classes should implement this. Behaviour should be the same as {@link #commit(boolean)}.
      */
     protected abstract void doCommit(boolean onePhase) throws SearchEngineException;
 
@@ -134,7 +134,7 @@ public abstract class AbstractConcurrentTransactionProcessor extends AbstractSea
     }
 
     /**
-     * Base classes should implement this. Behaviour should be the same as {@link #rollback()}.
+     * Sub classes should implement this. Behaviour should be the same as {@link #rollback()}.
      */
     protected abstract void doRollback() throws SearchEngineException;
 
@@ -192,6 +192,9 @@ public abstract class AbstractConcurrentTransactionProcessor extends AbstractSea
         }
     }
 
+    /**
+     * Sub classes should implement the actual processing of a transactional job.
+     */
     protected abstract void doProcessJob(TransactionJob job) throws SearchEngineException;
 
     /**
@@ -208,7 +211,7 @@ public abstract class AbstractConcurrentTransactionProcessor extends AbstractSea
     }
 
     /**
-     * Base classes should implement this. Behaviour should be the same as {@link #find(org.compass.core.lucene.engine.LuceneSearchEngineQuery)}.
+     * Sub classes should implement this. Behaviour should be the same as {@link #find(org.compass.core.lucene.engine.LuceneSearchEngineQuery)}.
      */
     protected abstract LuceneSearchEngineHits doFind(LuceneSearchEngineQuery query) throws SearchEngineException;
 
