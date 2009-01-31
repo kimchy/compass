@@ -62,8 +62,12 @@ public class IndexWritersManager {
         this.indexManager = indexManager;
         this.searchEngineFactory = indexManager.getSearchEngineFactory();
         this.luceneSettings = indexManager.getSettings();
-        trackOpenIndexWriters = luceneSettings.getSettings().getSettingAsBoolean(LuceneEnvironment.SearchEngineIndex.TRACK_OPENED_INDEX_WRITERS, true);
+        trackOpenIndexWriters =
+                luceneSettings.getSettings().getSettingAsBoolean(LuceneEnvironment.SearchEngineIndex.TRACK_OPENED_INDEX_WRITERS, true) || indexManager.getSearchEngineFactory().isDebug();
         if (trackOpenIndexWriters) {
+            if (logger.isTraceEnabled()) {
+                logger.trace("Tracking open index writers");
+            }
             trackedOpenIndexWriters = new ConcurrentHashMap<String, IndexWriter>();
         } else {
             trackedOpenIndexWriters = null;

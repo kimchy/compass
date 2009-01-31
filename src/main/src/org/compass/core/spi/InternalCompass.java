@@ -63,6 +63,4 @@ public interface InternalCompass extends Compass {
     void addRebuildEventListener(RebuildEventListener eventListener);
 
     void removeRebuildEventListener(RebuildEventListener eventListener);
-
-    void debugVerifyClosed();
 }

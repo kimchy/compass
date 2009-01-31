@@ -328,6 +328,7 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
     public synchronized void close() {
         stop();
         clearCache();
+        indexHoldersCache.close();
         indexWritersManager.close();
         searchEngineStore.close();
     }

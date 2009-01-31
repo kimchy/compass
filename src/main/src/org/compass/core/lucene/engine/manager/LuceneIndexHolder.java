@@ -20,14 +20,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.IndexSearcher;
-import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 
 /**
  * @author kimchy
  */
 public class LuceneIndexHolder {
 
-    private final LuceneSearchEngineFactory searchEngineFactory;
+    private final IndexHoldersCache indexHoldersCache;
 
     private final String subIndex;
 
@@ -45,16 +44,16 @@ public class LuceneIndexHolder {
 
     private boolean closed;
 
-    public LuceneIndexHolder(LuceneSearchEngineFactory searchEngineFactory, String subIndex, IndexSearcher indexSearcher) {
-        this.searchEngineFactory = searchEngineFactory;
+    public LuceneIndexHolder(IndexHoldersCache indexHoldersCache, String subIndex, IndexSearcher indexSearcher) {
+        this.indexHoldersCache = indexHoldersCache;
         this.subIndex = subIndex;
         this.indexSearcher = indexSearcher;
         this.indexReader = indexSearcher.getIndexReader();
-        if (searchEngineFactory.isDebug()) {
-            AtomicInteger count = searchEngineFactory.getDebugHoldersCount().get(subIndex);
+        if (indexHoldersCache.isDebug()) {
+            AtomicInteger count = indexHoldersCache.getDebugHoldersCount().get(subIndex);
             if (count == null) {
                 AtomicInteger newCount = new AtomicInteger();
-                count = searchEngineFactory.getDebugHoldersCount().putIfAbsent(subIndex, newCount);
+                count = indexHoldersCache.getDebugHoldersCount().putIfAbsent(subIndex, newCount);
                 if (count == null) {
                     count = newCount;
                 }
@@ -103,8 +102,8 @@ public class LuceneIndexHolder {
 
     private void checkIfCanClose() {
         if (markForClose && count <= 0 && !closed) {
-            if (searchEngineFactory.isDebug()) {
-                searchEngineFactory.getDebugHoldersCount().get(subIndex).decrementAndGet();
+            if (indexHoldersCache.isDebug()) {
+                indexHoldersCache.getDebugHoldersCount().get(subIndex).decrementAndGet();
             }
             closed = true;
             try {

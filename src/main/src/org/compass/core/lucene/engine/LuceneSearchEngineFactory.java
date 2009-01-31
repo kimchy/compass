@@ -16,11 +16,6 @@
 
 package org.compass.core.lucene.engine;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.compass.core.ResourceFactory;
@@ -105,8 +100,6 @@ public class LuceneSearchEngineFactory implements InternalSearchEngineFactory {
 
     private final boolean debug;
 
-    private final ConcurrentMap<String, AtomicInteger> debugOpenHoldersCount;
-
     public LuceneSearchEngineFactory(PropertyNamingStrategy propertyNamingStrategy, CompassSettings settings,
                                      CompassMapping mapping, ExecutorManager executorManager) {
         this.debug = settings.getSettingAsBoolean(CompassEnvironment.DEBUG, false);
@@ -158,13 +151,6 @@ public class LuceneSearchEngineFactory implements InternalSearchEngineFactory {
 
         // build the transaction processor manager
         transactionProcessorManager = new TransactionProcessorManager(this);
-
-        // init debug
-        if (debug) {
-            debugOpenHoldersCount = new ConcurrentHashMap<String, AtomicInteger>();
-        } else {
-            debugOpenHoldersCount = null;
-        }
     }
 
     public void close() throws SearchEngineException {
@@ -175,31 +161,9 @@ public class LuceneSearchEngineFactory implements InternalSearchEngineFactory {
         indexManager.close();
     }
 
-    // DEBUG START
-
-    public void debugVerifyClosed() {
-        boolean failed = false;
-        StringBuilder message = new StringBuilder();
-        for (Map.Entry<String, AtomicInteger> entry : debugOpenHoldersCount.entrySet()) {
-            if (entry.getValue().get() > 0) {
-                failed = true;
-                message.append("[CACHE HOLDER] Sub Index [").append(entry.getKey()).append("] has [").append(entry.getValue()).append("] holder(s) open\n");
-            }
-        }
-        if (failed) {
-            throw new IllegalStateException(message.toString());
-        }
-    }
-
     public boolean isDebug() {
         return debug;
     }
-
-    public ConcurrentMap<String, AtomicInteger> getDebugHoldersCount() {
-        return debugOpenHoldersCount;
-    }
-
-    // DEBUG END
 
     public SearchEngine openSearchEngine(RuntimeCompassSettings runtimeSettings) {
         return new LuceneSearchEngine(runtimeSettings, this);

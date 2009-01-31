@@ -20,9 +20,4 @@ public interface InternalSearchEngineFactory extends SearchEngineFactory {
 
 
     boolean isDebug();
-    
-    /**
-     * Verifies debug (if enabled).
-     */
-    void debugVerifyClosed() throws IllegalStateException;
 }

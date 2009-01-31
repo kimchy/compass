@@ -192,10 +192,6 @@ public class DefaultCompass implements InternalCompass {
         throw new UnsupportedOperationException();
     }
 
-    public void debugVerifyClosed() {
-        searchEngineFactory.debugVerifyClosed();
-    }
-
     public Compass clone(CompassSettings addedSettings) {
         CompassSettings copySettings = settings.copy();
         copySettings.addSettings(addedSettings);
@@ -290,10 +286,6 @@ public class DefaultCompass implements InternalCompass {
         }
 
         logger.info("Closed Compass [" + name + "]");
-
-        if (debug) {
-            debugVerifyClosed();
-        }
     }
 
     public boolean isClosed() {

@@ -21,8 +21,10 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -61,10 +63,22 @@ public class IndexHoldersCache {
 
     private Map<String, IndexHolderCacheLock> subIndexCacheLocks = new HashMap<String, IndexHolderCacheLock>();
 
+    private final ConcurrentMap<String, AtomicInteger> debugOpenHoldersCount;
+
+    private final boolean debug;
+    
     public IndexHoldersCache(LuceneSearchEngineIndexManager indexManager) {
         this.indexManager = indexManager;
         for (String subIndex : indexManager.getSubIndexes()) {
             subIndexCacheLocks.put(subIndex, new IndexHolderCacheLock());
+        }
+
+        // init debug
+        debug = indexManager.getSearchEngineFactory().isDebug();
+        if (debug) {
+            debugOpenHoldersCount = new ConcurrentHashMap<String, AtomicInteger>();
+        } else {
+            debugOpenHoldersCount = null;
         }
     }
 
@@ -87,6 +101,24 @@ public class IndexHoldersCache {
             scheduledRefreshCacheFuture.cancel(true);
             scheduledRefreshCacheFuture = null;
         }
+    }
+
+    public void close() {
+        if (indexManager.getSearchEngineFactory().isDebug()) {
+            for (Map.Entry<String, AtomicInteger> entry : debugOpenHoldersCount.entrySet()) {
+                if (entry.getValue().get() > 0) {
+                    logger.error("[CACHE HOLDER] Sub Index [" + entry.getKey() +  "] has [" + entry.getValue() + "] holder(s) open");
+                }
+            }
+        }
+    }
+
+    public boolean isDebug() {
+        return debug;
+    }
+
+    public ConcurrentMap<String, AtomicInteger> getDebugHoldersCount() {
+        return debugOpenHoldersCount;
     }
 
     public void doUnderCacheLock(String subIndex, Runnable task) {
@@ -268,7 +300,7 @@ public class IndexHoldersCache {
             }
             if (reader != indexHolder.getIndexReader()) {
                 LuceneIndexHolder origHolder = indexHolder;
-                indexHolder = new LuceneIndexHolder(indexManager.getSearchEngineFactory(), subIndex, indexManager.openIndexSearcher(reader));
+                indexHolder = new LuceneIndexHolder(this, subIndex, indexManager.openIndexSearcher(reader));
                 // since not synchronized, we need to mark the one we replaced as closed
                 LuceneIndexHolder oldHolder = indexHolders.put(subIndex, indexHolder);
                 if (oldHolder != null) {
@@ -284,7 +316,7 @@ public class IndexHoldersCache {
         } else {
             try {
                 IndexReader reader = IndexReader.open(indexManager.getDirectory(subIndex), true);
-                indexHolder = new LuceneIndexHolder(indexManager.getSearchEngineFactory(), subIndex, indexManager.openIndexSearcher(reader));
+                indexHolder = new LuceneIndexHolder(this, subIndex, indexManager.openIndexSearcher(reader));
             } catch (IOException e) {
                 throw new SearchEngineException("Failed to open sub index cache [" + subIndex + "]", e);
             }
