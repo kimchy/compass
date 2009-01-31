@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package org.compass.jboss.device.jpa;
+package org.compass.gps.device.jpa.extractor;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
 import org.compass.gps.device.jpa.JpaGpsDeviceException;
-import org.compass.gps.device.jpa.NativeJpaExtractor;
 import org.jboss.ejb3.entity.InjectedEntityManagerFactory;
 
 /**

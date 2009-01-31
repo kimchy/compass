@@ -27,7 +27,7 @@ import org.compass.core.CompassSession;
 import org.compass.gps.device.jpa.JpaGpsDevice;
 import org.compass.gps.device.jpa.embedded.DefaultJpaCompassGps;
 import org.compass.gps.device.jpa.embedded.JpaCompassGps;
-import org.compass.gps.device.jpa.support.NativeJpaHelper;
+import org.compass.gps.device.jpa.extractor.NativeJpaHelper;
 import org.eclipse.persistence.jpa.JpaEntityManager;
 import org.eclipse.persistence.sessions.Session;
 

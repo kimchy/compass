@@ -13,6 +13,8 @@ VERSION 2.2.0 M2
     c. Changed xsd configuration of optimizer from 'mergeFactor' to 'maxNumberOfSegments'.
     d. Changed Adaptive configuraion 'compass.engine.optimizer.adaptive.mergeFactor' to
        'compass.engine.optimizer.maxNumberOfSegments'. The setting apply to the defualt optimizer.
+2. Refactored JPA NaiveJpaExtractor and implementations (Spring, JBoss, Glassfish) into the same package:
+   'org.compass.gps.device.jpa.extractor'.
 
 VERSION 2.2.0 M1 (11 January, 2009)
 ===================================

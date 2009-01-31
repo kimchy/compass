@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package org.compass.gps.device.jpa;
+package org.compass.gps.device.jpa.extractor;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+
+import org.compass.gps.device.jpa.JpaGpsDeviceException;
 
 /**
  * A native <code>EntityManagerFactory<code> extractor. Should be used with code/frameworks that
@@ -33,7 +35,7 @@ public interface NativeJpaExtractor {
      *
      * @param entityManagerFactory The (possibly) wrapped <code>EntityManagerFactory</code>.
      * @return The actual <code>EntityManagerFactory</code> implementation.
-     * @throws JpaGpsDeviceException
+     * @throws org.compass.gps.device.jpa.JpaGpsDeviceException
      */
     EntityManagerFactory extractNative(EntityManagerFactory entityManagerFactory) throws JpaGpsDeviceException;
 

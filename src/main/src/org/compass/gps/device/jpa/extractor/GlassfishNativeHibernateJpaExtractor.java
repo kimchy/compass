@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.compass.glassfish.device.jpa;
+package org.compass.gps.device.jpa.extractor;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -23,7 +23,6 @@ import javax.persistence.EntityManagerFactory;
 
 import org.compass.core.CompassException;
 import org.compass.gps.device.jpa.JpaGpsDeviceException;
-import org.compass.gps.device.jpa.NativeJpaExtractor;
 
 /**
  * A JPA native extractor that extracts the actual implementation of JPA EntityManagerFactory/EntityManager

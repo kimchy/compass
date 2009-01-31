@@ -21,7 +21,7 @@ import javax.persistence.EntityManagerFactory;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.util.ClassUtils;
 import org.compass.gps.device.jpa.JpaGpsDeviceException;
-import org.compass.gps.device.jpa.support.NativeJpaHelper;
+import org.compass.gps.device.jpa.extractor.NativeJpaHelper;
 
 /**
  * A {@link JpaEntityLifecycleInjector} detector. Tries to check for the actual implementation of JPA
@@ -31,7 +31,7 @@ import org.compass.gps.device.jpa.support.NativeJpaHelper;
  * Currently support the following JPA implementations: Hibernate, TopLink Essentials (Glassfish Persistence), OpenJPA.
  * <p/>
  * Assumes that the <code>EntityManagerFactory</code> is the native one, since the
- * {@link org.compass.gps.device.jpa.NativeJpaExtractor} of the
+ * {@link org.compass.gps.device.jpa.extractor.NativeJpaExtractor} of the
  * {@link org.compass.gps.device.jpa.JpaGpsDevice} was used to extract it.
  *
  * @author kimchy

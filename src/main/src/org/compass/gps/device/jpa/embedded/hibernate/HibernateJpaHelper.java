@@ -26,7 +26,7 @@ import org.compass.gps.device.hibernate.embedded.HibernateHelper;
 import org.compass.gps.device.jpa.JpaGpsDevice;
 import org.compass.gps.device.jpa.embedded.DefaultJpaCompassGps;
 import org.compass.gps.device.jpa.embedded.JpaCompassGps;
-import org.compass.gps.device.jpa.support.NativeJpaHelper;
+import org.compass.gps.device.jpa.extractor.NativeJpaHelper;
 import org.hibernate.ejb.HibernateEntityManager;
 import org.hibernate.ejb.HibernateEntityManagerFactory;
 

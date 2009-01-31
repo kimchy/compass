@@ -27,7 +27,7 @@ import org.compass.gps.device.jpa.JpaGpsDeviceException;
  * used directly to inject global lifecycle event listeners usign propriety APIs.
  *
  * <p>Assume that the <code>EntityManagerFactory</code> is the native one, since the
- * {@link org.compass.gps.device.jpa.NativeJpaExtractor} of the
+ * {@link org.compass.gps.device.jpa.extractor.NativeJpaExtractor} of the
  * {@link JpaGpsDevice} was used to extract it.
  *
  * @author kimchy

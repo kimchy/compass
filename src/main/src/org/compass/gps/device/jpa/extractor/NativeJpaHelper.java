@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.compass.gps.device.jpa.support;
+package org.compass.gps.device.jpa.extractor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,11 +26,7 @@ import javax.persistence.EntityManagerFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.compass.core.util.ClassUtils;
-import org.compass.glassfish.device.jpa.GlassfishNativeHibernateJpaExtractor;
 import org.compass.gps.device.jpa.JpaGpsDeviceException;
-import org.compass.gps.device.jpa.NativeJpaExtractor;
-import org.compass.jboss.device.jpa.JBossNativeJpaExtractor;
-import org.compass.spring.device.jpa.SpringNativeJpaExtractor;
 
 /**
  * @author kimchy

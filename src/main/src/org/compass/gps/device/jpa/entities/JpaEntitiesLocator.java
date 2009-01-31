@@ -27,7 +27,7 @@ import org.compass.gps.device.jpa.JpaGpsDeviceException;
  * both annotations and other means of configuration (like xml), an implementaiton of this locator is required.
  * <p/>
  * Assume that the <code>EntityManagerFactory</code> is the native one, since the
- * {@link org.compass.gps.device.jpa.NativeJpaExtractor} of the
+ * {@link org.compass.gps.device.jpa.extractor.NativeJpaExtractor} of the
  * {@link JpaGpsDevice} was used to extract it.
  *
  * @author kimchy

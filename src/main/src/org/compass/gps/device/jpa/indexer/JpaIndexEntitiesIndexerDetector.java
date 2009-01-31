@@ -21,7 +21,7 @@ import javax.persistence.EntityManagerFactory;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.util.ClassUtils;
 import org.compass.gps.device.jpa.JpaGpsDeviceException;
-import org.compass.gps.device.jpa.support.NativeJpaHelper;
+import org.compass.gps.device.jpa.extractor.NativeJpaHelper;
 
 /**
  * @author kimchy

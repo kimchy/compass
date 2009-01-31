@@ -26,7 +26,7 @@ import org.apache.openjpa.persistence.OpenJPAPersistence;
 import org.compass.core.Compass;
 import org.compass.core.CompassSession;
 import org.compass.gps.device.jpa.embedded.JpaCompassGps;
-import org.compass.gps.device.jpa.support.NativeJpaHelper;
+import org.compass.gps.device.jpa.extractor.NativeJpaHelper;
 
 /**
  * Helper class to get different Compass constructs embedded with Open JPA.
