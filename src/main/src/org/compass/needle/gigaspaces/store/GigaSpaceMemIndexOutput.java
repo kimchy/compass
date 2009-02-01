@@ -27,8 +27,7 @@ import org.apache.lucene.store.IndexOutput;
  * Only use buckets to write the file to the index. Writes a header file and one
  * or more buckets that hold the file content.
  *
- * <p>Allows only seeking to the first bucket, which is what Lucene does with typical
- * bucket size.
+ * <p>Allows only seeking to the first bucket, which is what Lucene does.
  *
  * @author kimchy
  */

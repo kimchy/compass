@@ -22,6 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.j_spaces.core.IJSpace;
 import net.jini.core.lease.Lease;
+import org.apache.lucene.index.LuceneFileNames;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.IndexInput;
 import org.apache.lucene.store.IndexOutput;
@@ -211,7 +212,12 @@ public class GigaSpaceDirectory extends Directory {
     }
 
     public IndexOutput createOutput(String fileName) throws IOException {
-        IndexOutput out = new GigaSpaceMemIndexOutput(this, fileName);
+        IndexOutput out;
+        if (LuceneFileNames.isSegmentsFile(fileName)) {
+            out = new FlushOnCloseGigaSpaceIndexOutput(this, fileName);
+        } else {
+            out = new GigaSpaceMemIndexOutput(this, fileName);
+        }
         onGoingIndexOutputs.put(fileName, out);
         return out;
     }
