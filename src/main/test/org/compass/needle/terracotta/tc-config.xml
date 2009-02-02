@@ -69,6 +69,9 @@
                     <field-name>org.compass.needle.terracotta.TerracottaDirectoryStore.dirs</field-name>
                 </root>
                 <root>
+                    <field-name>org.compass.needle.terracotta.TerracottaDirectoryStore.managedRWL</field-name>
+                </root>
+                <root>
                     <field-name>org.compass.needle.terracotta.TerracottaLockFactoryProvider.lockFactories</field-name>
                 </root>
                 <root>

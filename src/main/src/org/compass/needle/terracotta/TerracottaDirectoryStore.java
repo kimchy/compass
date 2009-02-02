@@ -196,7 +196,8 @@ public class TerracottaDirectoryStore extends AbstractDirectoryStore implements 
 
     @Override
     public boolean requiresAsyncTransactionalContext() {
-        return false;
+        // in managed, we need to start a transaction so we can start the "global" real lock for less lock creation
+        return managed;
     }
 
     @Override
