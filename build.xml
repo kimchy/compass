@@ -256,6 +256,7 @@
             <packageset dir="${main.src.dir}">
                 <include name="org/apache/lucene/**"/>
                 <include name="org/compass/**"/>
+                <exclude name="org/compass/core/util/asm/**" />
             </packageset>
             <link href="http://java.sun.com/j2se/1.5.0/docs/api"/>
             <link href="http://lucene.apache.org/java/2_4_0/api//"/>
