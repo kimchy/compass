@@ -670,7 +670,7 @@ public class CompassEnvironment {
         /**
          * A prefix for definting scanning. The "logical name" of this scan should be defiend after the prefix,
          * and then at lease the {@link #SCAN_MAPPING_PACKAGE} must be defiend and optionally another setting
-         * with the same logical name and {@link @SCAN_MAPPING_PATTERN}.
+         * with the same logical name and {@link #SCAN_MAPPING_PATTERN}.
          */
         public static final String SCAN_MAPPING_PREFIX = "compass.mapping.scan";
 
