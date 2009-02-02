@@ -25,7 +25,7 @@ package org.compass.annotations;
  * meta-data using {@link #FALSE} and use the first meta-data as the intenral id,
  * or always create the intenal meta-data using {@link #TRUE}.
  * The other options allow to not create an interanl id and never unmarshalling that
- * property ({@llink #NO}), and not creating an internal id in case there all the meta
+ * property ({@link #NO}), and not creating an internal id in case there all the meta
  * data mappings fro that property have store="no" ({@link #NO_STORE}). 
  *
  * @author kimchy
