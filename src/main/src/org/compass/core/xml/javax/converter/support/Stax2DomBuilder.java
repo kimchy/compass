@@ -81,7 +81,6 @@ public class Stax2DomBuilder {
      * the given StAX stream reader instance.
      *
      * @param r Stream reader from which input is read.
-     * @return <code>Document</code> - DOM document object.
      * @throws XMLStreamException If the reader threw such exception (to
      *                            indicate a parsing or I/O problem)
      */
