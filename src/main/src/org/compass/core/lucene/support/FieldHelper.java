@@ -21,7 +21,7 @@ import org.compass.core.Property;
 import org.compass.core.engine.SearchEngineException;
 
 /**
- * A set of helper methods for Lucene {@link org.apache.lucene.document.Field
+ * A set of helper methods for Lucene {@link org.apache.lucene.document.Field}.
  *
  * @author kimchy
  */
