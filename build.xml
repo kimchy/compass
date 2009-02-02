@@ -251,14 +251,14 @@
                  source="1.5" access="package" author="true" version="true" use="true" defaultexcludes="true"
                  stylesheetfile="${docs.dir}/javadoc/jdstyle.css">
             <doctitle><![CDATA[<h1>Compass</h1>]]></doctitle>
-            <bottom><![CDATA[<i>Copyright (c) 2004-2008 The Compass Project.</i>]]></bottom>
+            <bottom><![CDATA[<i>Copyright (c) 2004-2009 The Compass Project.</i>]]></bottom>
             <classpath refid="all-libs"/>
             <packageset dir="${main.src.dir}">
                 <include name="org/apache/lucene/**"/>
                 <include name="org/compass/**"/>
             </packageset>
             <link href="http://java.sun.com/j2se/1.5.0/docs/api"/>
-            <link href="http://lucene.apache.org/java/2_3_2/api/"/>
+            <link href="http://lucene.apache.org/java/2_4_0/api//"/>
             <link href="http://www.junit.org/junit/javadoc/"/>
             <link href="http://www.hibernate.org/hib_docs/v3/api/"/>
             <link href="http://www.hibernate.org/hib_docs/annotations/api/"/>
