@@ -23,9 +23,9 @@ import org.compass.core.config.CompassSettings;
 
 /**
  * Resposible for providing a Jdbc {@link DataSource} for
- * {@link org.compass.core.lucene.engine.store.JdbcLuceneSearchEngineStore}.
- * <p/>
- * The {@link DataSource} is a shared data source that should be used throughout
+ * {@link org.compass.core.lucene.engine.store.JdbcDirectoryStore}.
+ *
+ * <p>The {@link DataSource} is a shared data source that should be used throughout
  * the lifecycle of this class.
  *
  * @author kimchy
