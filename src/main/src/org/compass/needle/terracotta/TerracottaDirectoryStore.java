@@ -98,7 +98,7 @@ public class TerracottaDirectoryStore extends AbstractDirectoryStore implements 
         indexName = settings.getSetting(CompassEnvironment.CONNECTION).substring(PROTOCOL.length());
         bufferSize = (int) settings.getSettingAsBytes(BUFFER_SIZE_PROP, TerracottaDirectory.DEFAULT_BUFFER_SIZE);
         flushRate = settings.getSettingAsInt(FLUSH_RATE_PROP, TerracottaDirectory.DEFAULT_FLUSH_RATE);
-        managed = settings.getSettingAsBoolean(MANAGED, true);
+        managed = settings.getSettingAsBoolean(MANAGED, false);
         chmInitialCapacity = settings.getSettingAsInt(CHM_CONCURRENCY_LEVEL_PROP, TerracottaDirectory.DEFAULT_CHM_INITIAL_CAPACITY);
         chmLoadFactor = settings.getSettingAsFloat(CHM_LOAD_FACTOR_PROP, TerracottaDirectory.DEFAULT_CHM_LOAD_FACTOR);
         chmConcurrencyLevel = settings.getSettingAsInt(CHM_CONCURRENCY_LEVEL_PROP, TerracottaDirectory.DEFAULT_CHM_CONCURRENCY_LEVEL);
