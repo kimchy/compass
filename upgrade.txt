@@ -1,8 +1,8 @@
 COMPASS UPGRADE DOCUMENTATION (Please see Compass JIRA for a complete change-log)
 ================================================================================
 
-VERSION 2.2.0 M2
-================
+VERSION 2.2.0 M2 (2 February, 2009)
+===================================
 
 1. Optimizer Refactoring:
     a. Removed AdaptiveOptimizer, it is the defualt (and only) optimizer in the system now.
