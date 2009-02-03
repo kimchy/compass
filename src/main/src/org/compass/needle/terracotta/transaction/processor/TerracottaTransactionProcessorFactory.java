@@ -248,7 +248,7 @@ public class TerracottaTransactionProcessorFactory implements TransactionProcess
                         } catch (IOException e) {
                             logger.warn("Failed to close writer, ignoring", e);
                         } finally {
-                            searchEngineFactory.getLuceneIndexManager().getIndexWritersManager().trackOpenIndexWriter(subIndex, writer);
+                            searchEngineFactory.getLuceneIndexManager().getIndexWritersManager().trackCloseIndexWriter(subIndex, writer);
                         }
                     }
                 } finally {
