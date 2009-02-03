@@ -23,7 +23,7 @@ import org.compass.core.CompassHits;
 import org.compass.core.CompassQuery;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
-import org.compass.core.cache.first.DefaultFirstLevelCache;
+import org.compass.core.cache.first.PlainFirstLevelCache;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.test.AbstractTestCase;
@@ -39,7 +39,7 @@ public class SameChildTests extends AbstractTestCase {
 
 
     protected void addSettings(CompassSettings settings) {
-        settings.setSetting(CompassEnvironment.Cache.FirstLevel.TYPE, DefaultFirstLevelCache.class.getName());
+        settings.setSetting(CompassEnvironment.Cache.FirstLevel.TYPE, PlainFirstLevelCache.class.getName());
     }
 
     public void testSameChildSameParent() throws Exception {

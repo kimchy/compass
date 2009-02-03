@@ -57,7 +57,7 @@
         </connection>
 
         <cache>
-            <firstLevel type="org.compass.core.cache.first.DefaultFirstLevelCache" />
+            <firstLevel type="org.compass.core.cache.first.PlainFirstLevelCache" />
         </cache>
 
         <searchEngine useCompoundFile="true">

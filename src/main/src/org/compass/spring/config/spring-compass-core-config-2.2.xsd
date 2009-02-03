@@ -1004,7 +1004,7 @@
                                         </xsd:documentation>
                                     </xsd:annotation>
                                 </xsd:enumeration>
-                                <xsd:enumeration value="org.compass.core.cache.first.DefaultFirstLevelCache">
+                                <xsd:enumeration value="org.compass.core.cache.first.PlainFirstLevelCache">
                                     <xsd:annotation>
                                         <xsd:documentation>
                                             Default first level cache handling, storing Resource and Objects in the

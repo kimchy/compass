@@ -26,7 +26,7 @@ import org.compass.core.spi.ResourceKey;
  *
  * @author kimchy
  */
-public class DefaultFirstLevelCache implements FirstLevelCache {
+public class PlainFirstLevelCache implements FirstLevelCache {
 
     private HashMap<ResourceKey, Object> objects = new HashMap<ResourceKey, Object>();
 

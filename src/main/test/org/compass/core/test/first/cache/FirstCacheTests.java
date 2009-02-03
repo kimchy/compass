@@ -21,7 +21,7 @@ import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
 import org.compass.core.Property;
 import org.compass.core.Resource;
-import org.compass.core.cache.first.DefaultFirstLevelCache;
+import org.compass.core.cache.first.PlainFirstLevelCache;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.test.AbstractTestCase;
@@ -37,7 +37,7 @@ public class FirstCacheTests extends AbstractTestCase {
 
     protected void addSettings(CompassSettings settings) {
         super.addSettings(settings);
-        settings.setSetting(CompassEnvironment.Cache.FirstLevel.TYPE, DefaultFirstLevelCache.class.getName());
+        settings.setSetting(CompassEnvironment.Cache.FirstLevel.TYPE, PlainFirstLevelCache.class.getName());
     }
 
     public void testResourceCache() {

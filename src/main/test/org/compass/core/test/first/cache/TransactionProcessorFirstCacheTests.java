@@ -2,8 +2,8 @@ package org.compass.core.test.first.cache;
 
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
-import org.compass.core.cache.first.DefaultFirstLevelCache;
 import org.compass.core.cache.first.NullFirstLevelCache;
+import org.compass.core.cache.first.PlainFirstLevelCache;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.spi.InternalCompassSession;
@@ -42,7 +42,7 @@ public class TransactionProcessorFirstCacheTests extends AbstractTestCase {
         CompassSession session = openSession();
         session.getSettings().setSetting(LuceneEnvironment.Transaction.Processor.TYPE, LuceneEnvironment.Transaction.Processor.ReadCommitted.NAME);
         CompassTransaction tr = session.beginTransaction();
-        assertTrue( ((InternalCompassSession) session).getFirstLevelCache() instanceof DefaultFirstLevelCache);
+        assertTrue( ((InternalCompassSession) session).getFirstLevelCache() instanceof PlainFirstLevelCache);
         tr.commit();
         session.close();
     }
