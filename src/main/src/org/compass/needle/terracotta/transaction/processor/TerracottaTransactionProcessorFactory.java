@@ -43,6 +43,7 @@ import org.compass.core.lucene.engine.transaction.TransactionProcessor;
 import org.compass.core.lucene.engine.transaction.TransactionProcessorFactory;
 import org.compass.core.lucene.engine.transaction.support.job.TransactionJob;
 import org.compass.core.lucene.engine.transaction.support.job.TransactionJobs;
+import org.compass.core.transaction.context.TransactionContextCallback;
 import org.compass.core.util.StringUtils;
 
 /**
@@ -120,7 +121,7 @@ public class TerracottaTransactionProcessorFactory implements TransactionProcess
                 aliasesSetting = null;
             }
             String[] subIndexes = searchEngineFactory.getIndexManager().calcSubIndexes(subIndexesSetting, aliasesSetting, null);
-            logger.info("Terracotta Transaction Processor Worker started. Sub indexes to process " + Arrays.toString(subIndexes));
+            logger.info("Terracotta Transaction Processor Worker started. Sub indexes to process: " + Arrays.toString(subIndexes));
             for (String subIndex : subIndexes) {
                 TerracottaProcessor processor = new TerracottaProcessor(subIndex, holder.getJobsPerSubIndex().get(subIndex));
                 searchEngineFactory.getExecutorManager().submit(processor);
@@ -176,6 +177,10 @@ public class TerracottaTransactionProcessorFactory implements TransactionProcess
             running = false;
         }
 
+        private String message(String message) {
+            return "Processor [" + subIndex + "]: " + message;
+        }
+
         public void run() {
             while (running) {
                 // each node locks and waits for jobs. This means that there are never
@@ -205,7 +210,7 @@ public class TerracottaTransactionProcessorFactory implements TransactionProcess
                     if (jobs == null) {
                         continue;
                     }
-                    List<TransactionJobs> jobsList = new ArrayList<TransactionJobs>();
+                    final List<TransactionJobs> jobsList = new ArrayList<TransactionJobs>();
                     jobsList.add(jobs);
                     jobsToProcess.drainTo(jobsList, nonBlockingBatchSize);
                     if (logger.isDebugEnabled()) {
@@ -213,44 +218,50 @@ public class TerracottaTransactionProcessorFactory implements TransactionProcess
                         for (TransactionJobs x : jobsList) {
                             totalJobs += x.getJobs().size();
                         }
-                        logger.debug("Processor [" + subIndex + "] procesing [" + jobsList.size() + "] transactions with [" + totalJobs + "] jobs");
+                        logger.debug(message("procesing [" + jobsList.size() + "] transactions with [" + totalJobs + "] jobs"));
                     }
 
-                    IndexWriter writer;
-                    try {
-                        writer = searchEngineFactory.getLuceneIndexManager().getIndexWritersManager().openIndexWriter(settings, subIndex);
-                        searchEngineFactory.getLuceneIndexManager().getIndexWritersManager().trackOpenIndexWriter(subIndex, writer);
-                    } catch (LockObtainFailedException e) {
-                        // we failed to get a lock, probably another one running and getting it, which is bad!
-                        logger.error("Another instance is running on the sub index, make sure it does not. Should not happen really...");
-                        continue;
-                    } catch (IOException e) {
-                        logger.error("Failed to open index writer, dismissing jobs [" + jobs + "]. Should not happen really...", e);
-                        continue;
-                    }
-                    try {
-                        for (TransactionJobs xJobs : jobsList) {
-                            for (TransactionJob job : xJobs.getJobs()) {
-                                job.execute(writer, searchEngineFactory);
+                    final TransactionJobs finalJobs = jobs;
+                    searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Boolean>() {
+                        public Boolean doInTransaction() throws CompassException {
+                            IndexWriter writer;
+                            try {
+                                writer = searchEngineFactory.getLuceneIndexManager().getIndexWritersManager().openIndexWriter(settings, subIndex);
+                                searchEngineFactory.getLuceneIndexManager().getIndexWritersManager().trackOpenIndexWriter(subIndex, writer);
+                            } catch (LockObtainFailedException e) {
+                                // we failed to get a lock, probably another one running and getting it, which is bad!
+                                logger.error(message("Another instance is running on the sub index, make sure it does not. Should not happen really..."));
+                                return false;
+                            } catch (IOException e) {
+                                logger.error(message("Failed to open index writer, dismissing jobs [" + finalJobs + "]. Should not happen really..."), e);
+                                return false;
                             }
+                            try {
+                                for (TransactionJobs xJobs : jobsList) {
+                                    for (TransactionJob job : xJobs.getJobs()) {
+                                        job.execute(writer, searchEngineFactory);
+                                    }
+                                }
+                                writer.commit();
+                            } catch (Exception e) {
+                                logger.error(message("Failed to process jobs [" + finalJobs + "]"), e);
+                                try {
+                                    writer.rollback();
+                                } catch (IOException e1) {
+                                    logger.warn(message("Failed to rollback transaction on jobs [" + finalJobs + "]"), e);
+                                }
+                            } finally {
+                                try {
+                                    writer.close();
+                                } catch (IOException e) {
+                                    logger.warn(message("Failed to close writer, ignoring"), e);
+                                } finally {
+                                    searchEngineFactory.getLuceneIndexManager().getIndexWritersManager().trackCloseIndexWriter(subIndex, writer);
+                                }
+                            }
+                            return null;
                         }
-                        writer.commit();
-                    } catch (Exception e) {
-                        logger.error("Failed to process jobs [" + jobs + "]", e);
-                        try {
-                            writer.rollback();
-                        } catch (IOException e1) {
-                            logger.warn("Failed to rollback transaction on jobs [" + jobs + "]", e);
-                        }
-                    } finally {
-                        try {
-                            writer.close();
-                        } catch (IOException e) {
-                            logger.warn("Failed to close writer, ignoring", e);
-                        } finally {
-                            searchEngineFactory.getLuceneIndexManager().getIndexWritersManager().trackCloseIndexWriter(subIndex, writer);
-                        }
-                    }
+                    });
                 } finally {
                     processLock.unlock();
                 }
