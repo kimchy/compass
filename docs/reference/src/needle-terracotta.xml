@@ -50,7 +50,7 @@
 	  </para>
 	  
 	  <para>
-	      The managed terracotta directory, which is the default, creates a logical transaction (using the managed read lock) that is bounded to the Compass transaction. It allows for much faster operations compared with the plain terracotta directory.
+	      The managed terracotta directory, creates a logical transaction (using the managed read lock) that is bounded to the Compass transaction. It allows for much faster operations compared with the plain terracotta directory on expense of lower concurrency. The managed feature is currently experimental and can be turned on by setting <literal>compass.engine.store.tc.managed</literal> setting to <literal>true</literal>.
 	  </para>
 	  
 	  <para>
