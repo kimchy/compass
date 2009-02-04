@@ -109,7 +109,9 @@ public class TerracottaDirectoryStore extends AbstractDirectoryStore implements 
         managed = settings.getSettingAsBoolean(MANAGED, true);
         concurrent = settings.getSettingAsBoolean(CONCURRENT, false);
         if (managed) {
-            // when working in managed mode, we can't have concurrent commits
+            // when working in managed mode, we can't have concurrent commits, since we run into deadlock
+            // we get teh read lock on one thread, and then try to get write lock on another without releasing the
+            // read lock
             concurrent = false;
         }
         chmInitialCapacity = settings.getSettingAsInt(CHM_CONCURRENCY_LEVEL_PROP, TerracottaDirectory.DEFAULT_CHM_INITIAL_CAPACITY);
