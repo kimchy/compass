@@ -76,6 +76,12 @@ public class TerracottaDirectoryStore extends AbstractDirectoryStore implements 
      */
     public static final String MANAGED = "compass.engine.store.tc.managed";
 
+    /**
+     * Should operations performed within a single "Compass transaction" be performed in a concurrent manner.
+     * The concurrent operations are jobs (create/update/delete) and commit (per sub index).
+     */
+    public static final String CONCURRENT = "compass.engine.store.tc.concurrent";
+
     private final Map<String, Map<String, Map<String, TerracottaDirectory>>> dirs = new HashMap<String, Map<String, Map<String, TerracottaDirectory>>>();
 
     private final ReadWriteLock managedRWL = new ReentrantReadWriteLock();
@@ -92,18 +98,25 @@ public class TerracottaDirectoryStore extends AbstractDirectoryStore implements 
 
     private boolean managed;
 
+    private boolean concurrent;
+
     private transient String indexName;
 
     public void configure(CompassSettings settings) throws CompassException {
         indexName = settings.getSetting(CompassEnvironment.CONNECTION).substring(PROTOCOL.length());
         bufferSize = (int) settings.getSettingAsBytes(BUFFER_SIZE_PROP, TerracottaDirectory.DEFAULT_BUFFER_SIZE);
         flushRate = settings.getSettingAsInt(FLUSH_RATE_PROP, TerracottaDirectory.DEFAULT_FLUSH_RATE);
-        managed = settings.getSettingAsBoolean(MANAGED, false);
+        managed = settings.getSettingAsBoolean(MANAGED, true);
+        concurrent = settings.getSettingAsBoolean(CONCURRENT, false);
+        if (managed) {
+            // when working in managed mode, we can't have concurrent commits
+            concurrent = false;
+        }
         chmInitialCapacity = settings.getSettingAsInt(CHM_CONCURRENCY_LEVEL_PROP, TerracottaDirectory.DEFAULT_CHM_INITIAL_CAPACITY);
         chmLoadFactor = settings.getSettingAsFloat(CHM_LOAD_FACTOR_PROP, TerracottaDirectory.DEFAULT_CHM_LOAD_FACTOR);
         chmConcurrencyLevel = settings.getSettingAsInt(CHM_CONCURRENCY_LEVEL_PROP, TerracottaDirectory.DEFAULT_CHM_CONCURRENCY_LEVEL);
         if (log.isDebugEnabled()) {
-            log.debug("Terracotta directory store configured with index [" + indexName + "], bufferSize [" + bufferSize + "], flushRate [" + flushRate + "], managed [" + managed + "]");
+            log.debug("Terracotta directory store configured with index [" + indexName + "], bufferSize [" + bufferSize + "], flushRate [" + flushRate + "], managed [" + managed + "], concurrent [" + concurrent + "]");
         }
     }
 
@@ -186,12 +199,12 @@ public class TerracottaDirectoryStore extends AbstractDirectoryStore implements 
 
     @Override
     public boolean supportsConcurrentCommits() {
-        return false;
+        return concurrent;
     }
 
     @Override
     public boolean supportsConcurrentOperations() {
-        return false;
+        return concurrent;
     }
 
     @Override

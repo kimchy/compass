@@ -177,12 +177,7 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
     }
 
     public void operate(final IndexOperationCallback callback) throws SearchEngineException {
-        searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Object>() {
-            public Object doInTransaction() throws CompassException {
-                doOperate(callback);
-                return null;
-            }
-        });
+        doOperate(callback);
     }
 
     protected void doOperate(final IndexOperationCallback callback) throws SearchEngineException {
@@ -195,20 +190,26 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         final Lock[] writerLocks = new Lock[subIndexes.length];
 
         try {
-            try {
-                if (log.isDebugEnabled()) {
-                    log.debug("Trying to obtain write locks");
+            if (log.isDebugEnabled()) {
+                log.debug("Trying to obtain write locks");
+            }
+            final String[] finalSubIndexes = subIndexes;
+            searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Object>() {
+                public Object doInTransaction() throws CompassException {
+                    for (int i = 0; i < finalSubIndexes.length; i++) {
+                        Directory dir = getDirectory(finalSubIndexes[i]);
+                        writerLocks[i] = dir.makeLock(IndexWriter.WRITE_LOCK_NAME);
+                        try {
+                            writerLocks[i].obtain(luceneSettings.getTransactionLockTimout());
+                        } catch (IOException e) {
+                            throw new SearchEngineException("Failed to retrieve transaction locks", e);
+                        }
+                    }
+                    return null;
                 }
-                for (int i = 0; i < subIndexes.length; i++) {
-                    Directory dir = getDirectory(subIndexes[i]);
-                    writerLocks[i] = dir.makeLock(IndexWriter.WRITE_LOCK_NAME);
-                    writerLocks[i].obtain(luceneSettings.getTransactionLockTimout());
-                }
-                if (log.isDebugEnabled()) {
-                    log.debug("Obtained write locks");
-                }
-            } catch (Exception e) {
-                throw new SearchEngineException("Failed to retrieve dirty transaction locks", e);
+            });
+            if (log.isDebugEnabled()) {
+                log.debug("Obtained write locks");
             }
             if (log.isDebugEnabled()) {
                 log.debug("Calling callback first step");
@@ -246,18 +247,18 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
             // call the second step
             callback.secondStep();
         } finally {
-            LuceneUtils.clearLocks(writerLocks);
+            searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Object>() {
+                public Object doInTransaction() throws CompassException {
+                    LuceneUtils.clearLocks(writerLocks);
+                    return null; 
+                }
+            });
         }
     }
 
 
     public void replaceIndex(final SearchEngineIndexManager indexManager, final ReplaceIndexCallback callback) throws SearchEngineException {
-        searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Object>() {
-            public Object doInTransaction() throws CompassException {
-                doReplaceIndex(indexManager, callback);
-                return null;
-            }
-        });
+        doReplaceIndex(indexManager, callback);
     }
 
     protected void doReplaceIndex(final SearchEngineIndexManager indexManager, final ReplaceIndexCallback callback) throws SearchEngineException {
@@ -286,17 +287,22 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
                 log.debug("[Replace Index] Replacing index [" + searchEngineStore + "] with ["
                         + indexManager.getStore() + "]");
             }
-            String[] subIndexes = searchEngineStore.polyCalcSubIndexes(getSubIndexes(), getAliases(), getTypes());
-            for (final String subIndex : subIndexes) {
-                indexHoldersCache.doUnderCacheLock(subIndex, new Runnable() {
-                    public void run() {
-                        clearCache(subIndex);
-                        indexManager.clearCache(subIndex);
-                        searchEngineStore.copyFrom(subIndex, indexManager.getStore());
-                        refreshCache(subIndex);
+            searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Object>() {
+                public Object doInTransaction() throws CompassException {
+                    String[] subIndexes = searchEngineStore.polyCalcSubIndexes(getSubIndexes(), getAliases(), getTypes());
+                    for (final String subIndex : subIndexes) {
+                        indexHoldersCache.doUnderCacheLock(subIndex, new Runnable() {
+                            public void run() {
+                                clearCache(subIndex);
+                                indexManager.clearCache(subIndex);
+                                searchEngineStore.copyFrom(subIndex, indexManager.getStore());
+                                refreshCache(subIndex);
+                            }
+                        });
                     }
-                });
-            }
+                    return null;
+                }
+            });
             if (log.isDebugEnabled()) {
                 log.debug("[Replace Index] Index [" + searchEngineStore + "] replaced from ["
                         + indexManager.getStore() + "]");

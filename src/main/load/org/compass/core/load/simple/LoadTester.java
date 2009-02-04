@@ -97,7 +97,8 @@ public class LoadTester {
                 a.setIndexTime(new Date());
 
                 temp = System.currentTimeMillis();
-                session.save(a);
+                session.save("a1", a);
+                session.save("a2", a);
                 saveTime[cycle] += System.currentTimeMillis() - temp;
             }
 
@@ -136,7 +137,7 @@ public class LoadTester {
             tr = session.beginTransaction();
             temp = System.currentTimeMillis();
             try {
-                session.load(A.class, new Long(1));
+                session.load("a1", new Long(1));
                 load[cycle] = System.currentTimeMillis() - temp;
             } catch (Exception e) {
                 load[cycle] = -1;
@@ -146,7 +147,7 @@ public class LoadTester {
             tr = session.beginTransaction();
             temp = System.currentTimeMillis();
             try {
-                session.load(A.class, new Long(1));
+                session.load("a1", new Long(1));
                 load2[cycle] = System.currentTimeMillis() - temp;
             } catch (Exception e) {
                 load2[cycle] = -1;
@@ -156,7 +157,7 @@ public class LoadTester {
             tr = session.beginTransaction();
             temp = System.currentTimeMillis();
             try {
-                session.loadResource(A.class, new Long(1));
+                session.loadResource("a1", new Long(1));
                 loadR[cycle] = System.currentTimeMillis() - temp;
             } catch (Exception e) {
                 loadR[cycle] = -1;
@@ -166,7 +167,7 @@ public class LoadTester {
             tr = session.beginTransaction();
             temp = System.currentTimeMillis();
             try {
-                Resource r = session.loadResource(A.class, new Long(1));
+                Resource r = session.loadResource("a1", new Long(1));
                 LuceneHelper.getTermFreqVectors(session, r);
                 termInfo[cycle] = System.currentTimeMillis() - temp;
             } catch (Exception e) {

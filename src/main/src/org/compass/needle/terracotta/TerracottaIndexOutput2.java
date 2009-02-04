@@ -22,8 +22,7 @@ import java.util.ArrayList;
 import org.apache.lucene.store.IndexOutput;
 
 /**
- * This index output should supports concurrent access to it from multiple threads, the problem is that the
- * managed directory has problems with it... .
+ * An index output that obtains a lock only when adding data to the file (to terracotta).
  *
  * @author kimchy
  */

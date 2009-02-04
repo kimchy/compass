@@ -6,6 +6,7 @@ VERSION 2.2.0 RC1
 
 1. Renamed the DefaultFirstLevelCache to PlainFirstLevelCache. Also changed the default first level cache to the
    NullFirstLevelCache.
+2. Removed SpringSyncTransactionGpsDeviceWrapper, no need for it anymore.
 
 VERSION 2.2.0 M2 (2 February, 2009)
 ===================================

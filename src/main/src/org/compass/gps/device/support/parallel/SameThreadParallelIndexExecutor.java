@@ -19,7 +19,6 @@ package org.compass.gps.device.support.parallel;
 import org.compass.core.CompassCallbackWithoutResult;
 import org.compass.core.CompassException;
 import org.compass.core.CompassSession;
-import org.compass.core.spi.InternalCompassSession;
 import org.compass.gps.spi.CompassGpsInterfaceDevice;
 
 /**
@@ -44,7 +43,7 @@ public class SameThreadParallelIndexExecutor implements ParallelIndexExecutor {
                 for (int i = 0; i < entities.length; i++) {
                     indexEntitiesIndexer.performIndex(session, entities[i]);
                 }
-                ((InternalCompassSession) session).flush();
+                session.flush();
             }
         });
     }

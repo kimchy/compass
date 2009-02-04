@@ -4,10 +4,30 @@
 
 <compass-core-mapping package="org.compass.core.load.simple">
 
-    <class name="A" alias="a">
+    <class name="A" alias="a1">
     
         <id name="id" />
         
+        <property name="data1">
+            <meta-data>mvalue</meta-data>
+            <meta-data>mdata1</meta-data>
+        </property>
+
+        <property name="data2">
+            <meta-data>mvalue</meta-data>
+            <meta-data>mdata2</meta-data>
+        </property>
+
+        <property name="indexTime">
+            <meta-data>mindexTime</meta-data>
+        </property>
+
+    </class>
+
+    <class name="A" alias="a2">
+
+        <id name="id" />
+
         <property name="data1">
             <meta-data>mvalue</meta-data>
             <meta-data>mdata1</meta-data>
