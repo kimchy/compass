@@ -10,6 +10,10 @@
             <honor-transient>true</honor-transient>
         </include>
         <include>
+            <class-expression>org.compass.core.lucene.engine.transaction.support.*</class-expression>
+            <honor-transient>true</honor-transient>
+        </include>
+        <include>
             <class-expression>org.apache.lucene.store.Directory</class-expression>
             <honor-transient>true</honor-transient>
         </include>
@@ -73,6 +77,9 @@
         </root>
         <root>
             <field-name>org.compass.needle.terracotta.transaction.processor.TerracottaTransactionProcessorFactory.holder</field-name>
+        </root>
+        <root>
+            <field-name>org.compass.core.lucene.engine.transaction.support.orderLocks</field-name>
         </root>
     </roots>
 </xml-fragment>
