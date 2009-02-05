@@ -18,8 +18,6 @@ package org.compass.needle.terracotta;
 
 import java.io.IOException;
 
-import com.tc.object.bytecode.ManagerUtil;
-import com.tc.object.lockmanager.api.LockLevel;
 import junit.framework.TestCase;
 import org.apache.lucene.store.IndexInput;
 import org.apache.lucene.store.IndexOutput;
@@ -63,20 +61,6 @@ public class TerracottaDirectoryTests extends TestCase {
 
     public void testSimpeLocking() throws Exception {
         TerracottaDirectory dir = new TerracottaDirectory(40, 1);
-
-        try {
-            ManagerUtil.tryBeginLock("test", LockLevel.WRITE);
-            // TODO not working for now
-//            dir.setLockFactory(new TerracottaManagerUtilLockFactory());
-        } catch (UnsupportedOperationException e) {
-            dir.setLockFactory(new TerracottaLockFactory());
-        } finally {
-            try {
-                ManagerUtil.commitLock("test");
-            } catch (Exception e) {
-                // ignore
-            }
-        }
 
         Lock lock = dir.makeLock("testlock");
         assertFalse(lock.isLocked());

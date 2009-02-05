@@ -780,13 +780,6 @@
       <JAVADOC />
       <SOURCES />
     </library>
-    <library name="jgroups">
-      <CLASSES>
-        <root url="jar://$PROJECT_DIR$/lib/jgroups/jgroups-all.jar!/" />
-      </CLASSES>
-      <JAVADOC />
-      <SOURCES />
-    </library>
     <library name="jotm">
       <CLASSES>
         <root url="jar://$PROJECT_DIR$/lib/jotm/jotm-carol.jar!/" />
@@ -813,13 +806,6 @@
     <library name="log4j">
       <CLASSES>
         <root url="jar://$PROJECT_DIR$/lib/log4j/log4j-1.2.13.jar!/" />
-      </CLASSES>
-      <JAVADOC />
-      <SOURCES />
-    </library>
-    <library name="mina">
-      <CLASSES>
-        <root url="jar://$PROJECT_DIR$/lib/mina/mina-core-1.1.5.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />
@@ -875,13 +861,6 @@
       <CLASSES>
         <root url="jar://$PROJECT_DIR$/lib/xpp/xpp3-1.1.3_8.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/xpp/pull-parser-2.1.10.jar!/" />
-      </CLASSES>
-      <JAVADOC />
-      <SOURCES />
-    </library>
-    <library name="Terracota">
-      <CLASSES>
-        <root url="jar://$PROJECT_DIR$/lib/terracotta/terracotta-api-2.7.0-prealpha.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />

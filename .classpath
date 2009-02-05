@@ -72,8 +72,6 @@
 	<classpathentry kind="lib" path="lib/gigaspaces/openspaces.jar"/>
 	<classpathentry kind="lib" path="lib/gigaspaces/reggie.jar"/>
 	<classpathentry kind="lib" path="lib/gigaspaces/start.jar"/>
-	<classpathentry kind="lib" path="lib/jgroups/jgroups-all.jar"/>
-	<classpathentry kind="lib" path="lib/mina/mina-core-1.1.5.jar"/>
 	<classpathentry kind="lib" path="lib/asm/asm-2.2.3.jar"/>
 	<classpathentry kind="lib" path="lib/asm/asm-commons-2.2.3.jar"/>
 	<classpathentry kind="lib" path="lib/asm/asm-util-2.2.3.jar"/>
@@ -90,7 +88,6 @@
 	<classpathentry kind="lib" path="lib/woodstox/wstx-asl-3.2.4.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/openjpa/openjpa-1.1.0.jar"/>
-	<classpathentry kind="lib" path="lib/terracotta/terracotta-api-2.7.0-prealpha.jar"/>
 	<classpathentry kind="lib" path="lib/spring/spring-test.jar"/>
 	<classpathentry kind="lib" path="lib/spring/spring-webmvc.jar"/>
 	<classpathentry kind="lib" path="lib/mvel/mvel2-2.0.jar"/>

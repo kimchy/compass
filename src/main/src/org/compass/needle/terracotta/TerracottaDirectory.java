@@ -79,14 +79,7 @@ public class TerracottaDirectory extends Directory {
         this.bufferSize = bufferSize;
         this.flushRate = flushRate;
         this.fileMap = createMap(chmInitialCapacity, chmLoadFactor, chmConcurrencyLevel);
-        try {
-            Class.forName("com.tc.object.bytecode.ManagerUtil", true, Thread.currentThread().getContextClassLoader());
-//            setLockFactory(new TerracottaManagerUtilLockFactory());
-            // Use the default lock factory for now as there are some problems with ManagerUtil
-            setLockFactory(new TerracottaLockFactory());
-        } catch (ClassNotFoundException e) {
-            setLockFactory(new TerracottaLockFactory());
-        }
+        setLockFactory(new TerracottaLockFactory());
         if (log.isDebugEnabled()) {
             log.debug("Using Terracota lock factory [" + getLockFactory() + "]");
         }
