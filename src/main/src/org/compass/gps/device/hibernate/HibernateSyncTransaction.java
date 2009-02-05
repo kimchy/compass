@@ -27,6 +27,7 @@ import org.compass.core.spi.InternalCompassSession;
 import org.compass.core.transaction.AbstractTransaction;
 import org.compass.core.transaction.TransactionException;
 import org.compass.core.transaction.TransactionFactory;
+import org.hibernate.FlushMode;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.engine.SessionImplementor;
@@ -68,7 +69,8 @@ public class HibernateSyncTransaction extends AbstractTransaction {
         this.session = session;
         try {
             controllingNewTransaction = true;
-            newTransaction = !((SessionImplementor) sessionFactory.getCurrentSession()).isTransactionInProgress();
+            SessionImplementor hibernateSession = ((SessionImplementor) sessionFactory.getCurrentSession());
+            newTransaction = !hibernateSession.isTransactionInProgress();
             transaction = sessionFactory.getCurrentSession().getTransaction();
             if (newTransaction) {
                 if (log.isDebugEnabled()) {
@@ -76,6 +78,9 @@ public class HibernateSyncTransaction extends AbstractTransaction {
                             + Thread.currentThread().getName() + "]");
                 }
                 session.getSearchEngine().begin();
+                if (session.isReadOnly()) {
+                    hibernateSession.setFlushMode(FlushMode.MANUAL);
+                }
                 transaction.begin();
             } else {
                 // joining an exisiting transaction
