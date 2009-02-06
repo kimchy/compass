@@ -68,6 +68,50 @@ public interface Compass extends Referenceable, Serializable {
     CompassSession openSession() throws CompassException;
 
     /**
+     * If there is a transaction bound session, will return it. Otherwise
+     * returns a new search session.
+     *
+     * <p>A transactional bound session is bounded to the transaction when calling
+     * the CompassSession.beginTransaction() or if Compass tries to automatically join
+     * an already running transaction (see next paragraph).
+     *
+     * <p>If creating a new session, will try to automatically join an existing
+     * outer transaction. An outer transaction might be an already running Compass
+     * local transaction, or an external transaciton (JTA or Spring for example). In
+     * such cases, there is no need to perform any transaction managment code (begin
+     * or commit/rollback transaction) or closing the opened session. Compass will also
+     * bind the session to the same transaction if an outer transaction exists. Note, when
+     * doing so, the mentioned code will have to always be excuted within an already running
+     * transaction.
+     *
+     * @return CompassSession The compass session
+     * @throws CompassException
+     */
+    CompassSearchSession openSearchSession() throws CompassException;
+
+    /**
+     * If there is a transaction bound session, will return it. Otherwise
+     * returns a new index session.
+     *
+     * <p>A transactional bound session is bounded to the transaction when calling
+     * the CompassSession.beginTransaction() or if Compass tries to automatically join
+     * an already running transaction (see next paragraph).
+     *
+     * <p>If creating a new session, will try to automatically join an existing
+     * outer transaction. An outer transaction might be an already running Compass
+     * local transaction, or an external transaciton (JTA or Spring for example). In
+     * such cases, there is no need to perform any transaction managment code (begin
+     * or commit/rollback transaction) or closing the opened session. Compass will also
+     * bind the session to the same transaction if an outer transaction exists. Note, when
+     * doing so, the mentioned code will have to always be excuted within an already running
+     * transaction.
+     *
+     * @return CompassSession The compass session
+     * @throws CompassException
+     */
+    CompassIndexSession openIndexSession() throws CompassException;
+
+    /**
      * Closes Compass and releases any resources that are assoicated with it. It is
      * very importnat to close an unused Compass instance since it might hold resources
      * (such as file descriptor when storing the index within the file system) that

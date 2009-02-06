@@ -75,6 +75,42 @@ try {
     </para>
 
   </sect1>
+  
+  <sect1 id="core-introduction-sessiontypes">
+      <title>Session Types</title>
+      
+      <para>
+          On top of the fully featured <literal>CompassSession</literal> which provides both search and index capabilities, Compass provides simplified APIs for either searching or indexing. The <literal>CompassSearchSession</literal> provides only search capabilities and can be used in the following manner:          
+<programlisting><![CDATA[
+CompassSearchSession session = compass.openSearchSession();
+try {
+  ...
+  CompassHits hits = session.find("jack london");
+  Author a = (Author) hits.data(0);
+  Resource r = hits.resource(0);
+  ...
+} finally {
+  session.close();
+}
+]]></programlisting>
+
+         The <literal>CompassIndexSession</literal> provides only index operations:
+         
+ <programlisting><![CDATA[
+ CompassIndexSession session = compass.openIndexSession();
+ try {
+   ...
+   session.save(author);
+   ...
+   session.commit();
+ } catch (Exception e) {
+   session.rollback();
+ } finally {
+   session.close();
+ }
+ ]]></programlisting>
+      </para>
+  </sect1>
 
   <sect1 id="core-introduction-sessionLifecycle">
     <title>Session Lifecycle</title>

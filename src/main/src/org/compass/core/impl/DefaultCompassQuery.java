@@ -22,6 +22,7 @@ import org.compass.core.CompassException;
 import org.compass.core.CompassHits;
 import org.compass.core.CompassQuery;
 import org.compass.core.CompassQueryFilter;
+import org.compass.core.CompassSearchSession;
 import org.compass.core.CompassSession;
 import org.compass.core.engine.SearchEngineHits;
 import org.compass.core.engine.SearchEngineQuery;
@@ -67,6 +68,11 @@ public class DefaultCompassQuery implements InternalCompassQuery, Cloneable {
     }
 
     public CompassQuery attach(CompassSession session) {
+        attachedSession.set((InternalCompassSession) session);
+        return this;
+    }
+
+    public CompassQuery attach(CompassSearchSession session) {
         attachedSession.set((InternalCompassSession) session);
         return this;
     }

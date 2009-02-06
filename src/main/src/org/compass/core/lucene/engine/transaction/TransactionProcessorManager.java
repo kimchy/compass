@@ -30,6 +30,7 @@ import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.lucene.engine.transaction.async.AsyncTransactionProcessorFactory;
 import org.compass.core.lucene.engine.transaction.lucene.LuceneTransactionProcessorFactory;
 import org.compass.core.lucene.engine.transaction.readcommitted.ReadCommittedTransactionProcessorFactory;
+import org.compass.core.lucene.engine.transaction.search.SearchTransactionProcessorFactory;
 import org.compass.core.util.ClassUtils;
 
 /**
@@ -84,6 +85,7 @@ public class TransactionProcessorManager {
         addDefaulIfRequired(searchEngineFactory, LuceneEnvironment.Transaction.Processor.ReadCommitted.NAME, ReadCommittedTransactionProcessorFactory.class);
         addDefaulIfRequired(searchEngineFactory, LuceneEnvironment.Transaction.Processor.Lucene.NAME, LuceneTransactionProcessorFactory.class);
         addDefaulIfRequired(searchEngineFactory, LuceneEnvironment.Transaction.Processor.Async.NAME, AsyncTransactionProcessorFactory.class);
+        addDefaulIfRequired(searchEngineFactory, LuceneEnvironment.Transaction.Processor.Search.NAME, SearchTransactionProcessorFactory.class);
     }
 
     private void addDefaulIfRequired(LuceneSearchEngineFactory searchEngineFactory, String key, Class<? extends TransactionProcessorFactory> type) {

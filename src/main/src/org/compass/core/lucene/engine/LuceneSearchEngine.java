@@ -110,9 +110,13 @@ public class LuceneSearchEngine implements SearchEngine {
         }
 
         closeDelegateClosed();
+        String defaultProcessorFactory = LuceneEnvironment.Transaction.Processor.ReadCommitted.NAME;
+        if (readOnly) {
+            defaultProcessorFactory = LuceneEnvironment.Transaction.Processor.Search.NAME;
+        }
 
         TransactionProcessorFactory transactionProcessorFactory = searchEngineFactory.getTransactionProcessorManager()
-                .getProcessorFactory(runtimeSettings.getSetting(LuceneEnvironment.Transaction.Processor.TYPE, LuceneEnvironment.Transaction.Processor.ReadCommitted.NAME));
+                .getProcessorFactory(runtimeSettings.getSetting(LuceneEnvironment.Transaction.Processor.TYPE, defaultProcessorFactory));
         transactionProcessor = transactionProcessorFactory.create(this);
         eventManager.beforeBeginTransaction();
         transactionProcessor.begin();

@@ -142,6 +142,12 @@ public interface CompassQuery {
     CompassQuery attach(CompassSession session);
 
     /**
+     * Attaches the Compass Query to the current session. Should be called when the query
+     * is created using {@link org.compass.core.Compass#queryBuilder()}.
+     */
+    CompassQuery attach(CompassSearchSession session);
+
+    /**
      * Detaches the query from the current session. Note, not required to be called since
      * it will be automatically detached when the session is closed.
      */

@@ -25,8 +25,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.compass.core.Compass;
 import org.compass.core.CompassException;
+import org.compass.core.CompassIndexSession;
 import org.compass.core.CompassQueryBuilder;
 import org.compass.core.CompassQueryFilterBuilder;
+import org.compass.core.CompassSearchSession;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
 import org.compass.core.ResourceFactory;
@@ -49,6 +51,7 @@ import org.compass.core.executor.ExecutorManager;
 import org.compass.core.id.IdentifierGenerator;
 import org.compass.core.id.UUIDGenerator;
 import org.compass.core.jndi.CompassObjectFactory;
+import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.metadata.CompassMetaData;
@@ -224,6 +227,18 @@ public class DefaultCompass implements InternalCompass {
 
     public CompassEventManager getEventManager() {
         return this.eventManager;
+    }
+
+    public CompassSearchSession openSearchSession() {
+        CompassSession session = openSession();
+        session.setReadOnly();
+        return session;
+    }
+
+    public CompassIndexSession openIndexSession() {
+        CompassSession session = openSession();
+        session.getSettings().setSetting(LuceneEnvironment.Transaction.Processor.TYPE, LuceneEnvironment.Transaction.Processor.Lucene.NAME);
+        return session;
     }
 
     public CompassSession openSession() {

@@ -675,6 +675,17 @@ public class LuceneEnvironment {
             }
 
             /**
+             * Search transaction processor allows to perform only search opeations. Very lightweight.
+             */
+            public static final class Search {
+
+                /**
+                 * The name of the search transaction processor.
+                 */
+                public static final String NAME = "search";
+            }
+
+            /**
              * Settings for async transaction processor.
              *
              * @see org.compass.core.lucene.engine.transaction.async.AsyncTransactionProcessorFactory

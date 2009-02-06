@@ -72,7 +72,7 @@ import org.compass.core.config.CompassSettings;
  * @see org.compass.core.Compass
  */
 
-public interface CompassSession extends CompassOperations {
+public interface CompassSession extends CompassOperations, CompassSearchSession, CompassIndexSession {
 
     /**
      * Indicates that the session will be used for read only operations. Allowing to optimize
