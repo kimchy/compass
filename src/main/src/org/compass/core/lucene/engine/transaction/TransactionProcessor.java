@@ -66,6 +66,12 @@ public interface TransactionProcessor {
     void flush() throws SearchEngineException;
 
     /**
+     * Flush changes and make them visible for other transactions. Note, operations performed up until
+     * the flush commit was called might not be able to roll back.
+     */
+    void flushCommit(String ... aliases) throws SearchEngineException;
+
+    /**
      * Creates a resource.
      */
     void create(final InternalResource resource) throws SearchEngineException;

@@ -50,6 +50,7 @@ import org.compass.core.lucene.engine.manager.LuceneIndexHolder;
 import org.compass.core.lucene.engine.transaction.support.AbstractConcurrentTransactionProcessor;
 import org.compass.core.lucene.engine.transaction.support.job.DeleteByQueryTransactionJob;
 import org.compass.core.lucene.engine.transaction.support.job.DeleteTransactionJob;
+import org.compass.core.lucene.engine.transaction.support.job.FlushCommitTransactionJob;
 import org.compass.core.lucene.engine.transaction.support.job.TransactionJob;
 import org.compass.core.lucene.engine.transaction.support.job.UpdateTransactionJob;
 import org.compass.core.lucene.search.CacheableMultiReader;
@@ -95,6 +96,10 @@ public class ReadCommittedTransactionProcessor extends AbstractConcurrentTransac
 
     public String getName() {
         return LuceneEnvironment.Transaction.Processor.ReadCommitted.NAME;
+    }
+
+    protected String[] getDirtySubIndexes() {
+        return indexWriterBySubIndex.keySet().toArray(new String[indexWriterBySubIndex.keySet().size()]);
     }
 
     @Override
@@ -331,16 +336,28 @@ public class ReadCommittedTransactionProcessor extends AbstractConcurrentTransac
                 markDeleted(deleteJob.getResourceKey());
                 // delete from the original index (autoCommit is false, so won't be committed)
                 job.execute(indexWriter, searchEngineFactory);
+                transIndexManager.processJob(job);
             } else if (job instanceof DeleteByQueryTransactionJob) {
-                DeleteByQueryTransactionJob deleteByQueryJob = (DeleteByQueryTransactionJob) job;
                 job.execute(indexWriter, searchEngineFactory);
+                transIndexManager.processJob(job);
             } else if (job instanceof UpdateTransactionJob) {
                 UpdateTransactionJob updateJob = (UpdateTransactionJob) job;
                 Term deleteTerm = markDeleted(updateJob.getResource().getResourceKey());
                 // delete from the original index (autoCommit is false, so won't be committed
                 indexWriter.deleteDocuments(deleteTerm);
+                transIndexManager.processJob(job);
+            } else if (job instanceof FlushCommitTransactionJob) {
+                if (transIndexManager.hasTransIndex(job.getSubIndex())) {
+                    transIndexManager.commit(job.getSubIndex());
+                    Directory transDir = transIndexManager.getDirectory(job.getSubIndex());
+                    indexWriter.addIndexesNoOptimize(new Directory[]{transDir});
+                    transIndexManager.close(job.getSubIndex());
+                }
+                indexWriter.commit();
+            } else {
+                // Create job
+                transIndexManager.processJob(job);
             }
-            transIndexManager.processJob(job);
         } catch (Exception e) {
             throw new SearchEngineException("Failed to process job [" + job + "]", e);
         }

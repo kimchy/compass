@@ -190,6 +190,13 @@ public class LuceneSearchEngine implements SearchEngine {
         }
     }
 
+    public void flushCommit(String ... aliases) throws SearchEngineException {
+        verifyWithinTransaction();
+        if (transactionProcessor != null) {
+            transactionProcessor.flushCommit(aliases);
+        }
+    }
+
     public boolean wasRolledBack() throws SearchEngineException {
         return transactionState == ROLLBACK;
     }

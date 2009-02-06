@@ -78,6 +78,10 @@ public class SearchTransactionProcessor extends AbstractSearchTransactionProcess
         // nothing to do
     }
 
+    public void flushCommit(String ... aliases) throws SearchEngineException {
+        // nothing to do here
+    }
+
     public void create(InternalResource resource) throws SearchEngineException {
         throw new SearchEngineException("create can not be perfoemd on a search only session");
     }

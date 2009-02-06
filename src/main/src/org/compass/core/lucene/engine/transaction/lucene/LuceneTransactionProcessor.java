@@ -68,6 +68,10 @@ public class LuceneTransactionProcessor extends AbstractConcurrentTransactionPro
         return LuceneEnvironment.Transaction.Processor.Lucene.NAME;
     }
 
+    protected String[] getDirtySubIndexes() {
+        return indexWriterBySubIndex.keySet().toArray(new String[indexWriterBySubIndex.keySet().size()]);
+    }
+
     @Override
     protected void doRollback() throws SearchEngineException {
         SearchEngineException exception = null;

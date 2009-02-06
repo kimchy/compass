@@ -44,6 +44,19 @@ public interface CompassIndexSession {
     ResourceFactory resourceFactory();
 
     /**
+     * Flush the current transaction.
+     */
+    void flush() throws CompassException;
+
+    /**
+     * Flush commit all the provided aliases (or all of them, if none is provided). Flush commit
+     * means that all operations up to this point will be made available in the index, and other
+     * sessions will be able to see it. It also means that the operations up to this point will
+     * not be rolledback.
+     */
+    void flushCommit(String ... aliases) throws CompassException;
+    
+    /**
      * Deletes a resource with the specified alias. Note that the resource must
      * have the defined ids in the mapping files set and an alias set.
      *

@@ -56,6 +56,10 @@ public class AsyncTransactionProcessor extends AbstractJobBasedTransactionProces
         // nothing to do here, we only add on commit
     }
 
+    protected void doFlushCommit(TransactionJobs jobs) {
+        processorFactory.add(jobs);
+    }
+
     protected void doCommit(boolean onePhase, TransactionJobs jobs) throws SearchEngineException {
         processorFactory.add(jobs);
         committed = true;

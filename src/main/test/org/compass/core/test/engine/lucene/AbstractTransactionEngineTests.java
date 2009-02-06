@@ -17,6 +17,7 @@
 package org.compass.core.test.engine.lucene;
 
 import org.compass.core.Resource;
+import org.compass.core.engine.SearchEngine;
 import org.compass.core.engine.SearchEngineHits;
 import org.compass.core.engine.SearchEngineQuery;
 import org.compass.core.lucene.AbstractLuceneEngineTests;
@@ -731,6 +732,77 @@ public abstract class AbstractTransactionEngineTests extends AbstractLuceneEngin
         assertMulitIdResourceExists(getSearchEngine());
         assertMulitIdResourceOriginal(getSearchEngine());
         getSearchEngine().rollback();
+    }
+
+    public void testFlushCommit() {
+        // create a search search engine
+        SearchEngine searchSearchEngine = createNewSearchEngine();
+        searchSearchEngine.begin();
+
+        // verify that there is no resources there
+        assertSingleIdResourceNotExists(searchSearchEngine);
+        assertMulitIdResourceNotExists(searchSearchEngine);
+
+        // start the search engine the perfoms the actual dirty operations
+        getSearchEngine().begin();
+        Resource singleId = createSingleIdResource(getSearchEngine());
+        getSearchEngine().create(singleId);
+        Resource multiId = createMultiIdResource(getSearchEngine());
+        getSearchEngine().create(multiId);
+        sleepForChangesToOccur();
+
+        // clear the cache and verify that we don't see the changes in the search SearchEngine
+        getSearchEngineFactory().getIndexManager().clearCache();
+        assertSingleIdResourceNotExists(searchSearchEngine);
+        assertMulitIdResourceNotExists(searchSearchEngine);
+
+        // flush commit, and now check that we see the changes in the search SearchEgnine
+        getSearchEngine().flushCommit();
+        sleepForChangesToOccur();
+        getSearchEngineFactory().getIndexManager().clearCache();
+        assertSingleIdResourceExists(searchSearchEngine);
+        assertMulitIdResourceExists(searchSearchEngine);
+
+        // create new resources (after flush commit), make sure we can do that
+        Resource singleId2 = createSingleIdResource2(getSearchEngine());
+        getSearchEngine().create(singleId2);
+        Resource multiId2 = createMultiIdResource2(getSearchEngine());
+        getSearchEngine().create(multiId2);
+        sleepForChangesToOccur();
+
+        // verify that we don't see them in the search SearchEngine
+        getSearchEngineFactory().getIndexManager().clearCache();
+        assertSingleIdResource2NotExists(searchSearchEngine);
+        assertMulitIdResource2NotExists(searchSearchEngine);
+
+        // flush commit and see that we can see them
+        getSearchEngine().flushCommit();
+        sleepForChangesToOccur();
+        getSearchEngineFactory().getIndexManager().clearCache();
+        assertSingleIdResource2Exists(searchSearchEngine);
+        assertMulitIdResource2Exists(searchSearchEngine);
+
+        // now delete the resource
+        getSearchEngine().delete(singleId);
+        getSearchEngine().delete(multiId);
+        sleepForChangesToOccur();
+
+        // check that we don't see it in the search SearchEngine
+        getSearchEngineFactory().getIndexManager().clearCache();
+        assertSingleIdResourceExists(searchSearchEngine);
+        assertMulitIdResourceExists(searchSearchEngine);
+
+        // now flush commit, and see that we don't see it in the search SearchEngine
+        getSearchEngine().flushCommit(ALIAS_SINGLE);
+        sleepForChangesToOccur();
+        getSearchEngineFactory().getIndexManager().clearCache();
+        assertSingleIdResourceNotExists(searchSearchEngine);
+        assertMulitIdResourceExists(searchSearchEngine);
+        assertSingleIdResource2Exists(searchSearchEngine);
+        assertMulitIdResource2Exists(searchSearchEngine);
+
+        searchSearchEngine.commit(true);
+        getSearchEngine().commit(true);
     }
 
     protected void sleepForChangesToOccur() {

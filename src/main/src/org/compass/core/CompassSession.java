@@ -113,6 +113,14 @@ public interface CompassSession extends CompassOperations, CompassSearchSession,
     void flush() throws CompassException;
 
     /**
+     * Flush commit all the provided aliases (or all of them, if none is provided). Flush commit
+     * means that all operations up to this point will be made available in the index, and other
+     * sessions will be able to see it. It also means that the operations up to this point will
+     * not be rolledback.
+     */
+    void flushCommit(String ... aliases) throws CompassException;
+
+    /**
      * Begin a unit of work and return the associated CompassTranscation object.
      * If a new underlying transaction is required, begin the transaction.
      * Otherwise continue the new work in the context of the existing underlying

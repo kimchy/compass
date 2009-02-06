@@ -17,6 +17,9 @@
 package org.compass.core.lucene.engine.transaction.support;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
@@ -32,6 +35,7 @@ import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
 import org.compass.core.lucene.engine.transaction.support.job.CreateTransactionJob;
 import org.compass.core.lucene.engine.transaction.support.job.DeleteByQueryTransactionJob;
 import org.compass.core.lucene.engine.transaction.support.job.DeleteTransactionJob;
+import org.compass.core.lucene.engine.transaction.support.job.FlushCommitTransactionJob;
 import org.compass.core.lucene.engine.transaction.support.job.TransactionJob;
 import org.compass.core.lucene.engine.transaction.support.job.UpdateTransactionJob;
 import org.compass.core.spi.InternalResource;
@@ -191,6 +195,38 @@ public abstract class AbstractConcurrentTransactionProcessor extends AbstractSea
             }
         }
     }
+
+    public void flushCommit(String ... aliases) throws SearchEngineException {
+        flush();
+        // intersect
+        Set<String> calcSubIndexes = new HashSet<String>();
+        if (aliases == null || aliases.length == 0) {
+            calcSubIndexes.addAll(Arrays.asList(getDirtySubIndexes()));
+        } else {
+            Set<String> dirtySubIndxes = new HashSet<String>(Arrays.asList(getDirtySubIndexes()));
+            Set<String> requiredSubIndexes = new HashSet<String>(Arrays.asList(indexManager.polyCalcSubIndexes(null, aliases, null)));
+            for (String subIndex : indexManager.getSubIndexes()) {
+                if (dirtySubIndxes.contains(subIndex) && requiredSubIndexes.contains(subIndex)) {
+                    calcSubIndexes.add(subIndex);
+                }
+            }
+        }
+        for (String subIndex : calcSubIndexes) {
+            TransactionJob job = new FlushCommitTransactionJob(subIndex);
+            if (concurrentOperations) {
+                prepareBeforeAsyncDirtyOperation(job);
+                getProcessor(job).addJob(job);
+            } else {
+                doProcessJob(job);
+            }
+        }
+        flush();
+    }
+
+    /**
+     * Returns the current dirty sub indexes.
+     */
+    protected abstract String[] getDirtySubIndexes();
 
     /**
      * Sub classes should implement the actual processing of a transactional job.

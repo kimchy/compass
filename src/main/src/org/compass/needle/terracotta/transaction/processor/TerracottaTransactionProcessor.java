@@ -38,7 +38,7 @@ public class TerracottaTransactionProcessor extends AbstractJobBasedTransactionP
 
     private final TerracottaTransactionProcessorFactory processorFactory;
 
-    private Map<String, TransactionJobs> committedJobs;
+    private transient Map<String, TransactionJobs> committedJobs;
 
     /**
      */
@@ -53,6 +53,10 @@ public class TerracottaTransactionProcessor extends AbstractJobBasedTransactionP
 
     protected void doPrepare(TransactionJobs jobs) throws SearchEngineException {
         // nothing to do here, we only add on commit
+    }
+
+    protected void doFlushCommit(TransactionJobs jobs) {
+        processorFactory.add(jobs);
     }
 
     protected void doCommit(boolean onePhase, TransactionJobs jobs) throws SearchEngineException {

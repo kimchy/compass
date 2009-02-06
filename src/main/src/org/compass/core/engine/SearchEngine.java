@@ -97,9 +97,16 @@ public interface SearchEngine {
     void rollback() throws SearchEngineException;
 
     /**
-     * Flushed the current transaction. Currently only works with batch insert transaction.
+     * Flushes the current transaction. Tries to wait till all operations are applied to the index.
      */
     void flush() throws SearchEngineException;
+
+    /**
+     * Flushes the current transaction, and make all the operations perfomed on it until now "viewable"
+     * to other transactions. The operations performed before the flush commit operation will not rollback
+     * on rollback operation.
+     */
+    void flushCommit(String ... aliases) throws SearchEngineException;
 
     /**
      * Was this transaction rolled back

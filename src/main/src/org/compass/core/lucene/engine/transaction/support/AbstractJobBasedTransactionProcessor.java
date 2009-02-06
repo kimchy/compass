@@ -17,8 +17,11 @@
 package org.compass.core.lucene.engine.transaction.support;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.lucene.store.Lock;
@@ -31,6 +34,7 @@ import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
 import org.compass.core.lucene.engine.transaction.support.job.CreateTransactionJob;
 import org.compass.core.lucene.engine.transaction.support.job.DeleteByQueryTransactionJob;
 import org.compass.core.lucene.engine.transaction.support.job.DeleteTransactionJob;
+import org.compass.core.lucene.engine.transaction.support.job.TransactionJob;
 import org.compass.core.lucene.engine.transaction.support.job.TransactionJobs;
 import org.compass.core.lucene.engine.transaction.support.job.UpdateTransactionJob;
 import org.compass.core.spi.InternalResource;
@@ -111,9 +115,6 @@ public abstract class AbstractJobBasedTransactionProcessor extends AbstractSearc
 
     abstract protected void doRollback(TransactionJobs jobs) throws SearchEngineException;
 
-    public void flush() throws SearchEngineException {
-    }
-
     public void create(InternalResource resource) throws SearchEngineException {
         obtainOrderLockIfNeeded(resource.getSubIndex());
         getTransactionJobs().add(new CreateTransactionJob(resource));
@@ -137,6 +138,37 @@ public abstract class AbstractJobBasedTransactionProcessor extends AbstractSearc
             getTransactionJobs().add(new DeleteByQueryTransactionJob(query.getQuery(), subIndex));
         }
     }
+
+    public void flush() throws SearchEngineException {
+        // nothing to do here
+    }
+
+    /**
+     * Calls {@link #doFlushCommit(org.compass.core.lucene.engine.transaction.support.job.TransactionJobs)} and then
+     * clears the jobs listed to be processed.
+     */
+    public void flushCommit(String ... aliases) throws SearchEngineException {
+        flush();
+        if (aliases == null || aliases.length == 0) {
+            doFlushCommit(jobs);
+            jobs = null;
+        } else {
+            Set<String> subIndexes = new HashSet<String>(Arrays.asList(indexManager.polyCalcSubIndexes(null, aliases, null)));
+            TransactionJobs flushJobs = new TransactionJobs();
+            TransactionJobs leftoverJobs = new TransactionJobs();
+            for (TransactionJob job : jobs.getJobs()) {
+                if (subIndexes.contains(job.getSubIndex())) {
+                    flushJobs.add(job);
+                } else {
+                    leftoverJobs.add(job);
+                }
+            }
+            doFlushCommit(flushJobs);
+            jobs = leftoverJobs;
+        }
+    }
+
+    protected abstract void doFlushCommit(TransactionJobs jobs);
 
     public LuceneSearchEngineHits find(LuceneSearchEngineQuery query) throws SearchEngineException {
         return performFind(query);

@@ -59,6 +59,10 @@ public abstract class AbstractSearchEngineTests extends AbstractEngineTests {
         this.searchEngine = searchEngineFactory.openSearchEngine(new RuntimeCompassSettings(compass.getSettings()));
     }
 
+    public SearchEngine createNewSearchEngine() {
+        return searchEngineFactory.openSearchEngine(new RuntimeCompassSettings(compass.getSettings()));
+    }
+
     protected void tearDown() throws Exception {
         searchEngine.close();
         compass.close();

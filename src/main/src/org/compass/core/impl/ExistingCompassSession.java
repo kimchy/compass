@@ -169,6 +169,10 @@ public class ExistingCompassSession implements InternalCompassSession {
         session.flush();
     }
 
+    public void flushCommit(String... aliases) throws CompassException {
+        session.flushCommit(aliases);
+    }
+
     public CompassTransaction beginTransaction() throws CompassException {
         return session.beginTransaction();
     }

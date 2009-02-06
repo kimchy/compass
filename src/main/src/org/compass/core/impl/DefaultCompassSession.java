@@ -180,6 +180,11 @@ public class DefaultCompassSession implements InternalCompassSession {
         searchEngine.flush();
     }
 
+    public void flushCommit(String... aliases) throws CompassException {
+        checkClosed();
+        searchEngine.flushCommit(aliases);
+    }
+
     public Resource getResource(Class clazz, Object... ids) throws CompassException {
         return getResource(clazz, (Object) ids);
     }
