@@ -26,6 +26,8 @@ import org.compass.core.spi.ResourceKey;
  */
 public class NullFirstLevelCache implements FirstLevelCache {
 
+    public static final NullFirstLevelCache INSTANCE = new NullFirstLevelCache();
+    
     public Object get(ResourceKey key) {
         return null;
     }

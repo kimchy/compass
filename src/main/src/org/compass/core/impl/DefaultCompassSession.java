@@ -67,31 +67,31 @@ public class DefaultCompassSession implements InternalCompassSession {
 
     private static final Log logger = LogFactory.getLog(DefaultCompassSession.class);
 
-    private InternalCompass compass;
+    private final InternalCompass compass;
 
-    private CompassMapping mapping;
+    private final CompassMapping mapping;
 
-    private CompassMetaData compassMetaData;
+    private final CompassMetaData compassMetaData;
 
-    private SearchEngine searchEngine;
+    private final SearchEngine searchEngine;
 
-    private TransactionFactory transactionFactory;
+    private final TransactionFactory transactionFactory;
 
-    private LocalTransactionFactory localTransactionFactory;
+    private final LocalTransactionFactory localTransactionFactory;
 
-    private MarshallingStrategy marshallingStrategy;
+    private final MarshallingStrategy marshallingStrategy;
 
     private FirstLevelCache firstLevelCache;
 
-    private boolean closed = false;
+    private volatile boolean closed = false;
 
-    private RuntimeCompassSettings runtimeSettings;
+    private final RuntimeCompassSettings runtimeSettings;
 
-    private CascadingManager cascadingManager;
+    private final CascadingManager cascadingManager;
 
     private boolean localTransaction;
 
-    private CompassTransaction transaction;
+    private volatile CompassTransaction transaction;
 
     private final List<InternalSessionDelegateClose> delegateClose = new ArrayList<InternalSessionDelegateClose>();
 
@@ -160,7 +160,7 @@ public class DefaultCompassSession implements InternalCompassSession {
     public CompassTransaction beginTransaction() throws CompassException {
         checkClosed();
         if (LuceneEnvironment.Transaction.Processor.Lucene.NAME.equalsIgnoreCase(getSettings().getSetting(LuceneEnvironment.Transaction.Processor.TYPE))) {
-            firstLevelCache = new NullFirstLevelCache();
+            firstLevelCache = NullFirstLevelCache.INSTANCE;
         }
         transaction = transactionFactory.beginTransaction(this);
         return transaction;
@@ -787,10 +787,14 @@ public class DefaultCompassSession implements InternalCompassSession {
             throw new CompassException("Transaction already rolled back");
         }
         if (transaction == null) {
-            if (localTransaction) {
-                transaction = beginLocalTransaction();
-            } else {
-                transaction = beginTransaction();
+            synchronized (this) {
+                if (transaction == null) {
+                    if (localTransaction) {
+                        transaction = beginLocalTransaction();
+                    } else {
+                        transaction = beginTransaction();
+                    }
+                }
             }
         }
     }
