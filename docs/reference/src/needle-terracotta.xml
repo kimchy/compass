@@ -119,5 +119,9 @@ compass.engine.store.tc.flushRate=10
 	    <para>
 	        When a transaction commits by one of the client nodes, it will not be immediately visible for search operations. It will be visible only after the actual node that will process the transaction has done so, and the cache invalidation interval has kicked in to identify that the shared index has changed and the new index needs to be reloaded (happens in the background when using Compass). The cache invalidation interval (how often Compass will check if the index has changed) can be set using the following setting: <literal>compass.engine.cacheIntervalInvalidation</literal>.
 	    </para>
+
+        <para>
+ 		    <literal>CompassSession</literal> and <literal>CompassIndexSession</literal> provides the <literal>flushCommit</literal> operation. The operation, when used with the <literal>tc</literal> transaction processor, means that all the changes accumulated up to this point will be passed to be processed (similar to commit) except that the session is still open for additional changes. This allows, for long running indexing sessions, to periodically flush and commit the changes (otherwise memory consumption will continue to grow) instead of committing and closing the current session, and opening a new session. 
+ 		</para>
 	</sect1>
 </chapter>

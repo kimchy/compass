@@ -283,19 +283,19 @@ standard (org.apache.lucene.analysis.standard.StandardAnalyzer):
 		</para>
   
         <para>
-            When starting a <literal>read_committed</literal> transaction, no locks are obtained. Read operation will not obtain a lock either. A lock will be obtained only when a dirty operation is performed. The lock is obtained only on the index of the alias / searchable content that is associated with the dirty operation, i.e the sub-index, and will lock all other aliases / searchable content that map to that sub-index. In Compass, every transaction that performed one or more <literal>save</literal> or <literal>create</literal> operation, and committed successfully, creates another segment in the respective index (different than how Lucene manages it's index), which helps in implementing quick transaction commits, fast updates, as well as paving the way for a two phase commit support (and the reason behind having optimizers).
+            When starting a <literal>read_committed</literal> transaction, no locks are obtained. Read operation will not obtain a lock either. A lock will be obtained only when a dirty operation is performed. The lock is obtained only on the index of the alias / searchable content that is associated with the dirty operation, i.e the sub-index, and will lock all other aliases / searchable content that map to that sub-index.
         </para>
 
 		<para>
-			The read committed transaction support concurrent commit where if operations are performed against several sub indexes, the commit process will happen concurrently on the different sub indexes. It uses Compass internal Execution Manager where the number of threads as well as the type of the execution manager (concurrent or work manager) can be configured.
+			The read committed transaction support concurrent commit where if operations are performed against several sub indexes, the commit process will happen concurrently on the different sub indexes. It uses Compass internal Execution Manager where the number of threads as well as the type of the execution manager (concurrent or work manager) can be configured. Concurrent commits are used only if the relevant store supports it.
 		</para>
 		
 		<para>
-		    By default, read committed transactions work in an asynchronous manner. Compass executor service is used to execute theses destructive operations using several threads. This allows for much faster execution and the ability to continue process application level logic while objects are being indexed or removed from the search engine. In order to disable this, the <literal>compass.transaction.processor.read_committed.concurrentOperations</literal> setting should be set to <literal>false</literal>. The read committed semantic is still maintain by waiting for all current operation to complete once a read/search operation occurs. Note, when asynchronous operation is enabled, problems with indexing objects will be raised not as a result of the actual operation that caused it, but on commit, flush or read/search time. ComapssSession flush operation can also be used to wait for all current operation to be performed.
+		    By default, read committed transactions work in an asynchronous manner (if allowed by the search engine store). Compass executor service is used to execute the destructive operations using several threads. This allows for much faster execution and the ability to continue process application level logic while objects are being indexed or removed from the search engine. In order to disable this, the <literal>compass.transaction.processor.read_committed.concurrentOperations</literal> setting should be set to <literal>false</literal>. The read committed semantic is still maintained by waiting for all current operation to complete once a read/search operation occurs. Note, when asynchronous operation is enabled, problems with indexing objects will be raised not as a result of the actual operation that caused it, but on commit, flush or read/search time. ComapssSession <literal>flush</literal> operation can also be used to wait for all current operation to be performed.
 	    </para>
 	    
 	    <para>
-	        There are several settings that control the asynchronous execution (javadoc at <literal>LuceneEnvironment.Transaction.Processor.ReadCommitted</literal>). The <literal>compass.transaction.processor.read_committed.concurrencyLevel</literal> control the number of threads used (per transaction) to process dirty operations (defaults to 5). <literal>compass.transaction.processor.read_committed.hashing</literal> controls how operations are hashed to a respective thread to be processed, and can be either by <literal>uid</literal> or <literal>subindex</literal> (defaults to <literal>uid</literal>). The <literal>compass.transaction.processor.read_committed.backlog</literal> controls the number of pending destructive operations allowed. If full, dirty operations will block until space is available (defaults to 100). Last, the <literal>compass.transaction.processor.read_committed.addTimeout</literal> controls the time to wait in order to add dirty operations to the backlog if the backlog is full. It defaults to 10 seconds and accepts Compass time format (10millis, 30s, ...). Note, all settings are also runtime settings that can control specific transaction using CompassSession#getSettings() and then setting the respective ones.
+	        There are several settings that control the asynchronous execution (javadoc at <literal>LuceneEnvironment.Transaction.Processor.ReadCommitted</literal>). The <literal>compass.transaction.processor.read_committed.concurrencyLevel</literal> control the number of threads used (per transaction) to process dirty operations (defaults to 5). <literal>compass.transaction.processor.read_committed.hashing</literal> controls how operations are hashed to a respective thread to be processed, and can be either by <literal>uid</literal> or <literal>subindex</literal> (defaults to <literal>uid</literal>). The <literal>compass.transaction.processor.read_committed.backlog</literal> controls the number of pending destructive operations allowed. If full, dirty operations will block until space becomes available (defaults to 100). Last, the <literal>compass.transaction.processor.read_committed.addTimeout</literal> controls the time to wait in order to add dirty operations to the backlog if the backlog is full. It defaults to 10 seconds and accepts Compass time format (10millis, 30s, ...). Note, all settings are also runtime settings that can control specific transaction using CompassSession#getSettings() and then setting the respective ones.
 	    </para>
 		
 		<para>
@@ -341,6 +341,10 @@ session.getSettings().setSetting(LuceneEnvironment.Transaction.Processor.TYPE,
 compass.transaction.readcommitted.translog.connection=file://
 ]]></programlisting>
  		</para>
+ 		
+ 		<para>
+ 		    <literal>CompassSession</literal> and <literal>CompassIndexSession</literal> provides the <literal>flushCommit</literal> operation. The operation, when used with the <literal>read_committed</literal> transaction processor, means that the current changes to the search engine will be flushed and committed. The operation will be visible to other sessions / compass instances and rollback operation on the transaction will not roll them back. The <literal>flushCommit</literal> is handy when there is a long running session that performs the indexing and transactionality is not as important as making the changes made available to other sessions intermittently.
+ 		</para>
 
       <para>
         Transactional log settings are one of the session level settings that can be set. This allows to change how Compass would save the transaction log per session, and not globally on the Compass instance level configuration. Note, this only applies on the session that is responsible for creating the transaction. The following is an example of how it can be done:
@@ -349,6 +353,7 @@ session.getSettings().setSetting(LuceneEnvironment.Transaction.Processor.ReadCom
                                  "file://tmp/");
 ]]></programlisting>
       </para>
+      
       </sect3>
   
       <sect3 id="core-searchengine-transaction-lucene">
@@ -367,7 +372,7 @@ session.getSettings().setSetting(LuceneEnvironment.Transaction.Processor.ReadCom
 		</para>
 		
 		<para>
-		    By default, lucene transactions work in an asynchronous manner. Compass executor service is used to execute theses destructive operations using several threads. This allows for much faster execution and the ability to continue process application level logic while objects are being indexed or removed from the search engine. In order to disable this, the <literal>compass.transaction.processor.lucene.concurrentOperations</literal> setting should be set to <literal>false</literal>. Note, when asynchronous operation is enabled, problems with indexing objects will be raised not as a result of the actual operation that caused it, but on commit or flush time. ComapssSession flush operation can also be used to wait for all current operation to be performed. Also note, that unlike read committed transaction (and because of the semantics of lucene transaction processor, that do not reflect current transaction operations in read/search operations), there is no need to wait for asynchronous dirty operation to be processed during search/read operation.
+		    By default, lucene transactions work in an asynchronous manner (if allowed by the index store). Compass executor service is used to execute theses destructive operations using several threads. This allows for much faster execution and the ability to continue process application level logic while objects are being indexed or removed from the search engine. In order to disable this, the <literal>compass.transaction.processor.lucene.concurrentOperations</literal> setting should be set to <literal>false</literal>. Note, when asynchronous operation is enabled, problems with indexing objects will be raised not as a result of the actual operation that caused it, but on commit or flush time. ComapssSession flush operation can also be used to wait for all current operation to be performed. Also note, that unlike read committed transaction (and because of the semantics of lucene transaction processor, that do not reflect current transaction operations in read/search operations), there is no need to wait for asynchronous dirty operation to be processed during search/read operation.
 	    </para>
 	    
 	    <para>
@@ -377,6 +382,10 @@ session.getSettings().setSetting(LuceneEnvironment.Transaction.Processor.ReadCom
 		<para>
 			The lucene transaction support concurrent commit where if operations are performed against several sub indexes, the commit process will happen concurrently on the different sub indexes. It uses Compass internal Execution Manager where the number of threads as well as the type of the execution manager (concurrent or work manager) can be configured.
 		</para>
+
+ 		<para>
+ 		    <literal>CompassSession</literal> and <literal>CompassIndexSession</literal> provides the <literal>flushCommit</literal> operation. The operation, when used with the <literal>lucene</literal> transaction processor, means that the current changes to the search engine will be flushed and committed. The operation will be visible to other sessions / compass instances and rollback operation on the transaction will not roll them back. The <literal>flushCommit</literal> is handy when there is a long running session that performs the indexing and transactionality is not as important as making the changes made available to other sessions intermittently.
+ 		</para>
 		
 		<para>
 			Here is how the transaction isolation level can be configured:
@@ -424,6 +433,10 @@ can be changed using the <literal>compass.transaction.processor.async.addTimeout
         <para>
             When all transaction jobs are accumulated, the processor starts up to 5 threads (configurable using <literal>compass.transaction.processor.async.concurrencyLevel</literal>) in order to process all the transaction jobs against the index. Hashing of actual operation (create/update/delete) can either be done based on <literal>uid</literal> (of the resource) or <literal>subindex</literal>. By default, hashing is done based on <literal>uid</literal> and can be configured using <literal>compass.transaction.processor.async.hashing</literal> setting.
         </para>
+        
+        <para>
+ 		    <literal>CompassSession</literal> and <literal>CompassIndexSession</literal> provides the <literal>flushCommit</literal> operation. The operation, when used with the <literal>async</literal> transaction processor, means that all the changes accumulated up to this point will be passed to be processed (similar to commit) except that the session is still open for additional changes. This allows, for long running indexing sessions, to periodically flush and commit the changes (otherwise memory consumption will continue to grow) instead of committing and closing the current session, and opening a new session. 
+ 		</para>
         
         <para>
             When the transaction processor closes, by default it will wait for all the transactions to finish. In order to disable it, the <literal>compass.transaction.processor.async.processBeforeClose</literal> setting should be set to <literal>false</literal>.
