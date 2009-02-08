@@ -43,4 +43,11 @@ public class ReadCommittedTransactionProcessorFactory implements TransactionProc
 
     public void close() {
     }
+
+    /**
+     * Read committed transaction processor is not threads safe.
+     */
+    public boolean isThreadSafe() {
+        return false;
+    }
 }

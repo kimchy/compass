@@ -142,6 +142,13 @@ public class TerracottaTransactionProcessorFactory implements TransactionProcess
         }
     }
 
+    /**
+     * The terracotta transaction processor is not thread safe.
+     */
+    public boolean isThreadSafe() {
+        return false;
+    }
+
     public Map<String, TransactionJobs> add(TransactionJobs jobs) {
         Map<String, TransactionJobs> subIndexesJobs = jobs.buildJobsPerSubIndex();
         for (Map.Entry<String, TransactionJobs> entry : subIndexesJobs.entrySet()) {

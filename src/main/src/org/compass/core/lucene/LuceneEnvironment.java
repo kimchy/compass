@@ -630,6 +630,10 @@ public class LuceneEnvironment {
                 }
             }
 
+            public static final class MT {
+                public static final String NAME = "mt";
+            }
+
             /**
              * Settings for <code>lucene</code> transaction procssor.
              *

@@ -79,7 +79,7 @@ import org.compass.core.transaction.context.TransactionalCallable;
  * (configurable using {@link org.compass.core.lucene.LuceneEnvironment.Transaction.Processor.Async#CONCURRENCY_LEVEL})
  * in order to process all the transaction jobs against the index. Hashing of actual operation (create/update/delete)
  * can either be done based on uid (of the resource) or sub index. By default, hashing is done based on <code>uid</code>
- * and can be configured using {@link org.compass.core.lucene.LuceneEnvironment.Transaction.Processor.Async#HASHING}. 
+ * and can be configured using {@link org.compass.core.lucene.LuceneEnvironment.Transaction.Processor.Async#HASHING}.
  *
  * <p>When the transaction processor closes, by default it will wait for all the transactions to finish. In order to
  * disable it, the {@link org.compass.core.lucene.LuceneEnvironment.Transaction.Processor.Async#PROCESS_BEFORE_CLOSE}
@@ -108,14 +108,14 @@ public class AsyncTransactionProcessorFactory implements TransactionProcessorFac
     private long batchJobTimeout;
 
     private int nonBlockingBatchSize;
-    
+
     private ResourceHashing hashing;
 
     private BlockingQueue<TransactionJobs> jobsToProcess;
 
     private Future pollingProcessorFuture;
 
-    private PollingProcessor pollingProcessor;
+    private volatile PollingProcessor pollingProcessor;
 
     private volatile boolean closed = false;
 
@@ -209,6 +209,13 @@ public class AsyncTransactionProcessorFactory implements TransactionProcessorFac
     }
 
     /**
+     * Async transaction processor is not thread safe.
+     */
+    public boolean isThreadSafe() {
+        return false;
+    }
+
+    /**
      * Removed (if still pending) the given {@link org.compass.core.lucene.engine.transaction.support.job.TransactionJobs}
      * from being processed.
      */
@@ -228,10 +235,12 @@ public class AsyncTransactionProcessorFactory implements TransactionProcessorFac
      * 10 seconds.
      */
     public void add(TransactionJobs jobs) throws SearchEngineException {
-        synchronized (this) { // though called from single thread each time, not that big an overhead to make it thread safe
-            if (pollingProcessor == null) {
-                this.pollingProcessor = new PollingProcessor();
-                pollingProcessorFuture = searchEngineFactory.getExecutorManager().submit(pollingProcessor);
+        if (pollingProcessor == null) {
+            synchronized (this) {
+                if (pollingProcessor == null) {
+                    this.pollingProcessor = new PollingProcessor();
+                    pollingProcessorFuture = searchEngineFactory.getExecutorManager().submit(pollingProcessor);
+                }
             }
         }
         try {

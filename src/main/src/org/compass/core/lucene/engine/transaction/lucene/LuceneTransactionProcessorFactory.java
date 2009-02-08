@@ -39,4 +39,11 @@ public class LuceneTransactionProcessorFactory implements TransactionProcessorFa
 
     public void close() {
     }
+
+    /**
+     * Lucene transaction processor is not thread safe.
+     */
+    public boolean isThreadSafe() {
+        return false;
+    }
 }

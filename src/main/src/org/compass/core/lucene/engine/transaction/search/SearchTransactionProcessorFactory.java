@@ -37,4 +37,11 @@ public class SearchTransactionProcessorFactory implements TransactionProcessorFa
 
     public void close() {
     }
+
+    /**
+     * The search transaction processor is thread safe.
+     */
+    public boolean isThreadSafe() {
+        return true;
+    }
 }

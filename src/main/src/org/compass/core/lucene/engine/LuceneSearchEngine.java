@@ -57,7 +57,7 @@ public class LuceneSearchEngine implements SearchEngine {
 
     private static final int ROLLBACK = 2;
 
-    private int transactionState;
+    private volatile int transactionState;
 
     private TransactionProcessor transactionProcessor;
 

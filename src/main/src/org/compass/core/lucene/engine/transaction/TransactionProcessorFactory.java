@@ -42,4 +42,9 @@ public interface TransactionProcessorFactory {
      * Closes the transaction factory.
      */
     void close();
+
+    /**
+     * Retruns <code>true</code> if the transaction processor created by the factory is thread safe.
+     */
+    boolean isThreadSafe();
 }
