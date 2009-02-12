@@ -84,7 +84,7 @@ public class JdbcTable {
         StringBuffer sb = new StringBuffer();
 
         sqlCreate = sb.append("create table ").append(getQualifiedName()).append(" (")
-                .append(nameColumn.getName()).append(' ').append(nameColumn.getType()).append(" , ")
+                .append(nameColumn.getName()).append(' ').append(nameColumn.getType()).append(" not null, ")
                 .append(valueColumn.getName()).append(' ').append(valueColumn.getType()).append(" , ")
                 .append(sizeColumn.getName()).append(' ').append(sizeColumn.getType()).append(" , ")
                 .append(lastModifiedColumn.getName()).append(' ').append(lastModifiedColumn.getType()).append(" , ")
