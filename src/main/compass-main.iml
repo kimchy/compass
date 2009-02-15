@@ -55,5 +55,10 @@
     <orderEntry type="library" name="commonj" level="project" />
     <orderEntry type="library" name="jackson" level="project" />
   </component>
+  <component name="copyright">
+    <Base>
+      <setting name="state" value="2" />
+    </Base>
+  </component>
 </module>
 

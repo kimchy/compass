@@ -641,6 +641,11 @@
       </value>
     </option>
   </component>
+  <component name="copyright">
+    <Base>
+      <setting name="state" value="2" />
+    </Base>
+  </component>
   <component name="libraryTable">
     <library name="Lucene">
       <CLASSES>

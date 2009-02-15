@@ -388,7 +388,7 @@ session.getSettings().setSetting(LuceneEnvironment.Transaction.Processor.ReadCom
  		</para>
 		
 		<para>
-			Here is how the transaction isolation level can be configured:
+			Here is how the transaction isolation level can be configured to be used as the default one:
 <programlisting><![CDATA[<compass name="default">
   <connection>
       <file path="target/test-index" />
@@ -443,7 +443,7 @@ can be changed using the <literal>compass.transaction.processor.async.addTimeout
         </para>
 
 		<para>
-			Here is how the transaction isolation level can be configured:
+			Here is how the transaction isolation level can be configured to be used as the default one:
 <programlisting><![CDATA[<compass name="default">
   <connection>
       <file path="target/test-index" />
@@ -461,6 +461,52 @@ compass.transaction.processor=async
 <programlisting><![CDATA[CompassSession session = compass.openSession();
 session.getSettings().setSetting(LuceneEnvironment.Transaction.Processor.TYPE, 
                                  LuceneEnvironment.Transaction.Processor.Async.NAME);
+]]></programlisting>			
+		</para>
+      </sect3>
+
+      <sect3 id="core-searchengine-transaction-mt">
+        <title>mt (Multi Threaded)</title>
+        
+        <para>
+            The <literal>mt</literal> transaction processor is a thread safe transaction processor effectively allowing to use the same <literal>CompassIndexSession</literal> (or <literal>CompassSession</literal>) across multiple threads. The transaction processor is very handy when several threads are updating the index during a single logical indexing session.
+        </para>
+        
+        <para>
+            Once a dirty operation is performed using the <literal>mt</literal> transaction processor, its respective sub index is locked and no dirty operation from other session is allowed until the session is committed, rolled back, or closed. Because of the nature of the <literal>mt</literal> transaction processor, the <literal>flushCommit</literal> operation can be very handy. It effectively commits all the changes up to the point it was called without closing or committing the session, making it visible for other sessions when searching. Note, it also means that the operations that were flush committed will not rollback on a rollback operation.
+        </para>
+
+		<para>
+			It is important to understand this transaction isolation level in terms of merging done during commit and indexing time. Lucene might perform some merges during commit time depending on the merge factor configured using <literal>compass.engine.mergeFactor</literal>. This is different from the <literal>read_committed</literal> processor  where no merges are performed during commit time. Possible merges can cause commits to take some time, so one option is to configure a large merge factor and let the optimizer do its magic (you can configure a different merge factor for the optimizer).
+		</para>
+		
+		<para>
+			Another important parameter when using this transaction isolation level is <literal>compass.engine.ramBufferSize</literal> (defaults to 16.0 Mb) which replaces the max buffered docs parameter and controls the amount of transactional data stored in memory. Larger values will yield better performance and it is best to allocate as much as possible.
+		</para>
+		
+		<para>
+		    If using the search / read API with the <literal>mt</literal> transaction processor, it basically acts in a similar manner to the <literal>lucene</literal> transaction processor, meaning the search operations will see the latest version of the index, without the current changes done during the transaction. There is an exception to the rule, where if the <literal>flushCommit</literal> operation was called, and the internal cache of Compass was invalidated (either asynchronously or explicitly by calling the refresh or clear cache API), then the search results will reflect that changes done up to the point when the <literal>flushCommit</literal> operation.
+		</para>
+
+		<para>
+			Here is how the transaction isolation level can be configured to be used as the default one:
+<programlisting><![CDATA[<compass name="default">
+  <connection>
+      <file path="target/test-index" />
+  </connection>
+  <transaction processor="mt" />
+</compass>
+]]></programlisting>
+<programlisting><![CDATA[compass.engine.connection=target/test-index
+compass.transaction.processor=mt
+]]></programlisting>			
+		</para>
+
+		<para>
+		    Using the mt transaction processor can also be done in runtime using the following code:
+<programlisting><![CDATA[CompassSession session = compass.openSession();
+session.getSettings().setSetting(LuceneEnvironment.Transaction.Processor.TYPE, 
+                                 LuceneEnvironment.Transaction.Processor.MT.NAME);
 ]]></programlisting>			
 		</para>
       </sect3>

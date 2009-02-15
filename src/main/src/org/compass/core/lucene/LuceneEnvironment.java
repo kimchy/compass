@@ -630,7 +630,16 @@ public class LuceneEnvironment {
                 }
             }
 
+            /**
+             * Setting for the <code>mt</code> transaction processor.
+             *
+             * @see org.compass.core.lucene.engine.transaction.mt.MTTransactionProcessorFactory
+             * @see org.compass.core.lucene.engine.transaction.mt.MTTransactionProcessor
+             */
             public static final class MT {
+                /**
+                 * The name of the mt transaction processor.
+                 */
                 public static final String NAME = "mt";
             }
 
