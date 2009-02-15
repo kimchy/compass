@@ -16,6 +16,8 @@
 
 package org.compass.core;
 
+import org.compass.core.config.CompassSettings;
+
 /**
  * A specialized interface that provides only search and read capabilities.
  *
@@ -35,6 +37,19 @@ package org.compass.core;
  */
 public interface CompassSearchSession {
 
+    /**
+     * Runtimes settings that apply on the session level.
+     *
+     * @return Runtime settings applies on the session level
+     */
+    CompassSettings getSettings();
+    
+    /**
+     * When not using the {@link org.compass.core.CompassTransaction} interface, will begin a local transaction
+     * instead of the configured transaction.
+     */
+    CompassSearchSession useLocalTransaction();
+    
     /**
      * Returns a Resource that match the mapping specified for the defined class
      * type, and specified id. The id can be an object of the class (with the id

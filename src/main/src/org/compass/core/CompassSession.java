@@ -102,8 +102,6 @@ public interface CompassSession extends CompassOperations, CompassSearchSession,
      * Runtimes settings that apply on the session level.
      *
      * @return Runtime settings applies on the session level
-     * @see org.compass.core.config.RuntimeCompassEnvironment
-     * @see org.compass.core.lucene.RuntimeLuceneEnvironment
      */
     CompassSettings getSettings();
 

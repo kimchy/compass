@@ -16,6 +16,8 @@
 
 package org.compass.core;
 
+import org.compass.core.config.CompassSettings;
+
 /**
  * A specialized interface that provides only index capabilities.
  *
@@ -37,6 +39,13 @@ package org.compass.core;
  * @author kimchy
  */
 public interface CompassIndexSession {
+
+    /**
+     * Runtimes settings that apply on the session level.
+     *
+     * @return Runtime settings applies on the session level
+     */
+    CompassSettings getSettings();
 
     /**
      * Returns a resource factory allowing to create resources and properties.
