@@ -510,6 +510,14 @@ session.getSettings().setSetting(LuceneEnvironment.Transaction.Processor.TYPE,
 ]]></programlisting>			
 		</para>
       </sect3>
+
+      <sect3 id="core-searchengine-transaction-search">
+        <title>search</title>
+        
+        <para>
+            An optimized transaction processor that only provides search capabilities. The transaction processor is automatically used when setting the session to read only (using <literal>CompassSession#setReadOnly()</literal>), or when opening a search session (using <literal>Compass#openSearchSession()</literal>).
+        </para>
+      </sect3>
       
       <sect3 id="core-searchengine-transaction-terracotta">
         <title>tc (Terracotta)</title>
