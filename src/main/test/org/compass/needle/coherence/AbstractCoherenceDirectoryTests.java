@@ -44,37 +44,67 @@ public abstract class AbstractCoherenceDirectoryTests extends TestCase {
 
     public void test1Buffer() throws Exception {
         CoherenceDirectory dir = doCreateDirectory("test", 1);
-        insertData(dir);
-        verifyData(dir);
+        insertData(dir, "value1");
+        verifyData(dir, "value1");
     }
 
     public void test3Buffer() throws Exception {
         CoherenceDirectory dir = doCreateDirectory("test", 3);
-        insertData(dir);
-        verifyData(dir);
+        insertData(dir, "value1");
+        verifyData(dir, "value1");
     }
 
     public void test10Buffer() throws Exception {
         CoherenceDirectory dir = doCreateDirectory("test", 10);
-        insertData(dir);
-        verifyData(dir);
+        insertData(dir, "value1");
+        verifyData(dir, "value1");
     }
 
     public void test15Buffer() throws Exception {
         CoherenceDirectory dir = doCreateDirectory("test", 15);
-        insertData(dir);
-        verifyData(dir);
+        insertData(dir, "value1");
+        verifyData(dir, "value1");
     }
 
     public void test40Buffer() throws Exception {
         CoherenceDirectory dir = doCreateDirectory("test", 40);
-        insertData(dir);
-        verifyData(dir);
+        insertData(dir, "value1");
+        verifyData(dir, "value1");
     }
 
-    private void insertData(CoherenceDirectory dir) throws IOException {
+    public void test1BufferFlushOnClose() throws Exception {
+        CoherenceDirectory dir = doCreateDirectory("test", 1);
+        insertData(dir, "segments");
+        verifyData(dir, "segments");
+    }
+
+    public void test3BufferFlushOnClose() throws Exception {
+        CoherenceDirectory dir = doCreateDirectory("test", 3);
+        insertData(dir, "segments");
+        verifyData(dir, "segments");
+    }
+
+    public void test10BufferFlushOnClose() throws Exception {
+        CoherenceDirectory dir = doCreateDirectory("test", 10);
+        insertData(dir, "segments");
+        verifyData(dir, "segments");
+    }
+
+    public void test15BufferFlushOnClose() throws Exception {
+        CoherenceDirectory dir = doCreateDirectory("test", 15);
+        insertData(dir, "segments");
+        verifyData(dir, "segments");
+    }
+
+    public void test40BufferFlushOnClose() throws Exception {
+        CoherenceDirectory dir = doCreateDirectory("test", 40);
+        insertData(dir, "segments");
+        verifyData(dir, "segments");
+    }
+
+    private void insertData(CoherenceDirectory dir, String fileName) throws IOException {
         byte[] test = new byte[]{1, 2, 3, 4, 5, 6, 7, 8};
-        IndexOutput indexOutput = dir.createOutput("value1");
+        IndexOutput indexOutput = dir.createOutput(fileName);
         indexOutput.writeBytes(new byte[] {2, 4, 6, 7, 8}, 5);
         indexOutput.writeInt(-1);
         indexOutput.writeLong(10);
@@ -93,12 +123,12 @@ public abstract class AbstractCoherenceDirectoryTests extends TestCase {
         indexOutput.close();
     }
 
-    private void verifyData(CoherenceDirectory dir) throws IOException {
+    private void verifyData(CoherenceDirectory dir, String fileName) throws IOException {
         byte[] test = new byte[]{1, 2, 3, 4, 5, 6, 7, 8};
-        assertTrue(dir.fileExists("value1"));
-        assertEquals(38, dir.fileLength("value1"));
+        assertTrue(dir.fileExists(fileName));
+        assertEquals(38, dir.fileLength(fileName));
 
-        IndexInput indexInput = dir.openInput("value1");
+        IndexInput indexInput = dir.openInput(fileName);
         indexInput.readBytes(test, 0, 5);
         assertEquals(8, test[0]);
         assertEquals(-1, indexInput.readInt());

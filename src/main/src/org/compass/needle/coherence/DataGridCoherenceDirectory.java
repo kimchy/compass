@@ -30,6 +30,7 @@ import com.tangosol.util.ValueExtractor;
 import com.tangosol.util.extractor.KeyExtractor;
 import com.tangosol.util.filter.AndFilter;
 import com.tangosol.util.filter.EqualsFilter;
+import org.apache.lucene.index.LuceneFileNames;
 import org.apache.lucene.store.IndexInput;
 import org.apache.lucene.store.IndexOutput;
 
@@ -228,7 +229,12 @@ public class DataGridCoherenceDirectory extends CoherenceDirectory {
     }
 
     public IndexOutput createOutput(String name) throws IOException {
-        IndexOutput indexOutput = new CoherenceMemIndexOutput(this, name);
+        IndexOutput indexOutput;
+        if (LuceneFileNames.isSegmentsFile(name)) {
+            indexOutput = new FlushOnCloseCoherenceIndexOutput(this, name);
+        } else {
+            indexOutput = new CoherenceMemIndexOutput(this, name);
+        }
         onGoingIndexOutputs.put(name, indexOutput);
         return indexOutput;
     }
