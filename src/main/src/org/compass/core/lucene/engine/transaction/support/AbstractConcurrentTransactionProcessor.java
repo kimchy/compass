@@ -20,9 +20,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
@@ -196,7 +196,7 @@ public abstract class AbstractConcurrentTransactionProcessor extends AbstractSea
         }
     }
 
-    public void flushCommit(String ... aliases) throws SearchEngineException {
+    public void flushCommit(String... aliases) throws SearchEngineException {
         flush();
         // intersect
         Set<String> calcSubIndexes = new HashSet<String>();
@@ -390,7 +390,7 @@ public abstract class AbstractConcurrentTransactionProcessor extends AbstractSea
      */
     private class Processor implements Runnable {
 
-        private final BlockingQueue<TransactionJob> jobs = new ArrayBlockingQueue<TransactionJob>(backlog);
+        private final BlockingQueue<TransactionJob> jobs = new LinkedBlockingQueue<TransactionJob>(backlog);
 
         private final int id;
 
