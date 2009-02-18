@@ -42,7 +42,7 @@ gps.start();
       </para>
       
       <para>
-         Several frameworks (like Spring) sometimes wrap (proxy) the actual <literal>EntityManagerFactory</literal>. Some features of the Jpa device require the actual implementation of the <literal>EntityManagerFactory</literal>. This features are the ones that integrate tightly with the implementation of the <literal>EntityManagerFactory</literal>, which are described later in the chapter. The device allows to set <literal>NativeEntityManagerFactoryExtractor</literal>, which is responsible for extracting the actual implementation.
+         Several frameworks (like Spring) sometimes wrap (proxy) the actual <literal>EntityManagerFactory</literal>. Some features of the Jpa device require the actual implementation of the <literal>EntityManagerFactory</literal>. This features are the ones that integrate tightly with the implementation of the <literal>EntityManagerFactory</literal>, which are described later in the chapter. The device allows to set <literal>NativeJpaExtractor</literal>, which is responsible for extracting the actual implementation.
       </para>
 
     </sect1>
@@ -59,7 +59,7 @@ gps.start();
       </para>
       
       <para>
-         The device allows to set a <literal>JpaEntitiesLocator</literal>, which is responsible for extracting all the entities that are mapped in both Compass and Jpa <literal>EntityManager</literal>. The default implementation <literal>DefaultJpaEntitiesLocator</literal> uses Annotations to determine if a class is mapped to the database. Most of the times, this will suffice, but for applications that use both annotations and xml definitions, a tighter integration with the Jpa implementation is required, with a specialized implementation of the locator. Compass comes with several specialized implementations of a locator, and auto-detect the one to use (defaulting to the default implementation if none is found). Note, that this is one of the cases where the actual <literal>EntityManagerFactory</literal> is required, so if the application is using a framework that wraps the <literal>EntityManagerFactory</literal>, a <literal>NativeEntityManagerFactoryExtractor</literal> should be provided.
+         The device allows to set a <literal>JpaEntitiesLocator</literal>, which is responsible for extracting all the entities that are mapped in both Compass and Jpa <literal>EntityManager</literal>. The default implementation <literal>DefaultJpaEntitiesLocator</literal> uses Annotations to determine if a class is mapped to the database. Most of the times, this will suffice, but for applications that use both annotations and xml definitions, a tighter integration with the Jpa implementation is required, with a specialized implementation of the locator. Compass comes with several specialized implementations of a locator, and auto-detect the one to use (defaulting to the default implementation if none is found). Note, that this is one of the cases where the actual <literal>EntityManagerFactory</literal> is required, so if the application is using a framework that wraps the <literal>EntityManagerFactory</literal>, a <literal>NativeJpaExtractor</literal> should be provided (though Compass tries to automatically detect most common framework and extract it automatically).
       </para>
 
     </sect1>
@@ -72,7 +72,7 @@ gps.start();
       </para>
       
       <para>
-         With several Jpa implementation, Compass can automatically register life-cycle event listeners based on the actual implementation API's (like Hibernate event listeners support). In order to enable it, the <literal>injectEntityLifecycleListener</literal> must be set to <literal>true</literal> (defaults to <literal>false</literal>), and an implementation of <literal>JpaEntityLifecycleInjector</literal> can be provided. Compass can auto-detect a proper injector based on the currently provided internal injector implementations. The auto-detection will happen if no implementation for the injector is provided, and the inject flag is set to true. Note, that this is one of the cases where the actual <literal>EntityManagerFactory</literal> is required, so if the application is using a framework that wraps the <literal>EntityManagerFactory</literal>, a <literal>NativeEntityManagerFactoryExtractor</literal> should be provided.
+         With several Jpa implementation, Compass can automatically register life-cycle event listeners based on the actual implementation API's (like Hibernate event listeners support). In order to enable it, the <literal>injectEntityLifecycleListener</literal> must be set to <literal>true</literal> (defaults to <literal>false</literal>), and an implementation of <literal>JpaEntityLifecycleInjector</literal> can be provided. Compass can auto-detect a proper injector based on the currently provided internal injector implementations. The auto-detection will happen if no implementation for the injector is provided, and the inject flag is set to true. Note, that this is one of the cases where the actual <literal>EntityManagerFactory</literal> is required, so if the application is using a framework that wraps the <literal>EntityManagerFactory</literal>, a <literal>NativeJpaExtractor</literal> should be provided.
       </para>
 
       <para>
