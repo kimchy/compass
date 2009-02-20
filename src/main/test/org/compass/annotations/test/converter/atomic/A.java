@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-package org.compass.core.converter.basic;
+package org.compass.annotations.test.converter.atomic;
+
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.compass.annotations.Searchable;
 import org.compass.annotations.SearchableId;
@@ -30,11 +34,11 @@ public class A {
     int id;
 
     @SearchableProperty
-    AType value1;
+    AtomicBoolean value1;
 
     @SearchableProperty
-    AType value2;
+    AtomicInteger value2;
 
     @SearchableProperty
-    B.Type value3;
+    AtomicLong value3;
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.compass.core.converter.basic;
+package org.compass.annotations.test.converter.enum1;
 
 import org.compass.annotations.test.AbstractAnnotationsTestCase;
 import org.compass.core.CompassHits;

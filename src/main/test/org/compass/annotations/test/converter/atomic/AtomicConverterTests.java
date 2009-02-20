@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.compass.core.converter.basic.atomic;
+package org.compass.annotations.test.converter.atomic;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;

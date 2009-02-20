@@ -14,31 +14,12 @@
  * limitations under the License.
  */
 
-package org.compass.core.converter.basic.atomic;
-
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
-
-import org.compass.annotations.Searchable;
-import org.compass.annotations.SearchableId;
-import org.compass.annotations.SearchableProperty;
+package org.compass.annotations.test.converter.enum1;
 
 /**
  * @author kimchy
  */
-@Searchable
-public class A {
-
-    @SearchableId
-    int id;
-
-    @SearchableProperty
-    AtomicBoolean value1;
-
-    @SearchableProperty
-    AtomicInteger value2;
-
-    @SearchableProperty
-    AtomicLong value3;
+public enum AType {
+    TEST1,
+    TEST2
 }

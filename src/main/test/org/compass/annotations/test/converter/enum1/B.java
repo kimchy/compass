@@ -1,4 +1,4 @@
-package org.compass.core.converter.basic;
+package org.compass.annotations.test.converter.enum1;
 
 /**
  * @author kimchy

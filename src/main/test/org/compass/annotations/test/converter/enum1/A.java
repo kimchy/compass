@@ -14,12 +14,27 @@
  * limitations under the License.
  */
 
-package org.compass.core.converter.basic;
+package org.compass.annotations.test.converter.enum1;
+
+import org.compass.annotations.Searchable;
+import org.compass.annotations.SearchableId;
+import org.compass.annotations.SearchableProperty;
 
 /**
  * @author kimchy
  */
-public enum AType {
-    TEST1,
-    TEST2
+@Searchable
+public class A {
+
+    @SearchableId
+    int id;
+
+    @SearchableProperty
+    AType value1;
+
+    @SearchableProperty
+    AType value2;
+
+    @SearchableProperty
+    B.Type value3;
 }
