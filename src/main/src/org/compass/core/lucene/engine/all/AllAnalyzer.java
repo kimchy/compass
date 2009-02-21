@@ -51,21 +51,21 @@ import org.compass.core.spi.InternalResource;
  */
 public class AllAnalyzer extends Analyzer {
 
-    private Analyzer analyzer;
+    private final Analyzer analyzer;
 
-    private InternalResource resource;
+    private final InternalResource resource;
 
-    private ResourceMapping resourceMapping;
+    private final ResourceMapping resourceMapping;
 
-    private AllMapping allMapping;
+    private final AllMapping allMapping;
 
-    private LuceneSearchEngineFactory searchEngineFactory;
+    private final LuceneSearchEngineFactory searchEngineFactory;
 
-    private ArrayList<Token> tokens = new ArrayList<Token>();
+    private final ArrayList<Token> tokens = new ArrayList<Token>();
 
-    private AllTokenStreamCollector allTokenStreamCollector = new AllTokenStreamCollector();
+    private final AllTokenStreamCollector allTokenStreamCollector = new AllTokenStreamCollector();
 
-    private boolean boostSupport;
+    private final boolean boostSupport;
 
     public AllAnalyzer(Analyzer analyzer, InternalResource resource, LuceneSearchEngineFactory searchEngineFactory) {
         this.analyzer = analyzer;
