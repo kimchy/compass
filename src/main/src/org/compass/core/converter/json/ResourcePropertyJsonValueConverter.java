@@ -24,8 +24,12 @@ import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.marshall.MarshallingContext;
 
 /**
- * Extends the {@link org.compass.core.converter.json.SimpleJsonValueConverter} by delegating all marhslaling
- * operations to an intenral {@link org.compass.core.converter.mapping.ResourcePropertyConverter}.
+ * Extends the {@link org.compass.core.converter.json.SimpleJsonValueConverter} by delegating all specific
+ * value marshalling (to/from) to a {@link org.compass.core.converter.mapping.ResourcePropertyConverter}.
+ *
+ * <p>The important part here is the fact that {@link #marshall(org.compass.core.Resource, Object, org.compass.core.mapping.Mapping, org.compass.core.marshall.MarshallingContext)}
+ * is still implemented by {@link org.compass.core.converter.json.SimpleJsonValueConverter}, so dynamic nature, full path,
+ * and null value are correctly handled.
  *
  * @author kimchy
  */
