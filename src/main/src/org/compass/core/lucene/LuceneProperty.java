@@ -23,6 +23,9 @@ import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.spi.InternalProperty;
 
 /**
+ * An implementation of {@link org.compass.core.Property} that wraps Lucene
+ * {@link org.apache.lucene.document.Fieldable}.
+ *
  * @author kimchy
  */
 public class LuceneProperty implements InternalProperty {
