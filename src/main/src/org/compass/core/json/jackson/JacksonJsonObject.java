@@ -22,11 +22,14 @@ import java.util.Map;
 import org.compass.core.json.JsonObject;
 
 /**
+ * A simple {@link org.compass.core.json.JsonObject} implementation that works with
+ * the {@link org.compass.core.json.jackson.converter.JacksonContentConverter} parser.
+ *
  * @author kimchy
  */
 public class JacksonJsonObject implements JsonObject {
 
-    private Map<String, Object> nodes;
+    private final Map<String, Object> nodes;
 
     public JacksonJsonObject(Map<String, Object> nodes) {
         this.nodes = nodes;

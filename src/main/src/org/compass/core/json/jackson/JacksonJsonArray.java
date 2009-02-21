@@ -21,6 +21,9 @@ import java.util.List;
 import org.compass.core.json.JsonArray;
 
 /**
+ * A simple {@link org.compass.core.json.JsonArray} implementation that works with
+ * the {@link org.compass.core.json.jackson.converter.JacksonContentConverter} parser.
+ *
  * @author kimchy
  */
 public class JacksonJsonArray implements JsonArray {

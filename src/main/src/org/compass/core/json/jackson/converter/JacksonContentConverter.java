@@ -42,6 +42,8 @@ import org.compass.core.json.jackson.JacksonJsonObject;
 import org.compass.core.util.StringBuilderWriter;
 
 /**
+ * A Jackson based json converter.
+ *
  * @author kimchy
  */
 public class JacksonContentConverter implements JsonContentConverter {
@@ -71,6 +73,10 @@ public class JacksonContentConverter implements JsonContentConverter {
         }
     }
 
+    /**
+     * Uses Jackson {@link org.codehaus.jackson.JsonGenerator} in order to generate the json string based on
+     * a {@link org.compass.core.json.JsonObject}.
+     */
     private void generateJsonObject(JsonObject jsonObject, JsonGenerator generator) throws IOException {
         generator.writeStartObject();
         for (Iterator<String> keyIt = jsonObject.keys(); keyIt.hasNext();) {
@@ -130,6 +136,9 @@ public class JacksonContentConverter implements JsonContentConverter {
     }
 
 
+    /**
+     * A mapper from Json content (a String for example) to a {@link org.compass.core.json.jackson.JacksonJsonObject}.
+     */
     public static class ContentMapper extends BaseMapper {
 
         public ContentMapper(JsonFactory jsonFactory) {

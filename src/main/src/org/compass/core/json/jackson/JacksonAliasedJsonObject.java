@@ -22,11 +22,14 @@ import org.codehaus.groovy.grails.web.json.JSONException;
 import org.compass.core.json.AliasedJsonObject;
 
 /**
+ * A simple aliased {@link org.compass.core.json.JsonObject} implementation that works with
+ * the {@link org.compass.core.json.jackson.converter.JacksonContentConverter} parser.
+ *
  * @author kimchy
  */
 public class JacksonAliasedJsonObject extends JacksonJsonObject implements AliasedJsonObject {
 
-    private String alias;
+    private final String alias;
 
     public JacksonAliasedJsonObject(String alias, Map<String, Object> nodes) throws JSONException {
         super(nodes);
