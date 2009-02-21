@@ -70,7 +70,7 @@ public class AllAnalyzer extends Analyzer {
     public AllAnalyzer(Analyzer analyzer, InternalResource resource, LuceneSearchEngineFactory searchEngineFactory) {
         this.analyzer = analyzer;
         this.resource = resource;
-        this.resourceMapping = resource.getResourceKey().getResourceMapping();
+        this.resourceMapping = resource.getResourceMapping();
         this.searchEngineFactory = searchEngineFactory;
         this.allMapping = resourceMapping.getAllMapping();
         this.boostSupport = searchEngineFactory.getLuceneSettings().isAllPropertyBoostSupport();
@@ -79,16 +79,8 @@ public class AllAnalyzer extends Analyzer {
             return;
         }
 
-        if (!allMapping.isExcludeAlias()) {
-            // add the alias to all prpoerty (lowecased, so finding it will be simple)
-            tokens.add(new Token(resource.getAlias().toLowerCase(), 0, resource.getAlias().length()));
-            // add the extended property
-            Property[] properties = resource.getProperties(searchEngineFactory.getExtendedAliasProperty());
-            if (properties != null) {
-                for (Property property : properties) {
-                    tokens.add(new Token(property.getStringValue().toLowerCase(), 0, property.getStringValue().length()));
-                }
-            }
+        for (Token aliasToken : searchEngineFactory.getAllTermsCache().getAliasTerms(resource.getAlias())) {
+            tokens.add(aliasToken);
         }
 
         // go over all the un tokenized properties and add them as tokens (if required)
@@ -158,8 +150,7 @@ public class AllAnalyzer extends Analyzer {
                         Token t = new Token(value, 0, value.length());
                         t.setPayload(payload);
                         tokens.add(t);
-                    } else
-                    if (resourcePropertyMapping.getExcludeFromAll() == ExcludeFromAll.NO_ANALYZED) {
+                    } else if (resourcePropertyMapping.getExcludeFromAll() == ExcludeFromAll.NO_ANALYZED) {
                         Analyzer propAnalyzer;
                         if (resourcePropertyMapping.getAnalyzer() != null) {
                             propAnalyzer = searchEngineFactory

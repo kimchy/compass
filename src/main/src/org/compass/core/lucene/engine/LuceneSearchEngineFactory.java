@@ -36,6 +36,7 @@ import org.compass.core.engine.spi.InternalSearchEngineFactory;
 import org.compass.core.executor.ExecutorManager;
 import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.LuceneResourceFactory;
+import org.compass.core.lucene.engine.all.AllTermsCache;
 import org.compass.core.lucene.engine.analyzer.LuceneAnalyzerManager;
 import org.compass.core.lucene.engine.highlighter.LuceneHighlighterManager;
 import org.compass.core.lucene.engine.indexdeletionpolicy.IndexDeletionPolicyFactory;
@@ -62,35 +63,37 @@ public class LuceneSearchEngineFactory implements InternalSearchEngineFactory {
 
     private static final Log log = LogFactory.getLog(LuceneSearchEngineFactory.class);
 
-    private CompassMapping mapping;
+    private final CompassMapping mapping;
 
-    private PropertyNamingStrategy propertyNamingStrategy;
+    private final PropertyNamingStrategy propertyNamingStrategy;
 
-    private LuceneSettings luceneSettings;
+    private final LuceneSettings luceneSettings;
 
-    private ResourceFactory resourceFactory;
+    private final ResourceFactory resourceFactory;
 
-    private SearchEngineOptimizer searchEngineOptimizer;
+    private final SearchEngineOptimizer searchEngineOptimizer;
 
     private InternalLuceneSearchEngineSpellCheckManager spellCheckManager;
 
-    private LuceneSearchEngineIndexManager indexManager;
+    private final LuceneSearchEngineIndexManager indexManager;
 
-    private ExecutorManager executorManager;
+    private final ExecutorManager executorManager;
 
     private TransactionContext transactionContext;
 
-    private TransactionProcessorManager transactionProcessorManager;
+    private final TransactionProcessorManager transactionProcessorManager;
 
-    private LuceneAnalyzerManager analyzerManager;
+    private final LuceneAnalyzerManager analyzerManager;
 
-    private LuceneSimilarityManager similarityManager;
+    private final LuceneSimilarityManager similarityManager;
 
     private LuceneHighlighterManager highlighterManager;
 
-    private LuceneQueryParserManager queryParserManager;
+    private final LuceneQueryParserManager queryParserManager;
 
-    private IndexDeletionPolicyFactory indexDeletionPolicyManager;
+    private final IndexDeletionPolicyFactory indexDeletionPolicyManager;
+
+    private final AllTermsCache allTermsCache;
 
     private CompassSettings settings;
 
@@ -151,6 +154,8 @@ public class LuceneSearchEngineFactory implements InternalSearchEngineFactory {
 
         // build the transaction processor manager
         transactionProcessorManager = new TransactionProcessorManager(this);
+
+        this.allTermsCache = new AllTermsCache(settings, mapping);
     }
 
     public void close() throws SearchEngineException {
@@ -282,5 +287,9 @@ public class LuceneSearchEngineFactory implements InternalSearchEngineFactory {
 
     public IndexDeletionPolicyFactory getIndexDeletionPolicyManager() {
         return indexDeletionPolicyManager;
+    }
+
+    public AllTermsCache getAllTermsCache() {
+        return allTermsCache;
     }
 }
