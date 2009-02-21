@@ -177,10 +177,14 @@ public abstract class AbstractBasicConverter<T> implements ContextResourceProper
         String sValue;
         if (o != null) {
             if (o instanceof String) {
-                // if we got a string, don't bother with converting it
-                // we trust the user that he gave us the correct value and also, since
-                // this is templated, we will get ClassCastException if it is not a string based converter
-                sValue = (String) o;
+                // if we got a string, try and convert it
+                // if we got a class cast exception, just assume that this is the value that we want to store
+                // (we expect number for example, but the use provided a String, assuming he knows what he wants)
+                try {
+                    sValue = doToString(o, resourcePropertyMapping, context);
+                } catch (ClassCastException e) {
+                    sValue = (String) o;
+                }
             } else {
                 sValue = doToString(o, resourcePropertyMapping, context);
             }

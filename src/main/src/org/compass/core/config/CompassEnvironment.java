@@ -127,9 +127,9 @@ public class CompassEnvironment {
     }
 
     /**
-     * Settings for global rregistration and handling of property accessors.
-     * <p/>
-     * This is a group settings, you can set more than one property accessor setting.
+     * Settings for global registration and handling of property accessors.
+     *
+     * <p>This is a group settings, you can set more than one property accessor setting.
      */
     public abstract class PropertyAccessor {
 
