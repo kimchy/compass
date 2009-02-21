@@ -79,6 +79,8 @@ public class AllAnalyzer extends Analyzer {
             return;
         }
 
+        // Note, we can cache the tokens and reuse it (even though we set the positiions on it) since
+        // the positions (which are the only thing we set that is not thread safe) will always be the same
         for (Token aliasToken : searchEngineFactory.getAllTermsCache().getAliasTerms(resource.getAlias())) {
             tokens.add(aliasToken);
         }
