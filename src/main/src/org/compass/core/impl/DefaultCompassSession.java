@@ -737,7 +737,25 @@ public class DefaultCompassSession implements InternalCompassSession {
         for (InternalSessionDelegateClose delegateClose : this.delegateClose) {
             delegateClose.close();
         }
+        // if we are closing this session, and we still have a transction open, we can commit it automatically
+        // Note: committing a transaction does not always end up with actual commit, for example, if it is an
+        // "outer" managed transaction
+        CompassException ex = null;
+        if (transaction != null) {
+            try {
+                transaction.commit();
+            } catch (CompassException e) {
+                ex = e;
+                try {
+                    transaction.rollback();
+                } catch (Exception e1) {
+                    logger.warn("Failed to rollback transaction after auto commit on session close, ignoring", e);
+                }
+            }
+        }
         CompassSession transactionBoundSession = transactionFactory.getTransactionBoundSession();
+        // if there is no bounded transaction (it was already committed / rolledback, thus unbounded)
+        // or if the current bounded session is not the same one, we need to close the session
         if (transactionBoundSession == null || transactionBoundSession != this) {
             closed = true;
             if (transaction != null && !rolledback) {
@@ -746,11 +764,15 @@ public class DefaultCompassSession implements InternalCompassSession {
                     transaction.rollback();
                 } catch (CompassException e) {
                     logger.debug("Failed to rollback un-committed transaction", e);
-                }
+                }                             
             }
 
             firstLevelCache.evictAll();
             searchEngine.close();
+        }
+
+        if (ex != null) {
+            throw ex;
         }
     }
 
