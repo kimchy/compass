@@ -105,7 +105,7 @@ compass.engine.store.tc.flushRate=10
 	    </para>
 	    
 	    <para>
-	        In order to disable the actual processing/indexing of transactions by a specific node, the <literal>compass.transaction.processor.tc.process</literal> setting can be set to <literal>false</literal>. This option allows to create pure "client" nodes that simply put jobs on the queue, and dedicated worker nodes that will process transactions off the queue.
+	        In order to disable the actual processing/indexing of transactions by a specific node, the <literal>compass.transaction.processor.tc.process</literal> setting can be set to <literal>false</literal>. This option allows to create pure "client" nodes that simply put jobs on the queue (process flag set to false), and dedicated worker nodes that will process transactions off the queue (process flag set to true).
 	    </para>
 	    
 	    <para>
