@@ -406,6 +406,13 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
             }
         }
 
+        public void onClassDynamicPropertyMapping(ClassMapping classMapping, ClassDynamicPropertyMapping dynamicPropertyMapping) {
+            if (classMapping == rootClassMapping) {
+                PropertyPath aliasedPath = namingStrategy.buildPath(compassMapping.getPath(), dynamicPropertyMapping.getDefinedInAlias());
+                dynamicPropertyMapping.setPath(namingStrategy.buildPath(aliasedPath, dynamicPropertyMapping.getName()));
+            }
+        }
+
         public void onParentMapping(ClassMapping classMapping, ParentMapping parentMapping) {
         }
 

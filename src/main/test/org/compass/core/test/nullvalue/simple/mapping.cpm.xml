@@ -12,6 +12,9 @@
             <meta-data null-value="moo">value</meta-data>
         </property>
 
+        <property name="value2" accessor="field">
+            <meta-data>value</meta-data>
+        </property>
     </class>
 
     <class name="A" alias="a1">

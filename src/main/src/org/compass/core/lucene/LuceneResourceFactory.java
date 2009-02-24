@@ -95,6 +95,7 @@ public class LuceneResourceFactory implements ResourceFactory {
         if (mapping.isOmitTf() != null) {
             property.setOmitTf(mapping.isOmitTf());
         }
+        property.setBoost(mapping.getBoost());
         ((LuceneProperty) property).setPropertyMapping(mapping);
         return property;
     }

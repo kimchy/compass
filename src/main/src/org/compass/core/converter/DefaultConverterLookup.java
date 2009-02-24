@@ -66,6 +66,7 @@ import org.compass.core.converter.mapping.json.JsonPropertyMappingConverter;
 import org.compass.core.converter.mapping.json.PlainJsonObjectMappingConverter;
 import org.compass.core.converter.mapping.json.RootJsonObjectMappingConverter;
 import org.compass.core.converter.mapping.osem.ArrayMappingConverter;
+import org.compass.core.converter.mapping.osem.ClassDynamicPropertyMappingConverter;
 import org.compass.core.converter.mapping.osem.ClassMappingConverter;
 import org.compass.core.converter.mapping.osem.ClassPropertyMappingConverter;
 import org.compass.core.converter.mapping.osem.CollectionMappingConverter;
@@ -86,6 +87,7 @@ import org.compass.core.mapping.json.JsonPropertyMapping;
 import org.compass.core.mapping.json.PlainJsonObjectMapping;
 import org.compass.core.mapping.json.RootJsonObjectMapping;
 import org.compass.core.mapping.osem.ArrayMapping;
+import org.compass.core.mapping.osem.ClassDynamicPropertyMapping;
 import org.compass.core.mapping.osem.ClassIdPropertyMapping;
 import org.compass.core.mapping.osem.ClassMapping;
 import org.compass.core.mapping.osem.ClassPropertyMapping;
@@ -277,6 +279,8 @@ public class DefaultConverterLookup implements ConverterLookup {
                 ClassMapping.class, new ClassMappingConverter());
         addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.CLASS_PROPERTY_MAPPING,
                 ClassPropertyMapping.class, new ClassPropertyMappingConverter());
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.CLASS_DYNAMIC_PROPERTY_MAPPING,
+                ClassDynamicPropertyMapping.class, new ClassDynamicPropertyMappingConverter());
         addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.CLASS_ID_PROPERTY_MAPPING,
                 ClassIdPropertyMapping.class, new ClassPropertyMappingConverter());
         addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.COMPONENT_MAPPING,

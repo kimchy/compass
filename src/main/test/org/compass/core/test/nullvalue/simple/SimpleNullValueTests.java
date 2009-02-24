@@ -19,6 +19,7 @@ package org.compass.core.test.nullvalue.simple;
 import org.compass.core.CompassHits;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
+import org.compass.core.Resource;
 import org.compass.core.test.AbstractTestCase;
 
 /**
@@ -37,11 +38,17 @@ public class SimpleNullValueTests extends AbstractTestCase {
         A a = new A();
         a.id = 1;
         a.value = null;
+        a.value2 = null;
         session.save("a", a);
 
         a = (A) session.load("a", "1");
         assertEquals(1, a.id);
         assertNull(a.value);
+        assertNull(a.value2);
+
+        Resource resource = session.loadResource("a", 1);
+        assertEquals("moo", resource.getValue("value"));
+        assertNull(resource.getValue("value2"));
 
         CompassHits hits = session.find("moo");
         assertEquals(1, hits.length());

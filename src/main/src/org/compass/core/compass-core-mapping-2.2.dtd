@@ -277,7 +277,7 @@
     parent?,
     (analyzer?),
     (boost?),
-    (property|dynamic-meta-data|component|reference|constant|cascade)*
+    (property|dynamic-property|dynamic-meta-data|component|reference|constant|cascade)*
 )>
     <!--
         The fully qualified class name (or relative if the package is declared in compass-core-mapping).
@@ -456,6 +456,28 @@
     <!ATTLIST constant override (true|false) "true">
     <!ATTLIST constant converter CDATA #IMPLIED>
     <!ATTLIST constant spell-check (include|exclude|na) "na">
+
+<!ELEMENT dynamic-property EMPTY
+>
+    <!ATTLIST dynamic-property name CDATA #REQUIRED>
+    <!ATTLIST dynamic-property converter CDATA #IMPLIED>
+    <!ATTLIST dynamic-property accessor CDATA #IMPLIED>
+    <!ATTLIST dynamic-property name-prefix CDATA #IMPLIED>
+    <!ATTLIST dynamic-property name-property CDATA #IMPLIED>
+    <!ATTLIST dynamic-property value-property CDATA #IMPLIED>
+    <!ATTLIST dynamic-property name-converter CDATA #IMPLIED>
+    <!ATTLIST dynamic-property value-converter CDATA #IMPLIED>
+    <!ATTLIST dynamic-property name-format CDATA #IMPLIED>
+    <!ATTLIST dynamic-property value-format CDATA #IMPLIED>
+    <!ATTLIST dynamic-property store (no|yes|compress) #IMPLIED>
+    <!ATTLIST dynamic-property index (no|analyzed|not_analyzed|tokenized|un_tokenized) #IMPLIED>
+    <!ATTLIST dynamic-property term-vector (no|yes|positions|offsets|positions_offsets) #IMPLIED>
+    <!ATTLIST dynamic-property omit-norms (true|false) #IMPLIED>
+    <!ATTLIST dynamic-property omit-tf (true|false) #IMPLIED>
+    <!ATTLIST dynamic-property override (true|false) "true">
+    <!ATTLIST dynamic-property boost CDATA #IMPLIED>
+    <!ATTLIST dynamic-property format CDATA #IMPLIED>
+    <!ATTLIST dynamic-property null-value CDATA #IMPLIED>
 
 <!ELEMENT dynamic-meta-data (
     #PCDATA

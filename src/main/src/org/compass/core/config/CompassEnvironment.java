@@ -342,6 +342,8 @@ public class CompassEnvironment {
 
                 public static final String CLASS_PROPERTY_MAPPING = "classPropertyMapping";
 
+                public static final String CLASS_DYNAMIC_PROPERTY_MAPPING = "classDynamicPropertyMapping";
+                
                 public static final String CLASS_ID_PROPERTY_MAPPING = "classIdPropertyMapping";
 
                 public static final String COMPONENT_MAPPING = "component";

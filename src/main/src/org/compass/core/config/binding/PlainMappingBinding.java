@@ -52,20 +52,7 @@ import org.compass.core.mapping.json.JsonPropertyMapping;
 import org.compass.core.mapping.json.Naming;
 import org.compass.core.mapping.json.PlainJsonObjectMapping;
 import org.compass.core.mapping.json.RootJsonObjectMapping;
-import org.compass.core.mapping.osem.ClassBoostPropertyMapping;
-import org.compass.core.mapping.osem.ClassIdPropertyMapping;
-import org.compass.core.mapping.osem.ClassMapping;
-import org.compass.core.mapping.osem.ClassPropertyAnalyzerController;
-import org.compass.core.mapping.osem.ClassPropertyMapping;
-import org.compass.core.mapping.osem.ClassPropertyMetaDataMapping;
-import org.compass.core.mapping.osem.ComponentMapping;
-import org.compass.core.mapping.osem.ConstantMetaDataMapping;
-import org.compass.core.mapping.osem.DynamicMetaDataMapping;
-import org.compass.core.mapping.osem.IdComponentMapping;
-import org.compass.core.mapping.osem.ManagedId;
-import org.compass.core.mapping.osem.ParentMapping;
-import org.compass.core.mapping.osem.PlainCascadeMapping;
-import org.compass.core.mapping.osem.ReferenceMapping;
+import org.compass.core.mapping.osem.*;
 import org.compass.core.mapping.rsem.RawBoostPropertyMapping;
 import org.compass.core.mapping.rsem.RawResourceMapping;
 import org.compass.core.mapping.rsem.RawResourcePropertyAnalyzerController;
@@ -803,6 +790,13 @@ public abstract class PlainMappingBinding extends AbstractConfigurationHelperMap
             classMapping.addMapping(boostPropertyMapping);
         }
 
+        ConfigurationHelper[] dynamicPropertyConfs = classConf.getChildren("dynamic-property");
+        for (ConfigurationHelper dynamicConf : dynamicPropertyConfs) {
+            ClassDynamicPropertyMapping dynamicPropertyMapping = new ClassDynamicPropertyMapping();
+            bindClassDynamicProperty(dynamicConf, classMapping, dynamicPropertyMapping);
+            classMapping.addMapping(dynamicPropertyMapping);
+        }
+
         ConfigurationHelper[] dynamicConfs = classConf.getChildren("dynamic-meta-data");
         for (ConfigurationHelper dynamicConf : dynamicConfs) {
             DynamicMetaDataMapping dynamicMetaDataMapping = new DynamicMetaDataMapping();
@@ -980,6 +974,39 @@ public abstract class PlainMappingBinding extends AbstractConfigurationHelperMap
             bindMetaData(metadata, aliasMapping, classPropertyMapping, mdMapping);
             classPropertyMapping.addMapping(mdMapping);
         }
+    }
+
+    private void bindClassDynamicProperty(ConfigurationHelper dynamicPropertyConf, AliasMapping classMapping,
+                                          ClassDynamicPropertyMapping dynamicPropertyMapping) {
+        String name = dynamicPropertyConf.getAttribute("name");
+        dynamicPropertyMapping.setName(name);
+
+        dynamicPropertyMapping.setDefinedInAlias(classMapping.getAlias());
+
+        dynamicPropertyMapping.setOverrideByName(dynamicPropertyConf.getAttributeAsBoolean("override", true));
+        
+        dynamicPropertyMapping.setAccessor(dynamicPropertyConf.getAttribute("accessor", null));
+        dynamicPropertyMapping.setPropertyName(name);
+
+        dynamicPropertyMapping.setNamePrefix(dynamicPropertyConf.getAttribute("name-prefix", null));
+        
+        dynamicPropertyMapping.setNameProperty(dynamicPropertyConf.getAttribute("name-property", null));
+        dynamicPropertyMapping.setValueProperty(dynamicPropertyConf.getAttribute("value-property", null));
+
+        dynamicPropertyMapping.setNameConverterName(dynamicPropertyConf.getAttribute("name-converter", null));
+        dynamicPropertyMapping.setValueConverterName(dynamicPropertyConf.getAttribute("value-converter", null));
+
+        String nameFormat = dynamicPropertyConf.getAttribute("name-format", null);
+        if (nameFormat != null) {
+            dynamicPropertyMapping.setNameConverter(new FormatDelegateConverter(nameFormat));
+        }
+        String valueFormat = dynamicPropertyConf.getAttribute("value-format", null);
+        if (valueFormat != null) {
+            dynamicPropertyMapping.setValueConverter(new FormatDelegateConverter(valueFormat));
+        }
+
+        bindConverter(dynamicPropertyConf, dynamicPropertyMapping);
+        bindResourcePropertyMapping(dynamicPropertyConf, dynamicPropertyMapping.getResourcePropertyMapping(), classMapping);
     }
 
     private void bindConstant(ConfigurationHelper constantConf, AliasMapping classMapping,

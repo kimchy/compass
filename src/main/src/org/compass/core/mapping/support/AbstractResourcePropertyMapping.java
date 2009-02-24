@@ -17,6 +17,7 @@
 package org.compass.core.mapping.support;
 
 import org.compass.core.Property;
+import org.compass.core.converter.mapping.ResourcePropertyConverter;
 import org.compass.core.mapping.ExcludeFromAll;
 import org.compass.core.mapping.ReverseType;
 import org.compass.core.mapping.SpellCheck;
@@ -202,5 +203,12 @@ public abstract class AbstractResourcePropertyMapping extends AbstractMapping im
 
     public void setSpellCheck(SpellCheck spellCheck) {
         this.spellCheck = spellCheck;
+    }
+
+    public ResourcePropertyConverter getResourcePropertyConverter() {
+        if (getConverter() instanceof ResourcePropertyConverter) {
+            return (ResourcePropertyConverter) getConverter();
+        }
+        return null;
     }
 }

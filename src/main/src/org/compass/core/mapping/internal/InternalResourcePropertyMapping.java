@@ -25,7 +25,7 @@ import org.compass.core.mapping.SpellCheck;
 /**
  * @author kimchy
  */
-public interface InternalResourcePropertyMapping extends ResourcePropertyMapping {
+public interface InternalResourcePropertyMapping extends ResourcePropertyMapping, InternalMapping {
 
     /**
      * Allows to set the resource property mapping null value.

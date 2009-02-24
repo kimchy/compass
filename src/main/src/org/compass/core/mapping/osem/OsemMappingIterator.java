@@ -46,6 +46,8 @@ public abstract class OsemMappingIterator {
 
         void onClassPropertyMapping(ClassMapping classMapping, ClassPropertyMapping classPropertyMapping);
 
+        void onClassDynamicPropertyMapping(ClassMapping classMapping, ClassDynamicPropertyMapping dynamicPropertyMapping);
+
         void onComponentMapping(ClassMapping classMapping, ComponentMapping componentMapping);
 
         void onReferenceMapping(ClassMapping classMapping, ReferenceMapping referenceMapping);
@@ -174,6 +176,9 @@ public abstract class OsemMappingIterator {
         public void onDynamicMetaDataMapping(ClassMapping classMapping, DynamicMetaDataMapping dynamicMetaDataMapping) {
         }
 
+        public void onClassDynamicPropertyMapping(ClassMapping classMapping, ClassDynamicPropertyMapping dynamicPropertyMapping) {
+        }
+
         public void onResourcePropertyMapping(ResourcePropertyMapping resourcePropertyMapping) {
             resourcePropertyMappings.add(resourcePropertyMapping);
         }
@@ -193,6 +198,9 @@ public abstract class OsemMappingIterator {
             if (m instanceof ClassPropertyMapping) {
                 ClassPropertyMapping classPropertyMapping = (ClassPropertyMapping) m;
                 iteratePropertyMapping(callback, classMapping, classPropertyMapping);
+            } else if (m instanceof ClassDynamicPropertyMapping) {
+                ClassDynamicPropertyMapping dynamicPropertyMapping = (ClassDynamicPropertyMapping) m;
+                callback.onClassDynamicPropertyMapping(classMapping, dynamicPropertyMapping);
             } else if (m instanceof ParentMapping) {
                 callback.onParentMapping(classMapping, (ParentMapping) m);
             } else if (m instanceof PlainCascadeMapping) {
@@ -225,6 +233,9 @@ public abstract class OsemMappingIterator {
                 if (elementMapping instanceof ClassPropertyMapping) {
                     ClassPropertyMapping classPropertyMapping = (ClassPropertyMapping) elementMapping;
                     iteratePropertyMapping(callback, classMapping, classPropertyMapping);
+                } else if (elementMapping instanceof ClassDynamicPropertyMapping) {
+                    ClassDynamicPropertyMapping dynamicPropertyMapping = (ClassDynamicPropertyMapping) elementMapping;
+                    callback.onClassDynamicPropertyMapping(classMapping, dynamicPropertyMapping);
                 } else if (elementMapping instanceof ComponentMapping) {
                     ComponentMapping componentMapping = (ComponentMapping) elementMapping;
                     iterateComponentMapping(callback, classMapping, componentMapping, recursive);

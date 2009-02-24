@@ -18,6 +18,7 @@ package org.compass.core.config.process;
 
 import org.compass.core.Property;
 import org.compass.core.accessor.AccessorUtils;
+import org.compass.core.accessor.Getter;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.config.ConfigurationException;
@@ -128,8 +129,18 @@ public abstract class MappingProcessorUtils {
         }
     }
 
-    private static Converter resolveConverterByClass(ClassPropertyMapping classPropertyMapping, ConverterLookup converterLookup) {
-        String className = classPropertyMapping.getClassName();
+    public static Converter resolveConverterByClass(ClassPropertyMapping classPropertyMapping, ConverterLookup converterLookup) {
+        return resolveConverterByClass(classPropertyMapping.getClassName(), classPropertyMapping.getGetter(), converterLookup);
+    }
+
+    public static Converter resolveConverter(String converterName, String className, Getter getter, ConverterLookup converterLookup) {
+        if (converterName != null) {
+            return converterLookup.lookupConverter(converterName);
+        }
+        return resolveConverterByClass(className, getter, converterLookup);
+    }
+
+    public static Converter resolveConverterByClass(String className, Getter getter, ConverterLookup converterLookup) {
         Class clazz = null;
 
         try {
@@ -141,12 +152,12 @@ public abstract class MappingProcessorUtils {
         }
 
         if (clazz == null) {
-            clazz = AccessorUtils.getCollectionParameter(classPropertyMapping.getGetter());
+            clazz = AccessorUtils.getCollectionParameter(getter);
         }
 
         Converter converter;
         if (clazz == null) {
-            clazz = classPropertyMapping.getGetter().getReturnType();
+            clazz = getter.getReturnType();
             converter = converterLookup.lookupConverter(clazz);
             // Not sure how pretty it is, but here we go
             // if we did not set a converter for the array type, see if we
@@ -161,8 +172,7 @@ public abstract class MappingProcessorUtils {
         }
 
         if (converter == null) {
-            throw new MappingException("No converter defined for type ["
-                    + classPropertyMapping.getGetter().getReturnType().getName() + "]");
+            throw new MappingException("No converter defined for type [" + getter.getReturnType().getName() + "]");
         }
         return converter;
     }

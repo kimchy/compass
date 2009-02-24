@@ -18,7 +18,6 @@ package org.compass.core.mapping.osem;
 
 import org.compass.core.accessor.Getter;
 import org.compass.core.accessor.Setter;
-import org.compass.core.converter.mapping.ResourcePropertyConverter;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ReverseType;
 import org.compass.core.mapping.osem.internal.InternalObjectMapping;
@@ -103,12 +102,5 @@ public class ClassPropertyMetaDataMapping extends AbstractResourcePropertyMappin
 
     public void setDefinedInAlias(String definedInAlias) {
         this.definedInAlias = definedInAlias;
-    }
-
-    public ResourcePropertyConverter getResourcePropertyConverter() {
-        if (getConverter() instanceof ResourcePropertyConverter) {
-            return (ResourcePropertyConverter) getConverter();
-        }
-        return null;
     }
 }

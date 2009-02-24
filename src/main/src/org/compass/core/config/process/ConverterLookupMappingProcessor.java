@@ -46,6 +46,7 @@ import org.compass.core.mapping.json.JsonPropertyMapping;
 import org.compass.core.mapping.json.PlainJsonObjectMapping;
 import org.compass.core.mapping.json.RootJsonObjectMapping;
 import org.compass.core.mapping.osem.AbstractCollectionMapping;
+import org.compass.core.mapping.osem.ClassDynamicPropertyMapping;
 import org.compass.core.mapping.osem.ClassMapping;
 import org.compass.core.mapping.osem.ClassPropertyMapping;
 import org.compass.core.mapping.osem.ClassPropertyMetaDataMapping;
@@ -245,6 +246,24 @@ public class ConverterLookupMappingProcessor implements MappingProcessor {
             MappingProcessorUtils.lookupConverter(converterLookup, classPropertyMapping);
         }
 
+        public void onClassDynamicPropertyMapping(ClassMapping classMapping, ClassDynamicPropertyMapping dynamicPropertyMapping) {
+            MappingProcessorUtils.lookupConverter(converterLookup, dynamicPropertyMapping);
+            if (dynamicPropertyMapping.getNameConverter() == null) {
+                dynamicPropertyMapping.setNameConverter((ResourcePropertyConverter) MappingProcessorUtils.resolveConverter(dynamicPropertyMapping.getNameConverterName(), null, dynamicPropertyMapping.getNameGetter(), converterLookup));
+            } else if (dynamicPropertyMapping.getNameConverter() instanceof DelegateConverter) {
+                ((DelegateConverter) dynamicPropertyMapping.getNameConverter()).setDelegatedConverter(MappingProcessorUtils.resolveConverter(dynamicPropertyMapping.getNameConverterName(), null, dynamicPropertyMapping.getNameGetter(), converterLookup));
+            }
+            if (dynamicPropertyMapping.getValueConverter() == null) {
+                dynamicPropertyMapping.setValueConverter((ResourcePropertyConverter) MappingProcessorUtils.resolveConverter(dynamicPropertyMapping.getValueConverterName(), null, dynamicPropertyMapping.getNameGetter(), converterLookup));
+            } else if (dynamicPropertyMapping.getValueConverter() instanceof DelegateConverter) {
+                ((DelegateConverter) dynamicPropertyMapping.getValueConverter()).setDelegatedConverter(MappingProcessorUtils.resolveConverter(dynamicPropertyMapping.getValueConverterName(), null, dynamicPropertyMapping.getValueGetter(), converterLookup));
+            }
+
+            dynamicPropertyMapping.getResourcePropertyMapping().setConverter(dynamicPropertyMapping.getValueConverter());
+
+            MappingProcessorUtils.applyResourcePropertySettings(dynamicPropertyMapping.getResourcePropertyMapping(), settings);
+        }
+
         public void onComponentMapping(ClassMapping classMapping, ComponentMapping componentMapping) {
             MappingProcessorUtils.lookupConverter(converterLookup, componentMapping);
         }
@@ -264,7 +283,6 @@ public class ConverterLookupMappingProcessor implements MappingProcessor {
         public void onConstantMetaDataMappaing(ClassMapping classMapping, ConstantMetaDataMapping constantMetaDataMapping) {
             MappingProcessorUtils.lookupConverter(converterLookup, constantMetaDataMapping);
         }
-
 
         public void onClassPropertyMetaDataMapping(ClassPropertyMetaDataMapping classPropertyMetaDataMapping) {
             MappingProcessorUtils.lookupConverter(converterLookup, classPropertyMetaDataMapping, classPropertyMapping);
