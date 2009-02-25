@@ -18,6 +18,7 @@ package org.compass.core.config.process;
 
 import java.util.Iterator;
 
+import org.compass.core.accessor.AccessorUtils;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.config.ConfigurationException;
 import org.compass.core.converter.Converter;
@@ -248,18 +249,51 @@ public class ConverterLookupMappingProcessor implements MappingProcessor {
 
         public void onClassDynamicPropertyMapping(ClassMapping classMapping, ClassDynamicPropertyMapping dynamicPropertyMapping) {
             MappingProcessorUtils.lookupConverter(converterLookup, dynamicPropertyMapping);
-            if (dynamicPropertyMapping.getNameConverter() == null) {
-                dynamicPropertyMapping.setNameConverter((ResourcePropertyConverter) MappingProcessorUtils.resolveConverter(dynamicPropertyMapping.getNameConverterName(), null, dynamicPropertyMapping.getNameGetter(), converterLookup));
-            } else if (dynamicPropertyMapping.getNameConverter() instanceof DelegateConverter) {
-                ((DelegateConverter) dynamicPropertyMapping.getNameConverter()).setDelegatedConverter(MappingProcessorUtils.resolveConverter(dynamicPropertyMapping.getNameConverterName(), null, dynamicPropertyMapping.getNameGetter(), converterLookup));
-            }
-            if (dynamicPropertyMapping.getValueConverter() == null) {
-                dynamicPropertyMapping.setValueConverter((ResourcePropertyConverter) MappingProcessorUtils.resolveConverter(dynamicPropertyMapping.getValueConverterName(), null, dynamicPropertyMapping.getNameGetter(), converterLookup));
-            } else if (dynamicPropertyMapping.getValueConverter() instanceof DelegateConverter) {
-                ((DelegateConverter) dynamicPropertyMapping.getValueConverter()).setDelegatedConverter(MappingProcessorUtils.resolveConverter(dynamicPropertyMapping.getValueConverterName(), null, dynamicPropertyMapping.getValueGetter(), converterLookup));
+            if (dynamicPropertyMapping.getNameConverter() == null || dynamicPropertyMapping.getNameConverter() instanceof DelegateConverter) {
+                ResourcePropertyConverter converter = null;
+                if (dynamicPropertyMapping.getObjectType() == ClassDynamicPropertyMapping.ObjectType.MAP) {
+                    Class keyType;
+                    if (dynamicPropertyMapping.getNameGetter() != null) {
+                        keyType = dynamicPropertyMapping.getNameGetter().getReturnType();
+                    } else {
+                        keyType = AccessorUtils.getMapKeyParameter(dynamicPropertyMapping.getGetter());
+                    }
+                    converter = (ResourcePropertyConverter) MappingProcessorUtils.resolveConverter(dynamicPropertyMapping.getNameConverterName(), null, keyType, converterLookup);
+                } else {
+                    converter = (ResourcePropertyConverter) MappingProcessorUtils.resolveConverter(dynamicPropertyMapping.getNameConverterName(), null, dynamicPropertyMapping.getNameGetter(), converterLookup);
+                }
+
+                if (dynamicPropertyMapping.getNameConverter() instanceof DelegateConverter) {
+                    ((DelegateConverter) dynamicPropertyMapping.getNameConverter()).setDelegatedConverter(converter);
+                } else {
+                    dynamicPropertyMapping.setNameConverter(converter);
+                }
             }
 
-            dynamicPropertyMapping.getResourcePropertyMapping().setConverter(dynamicPropertyMapping.getValueConverter());
+            if (dynamicPropertyMapping.getValueConverter() == null || dynamicPropertyMapping.getValueConverter() instanceof DelegateConverter) {
+                ResourcePropertyConverter converter;
+                if (dynamicPropertyMapping.getObjectType() == ClassDynamicPropertyMapping.ObjectType.MAP) {
+                    Class valueType;
+                    if (dynamicPropertyMapping.getValueGetter() != null) {
+                        valueType = dynamicPropertyMapping.getValueGetter().getReturnType();
+                    } else {
+                        valueType = AccessorUtils.getMapValueParameter(dynamicPropertyMapping.getGetter());
+                    }
+                    converter = (ResourcePropertyConverter) MappingProcessorUtils.resolveConverter(dynamicPropertyMapping.getValueConverterName(), null, valueType, converterLookup);
+                } else {
+                    converter = (ResourcePropertyConverter) MappingProcessorUtils.resolveConverter(dynamicPropertyMapping.getValueConverterName(), null, dynamicPropertyMapping.getValueGetter(), converterLookup);
+                }
+
+                if (dynamicPropertyMapping.getValueConverter() instanceof DelegateConverter) {
+                    ((DelegateConverter) dynamicPropertyMapping.getValueConverter()).setDelegatedConverter(converter);
+                } else {
+                    dynamicPropertyMapping.setValueConverter(converter);
+                }
+            }
+
+            if (dynamicPropertyMapping.getValueConverter() != null) {
+                dynamicPropertyMapping.getResourcePropertyMapping().setConverter(dynamicPropertyMapping.getValueConverter());
+            }
 
             MappingProcessorUtils.applyResourcePropertySettings(dynamicPropertyMapping.getResourcePropertyMapping(), settings);
         }

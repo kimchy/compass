@@ -476,7 +476,6 @@
     <!ATTLIST dynamic-property omit-tf (true|false) #IMPLIED>
     <!ATTLIST dynamic-property override (true|false) "true">
     <!ATTLIST dynamic-property boost CDATA #IMPLIED>
-    <!ATTLIST dynamic-property format CDATA #IMPLIED>
     <!ATTLIST dynamic-property null-value CDATA #IMPLIED>
 
 <!ELEMENT dynamic-meta-data (

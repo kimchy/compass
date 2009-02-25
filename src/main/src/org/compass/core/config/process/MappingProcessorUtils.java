@@ -129,15 +129,55 @@ public abstract class MappingProcessorUtils {
         }
     }
 
-    public static Converter resolveConverterByClass(ClassPropertyMapping classPropertyMapping, ConverterLookup converterLookup) {
-        return resolveConverterByClass(classPropertyMapping.getClassName(), classPropertyMapping.getGetter(), converterLookup);
-    }
-
     public static Converter resolveConverter(String converterName, String className, Getter getter, ConverterLookup converterLookup) {
         if (converterName != null) {
             return converterLookup.lookupConverter(converterName);
         }
         return resolveConverterByClass(className, getter, converterLookup);
+    }
+
+    public static Converter resolveConverter(String converterName, String className, Class type, ConverterLookup converterLookup) {
+        if (converterName != null) {
+            return converterLookup.lookupConverter(converterName);
+        }
+        return resolveConverterByClass(className, type, converterLookup);
+    }
+
+    public static Converter resolveConverterByClass(ClassPropertyMapping classPropertyMapping, ConverterLookup converterLookup) {
+        return resolveConverterByClass(classPropertyMapping.getClassName(), classPropertyMapping.getGetter(), converterLookup);
+    }
+    
+    public static Converter resolveConverterByClass(String className, Class type, ConverterLookup converterLookup) {
+        Class clazz = null;
+
+        try {
+            if (className != null) {
+                clazz = ClassUtils.forName(className, converterLookup.getSettings().getClassLoader());
+            }
+        } catch (ClassNotFoundException e) {
+            throw new MappingException("Failed to find class [" + className + "]", e);
+        }
+
+        Converter converter;
+        if (clazz == null) {
+            clazz = type;
+            converter = converterLookup.lookupConverter(clazz);
+            // Not sure how pretty it is, but here we go
+            // if we did not set a converter for the array type, see if we
+            // set a converter to the component type, and than we use the
+            // array mapping as well
+            if (converter == null && clazz.isArray()) {
+                clazz = clazz.getComponentType();
+                converter = converterLookup.lookupConverter(clazz);
+            }
+        } else {
+            converter = converterLookup.lookupConverter(clazz);
+        }
+
+        if (converter == null) {
+            throw new MappingException("No converter defined for type [" + type.getName() + "]");
+        }
+        return converter;
     }
 
     public static Converter resolveConverterByClass(String className, Getter getter, ConverterLookup converterLookup) {

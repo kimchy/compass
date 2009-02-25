@@ -16,8 +16,6 @@
 
 package org.compass.core.mapping.osem;
 
-import java.util.Collection;
-
 import org.compass.core.accessor.Getter;
 import org.compass.core.converter.mapping.ResourcePropertyConverter;
 import org.compass.core.mapping.Mapping;
@@ -36,6 +34,13 @@ public class ClassDynamicPropertyMapping extends AbstractAccessorMapping impleme
         COLLECTION
     }
 
+    public static enum ObjectType {
+        PLAIN,
+        ARRAY,
+        COLLECTION,
+        MAP
+    }
+
     private String namePrefix;
 
     private String nameProperty;
@@ -50,13 +55,21 @@ public class ClassDynamicPropertyMapping extends AbstractAccessorMapping impleme
 
     private String valueConverterName;
 
+    private String nameFormat;
+
+    private String valueFormat;
+
     private ResourcePropertyConverter nameConverter;
 
     private ResourcePropertyConverter valueConverter;
 
     private boolean overrideByName = true;
 
-    private ValueType valueType = ValueType.PLAIN;
+    private ValueType valueType;
+
+    private ValueType mapValueType;
+
+    private ObjectType objectType;
 
     private InternalResourcePropertyMapping resourcePropertyMapping = new DynamicResourcePropertyMapping();
 
@@ -73,6 +86,10 @@ public class ClassDynamicPropertyMapping extends AbstractAccessorMapping impleme
         copy.setNameConverter(getNameConverter());
         copy.setValueConverter(getValueConverter());
         copy.setValueType(getValueType());
+        copy.setMapValueType(getMapValueType());
+        copy.setObjectType(getObjectType());
+        copy.setNameFormat(getNameFormat());
+        copy.setValueFormat(getValueFormat());
         if (getResourcePropertyMapping() != null) {
             copy.setResourcePropertyMapping((InternalResourcePropertyMapping) getResourcePropertyMapping().copy());
         }
@@ -121,15 +138,6 @@ public class ClassDynamicPropertyMapping extends AbstractAccessorMapping impleme
 
     public void setValueGetter(Getter valueGetter) {
         this.valueGetter = valueGetter;
-        if (valueGetter != null) {
-            if (valueGetter.getReturnType().isArray()) {
-                setValueType(ValueType.ARRAY);
-            } else if (Collection.class.isAssignableFrom(valueGetter.getReturnType())) {
-                setValueType(ValueType.COLLECTION);
-            } else {
-                setValueType(ValueType.PLAIN);
-            }
-        }
     }
 
     public String getNameConverterName() {
@@ -180,12 +188,44 @@ public class ClassDynamicPropertyMapping extends AbstractAccessorMapping impleme
         this.resourcePropertyMapping = resourcePropertyMapping;
     }
 
+    public void setValueType(ValueType valueType) {
+        this.valueType = valueType;
+    }
+
     public ValueType getValueType() {
         return valueType;
     }
 
-    public void setValueType(ValueType valueType) {
-        this.valueType = valueType;
+    public ValueType getMapValueType() {
+        return mapValueType;
+    }
+
+    public void setMapValueType(ValueType mapValueType) {
+        this.mapValueType = mapValueType;
+    }
+
+    public void setObjectType(ObjectType objectType) {
+        this.objectType = objectType;
+    }
+
+    public ObjectType getObjectType() {
+        return objectType;
+    }
+
+    public String getNameFormat() {
+        return nameFormat;
+    }
+
+    public void setNameFormat(String nameFormat) {
+        this.nameFormat = nameFormat;
+    }
+
+    public String getValueFormat() {
+        return valueFormat;
+    }
+
+    public void setValueFormat(String valueFormat) {
+        this.valueFormat = valueFormat;
     }
 
     private static class DynamicResourcePropertyMapping extends AbstractResourcePropertyMapping {

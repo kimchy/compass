@@ -19,6 +19,7 @@ package org.compass.core.converter.mapping.osem;
 import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.compass.core.Property;
 import org.compass.core.Resource;
@@ -39,6 +40,78 @@ public class ClassDynamicPropertyMappingConverter implements Converter {
         if (root == null) {
             return false;
         }
+        if (dynamicPropertyMapping.getObjectType() == ClassDynamicPropertyMapping.ObjectType.MAP) {
+            return marshallMap(resource, root, context, dynamicPropertyMapping);
+        } else {
+            return marshallSimple(resource, root, context, dynamicPropertyMapping);
+        }
+    }
+
+    public Object unmarshall(Resource resource, Mapping mapping, MarshallingContext context) throws ConversionException {
+        // does not support unmarshalling, simply return null
+        return null;
+    }
+
+    private boolean marshallMap(Resource resource, Object root, MarshallingContext context, ClassDynamicPropertyMapping dynamicPropertyMapping) {
+        Map map = (Map) root;
+        if (map.isEmpty()) {
+            return false;
+        }
+        for (Iterator it = map.entrySet().iterator(); it.hasNext();) {
+            Map.Entry entry = (Map.Entry) it.next();
+            Object nameObj = entry.getKey();
+            if (dynamicPropertyMapping.getNameGetter() != null) {
+                nameObj = dynamicPropertyMapping.getNameGetter().get(nameObj);
+            }
+            if (nameObj == null) {
+                continue;
+            }
+            String name = dynamicPropertyMapping.getNameConverter().toString(nameObj, null);
+            if (dynamicPropertyMapping.getNamePrefix() != null) {
+                name = dynamicPropertyMapping.getNamePrefix() + name;
+            }
+
+            Object valueObj = entry.getValue();
+            if (dynamicPropertyMapping.getMapValueType() == ClassDynamicPropertyMapping.ValueType.PLAIN) {
+                if (dynamicPropertyMapping.getValueGetter() != null) {
+                    valueObj = dynamicPropertyMapping.getValueGetter().get(valueObj);
+                }
+                // don't save a null value if the context does not states so
+                if (valueObj == null && !handleNulls(dynamicPropertyMapping.getResourcePropertyMapping(), context)) {
+                    continue;
+                }
+                processNameAndValue(resource, context, dynamicPropertyMapping, name, valueObj);
+            } else if (dynamicPropertyMapping.getMapValueType() == ClassDynamicPropertyMapping.ValueType.ARRAY) {
+                int size = Array.getLength(valueObj);
+                for (int i = 0; i < size; i++) {
+                    Object valueItem = Array.get(valueObj, i);
+                    if (dynamicPropertyMapping.getValueGetter() != null) {
+                        valueItem = dynamicPropertyMapping.getValueGetter().get(valueItem);
+                    }
+                    if (valueItem == null && !handleNulls(dynamicPropertyMapping.getResourcePropertyMapping(), context)) {
+                        continue;
+                    }
+                    processNameAndValue(resource, context, dynamicPropertyMapping, name, valueItem);
+                }
+            } else if (dynamicPropertyMapping.getMapValueType() == ClassDynamicPropertyMapping.ValueType.COLLECTION) {
+                Collection valueCol = (Collection) valueObj;
+                for (Iterator it2 = valueCol.iterator(); it2.hasNext();) {
+                    Object valueItem = it2.next();
+                    if (dynamicPropertyMapping.getValueGetter() != null) {
+                        valueItem = dynamicPropertyMapping.getValueGetter().get(valueItem);
+                    }
+                    if (valueItem == null && !handleNulls(dynamicPropertyMapping.getResourcePropertyMapping(), context)) {
+                        continue;
+                    }
+                    processNameAndValue(resource, context, dynamicPropertyMapping, name, valueItem);
+                }
+            }
+        }
+        
+        return dynamicPropertyMapping.getResourcePropertyMapping().getStore() != Property.Store.NO;
+    }
+
+    private boolean marshallSimple(Resource resource, Object root, MarshallingContext context, ClassDynamicPropertyMapping dynamicPropertyMapping) {
         Object nameObj = dynamicPropertyMapping.getNameGetter().get(root);
         if (nameObj == null) {
             return false;
@@ -52,6 +125,12 @@ public class ClassDynamicPropertyMappingConverter implements Converter {
         if (valueObj == null && !handleNulls(dynamicPropertyMapping.getResourcePropertyMapping(), context)) {
             return false;
         }
+        processNameAndValue(resource, context, dynamicPropertyMapping, name, valueObj);
+
+        return dynamicPropertyMapping.getResourcePropertyMapping().getStore() != Property.Store.NO;
+    }
+
+    private void processNameAndValue(Resource resource, MarshallingContext context, ClassDynamicPropertyMapping dynamicPropertyMapping, String name, Object valueObj) {
         if (dynamicPropertyMapping.getValueType() == ClassDynamicPropertyMapping.ValueType.ARRAY) {
             int size = Array.getLength(valueObj);
             for (int i = 0; i < size; i++) {
@@ -75,13 +154,6 @@ public class ClassDynamicPropertyMappingConverter implements Converter {
             Property property = context.getResourceFactory().createProperty(name, value, dynamicPropertyMapping.getResourcePropertyMapping());
             resource.addProperty(property);
         }
-
-        return dynamicPropertyMapping.getResourcePropertyMapping().getStore() != Property.Store.NO;
-    }
-
-    public Object unmarshall(Resource resource, Mapping mapping, MarshallingContext context) throws ConversionException {
-        // does not support unmarshalling, simply return null
-        return null;
     }
 
     protected void addProperty(Resource resource, ClassDynamicPropertyMapping mapping, MarshallingContext context, String name, Object valueObj) {

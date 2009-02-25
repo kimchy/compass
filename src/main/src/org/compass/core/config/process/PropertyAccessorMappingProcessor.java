@@ -17,10 +17,8 @@
 package org.compass.core.config.process;
 
 import java.lang.reflect.Modifier;
-import java.util.Collection;
 import java.util.Iterator;
 
-import org.compass.core.accessor.AccessorUtils;
 import org.compass.core.accessor.PropertyAccessor;
 import org.compass.core.accessor.PropertyAccessorFactory;
 import org.compass.core.config.CompassSettings;
@@ -31,7 +29,6 @@ import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.MultipleMapping;
-import org.compass.core.mapping.osem.ClassDynamicPropertyMapping;
 import org.compass.core.mapping.osem.ClassMapping;
 import org.compass.core.mapping.osem.ObjectMapping;
 import org.compass.core.mapping.osem.internal.InternalObjectMapping;
@@ -95,20 +92,6 @@ public class PropertyAccessorMappingProcessor implements MappingProcessor {
         PropertyAccessor pAccessor = propertyAccessorFactory.getPropertyAccessor(objectMapping.getAccessor(), settings);
         ((InternalObjectMapping) objectMapping).setGetter(pAccessor.getGetter(clazz, objectMapping.getPropertyName()));
         ((InternalObjectMapping) objectMapping).setSetter(pAccessor.getSetter(clazz, objectMapping.getPropertyName()));
-
-        // hack to support dynamic property (not nice!)
-        if (objectMapping instanceof ClassDynamicPropertyMapping) {
-            Class getterType = objectMapping.getGetter().getReturnType();
-            Class dynaType = getterType;
-            ClassDynamicPropertyMapping dynamicPropertyMapping = (ClassDynamicPropertyMapping) objectMapping;
-            if (getterType.isArray()) {
-                dynaType = getterType.getComponentType();
-            } else if (Collection.class.isAssignableFrom(getterType)) {
-                dynaType = AccessorUtils.getCollectionParameter(objectMapping.getGetter());
-            }
-            dynamicPropertyMapping.setNameGetter(pAccessor.getGetter(dynaType, dynamicPropertyMapping.getNameProperty()));
-            dynamicPropertyMapping.setValueGetter(pAccessor.getGetter(dynaType, dynamicPropertyMapping.getValueProperty()));
-        }
 
         if (mapping instanceof MultipleMapping) {
             MultipleMapping multipleMapping = (MultipleMapping) mapping;

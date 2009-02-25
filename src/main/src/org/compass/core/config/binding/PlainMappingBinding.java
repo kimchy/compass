@@ -998,10 +998,12 @@ public abstract class PlainMappingBinding extends AbstractConfigurationHelperMap
 
         String nameFormat = dynamicPropertyConf.getAttribute("name-format", null);
         if (nameFormat != null) {
+            dynamicPropertyMapping.setNameFormat(nameFormat);
             dynamicPropertyMapping.setNameConverter(new FormatDelegateConverter(nameFormat));
         }
         String valueFormat = dynamicPropertyConf.getAttribute("value-format", null);
         if (valueFormat != null) {
+            dynamicPropertyMapping.setValueFormat(valueFormat);
             dynamicPropertyMapping.setValueConverter(new FormatDelegateConverter(valueFormat));
         }
 
