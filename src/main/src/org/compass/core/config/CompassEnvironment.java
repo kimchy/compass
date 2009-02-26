@@ -834,7 +834,7 @@ public class CompassEnvironment {
                  * Controls the output format for dom4j. Values are <code>default</code> and <code>compact</code>.
                  * Defaults to <code>default</code>.
                  */
-                public static final String OUTPUT_FORMAT = PREFIX + "dom4j.outputFormat";
+                public static final String OUTPUT_FORMAT = PREFIX + "jdom.outputFormat";
             }
         }
     }
