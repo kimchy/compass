@@ -37,7 +37,7 @@ public class SimpleJacksonJsonObjectTests extends AbstractTestCase {
     }
 
     protected void addSettings(CompassSettings settings) {
-        settings.setClassSetting(CompassEnvironment.Converter.JsonContent.TYPE, JacksonContentConverter.class);
+        settings.setClassSetting(CompassEnvironment.Jsem.JsonContent.TYPE, JacksonContentConverter.class);
     }
 
     public void testDotPath() {

@@ -45,7 +45,7 @@ public class JsonContentMappingConverter implements Converter, CompassConfigurab
     private JsonContentConverter contentConverter;
 
     public void configure(CompassSettings settings) throws CompassException {
-        String type = settings.getGloablSettings().getSetting(CompassEnvironment.Converter.JsonContent.TYPE);
+        String type = settings.getGloablSettings().getSetting(CompassEnvironment.Jsem.JsonContent.TYPE);
         if (type == null) {
             type = DefaultJSONContentConverterImpl.class.getName();
         }

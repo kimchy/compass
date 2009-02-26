@@ -37,7 +37,7 @@ public class SimpleGrailsJsonObjectTests extends AbstractTestCase {
     }
 
     protected void addSettings(CompassSettings settings) {
-        settings.setClassSetting(CompassEnvironment.Converter.JsonContent.TYPE, GrailsContentConverter.class);
+        settings.setClassSetting(CompassEnvironment.Jsem.JsonContent.TYPE, GrailsContentConverter.class);
     }
 
     public void testDotPath() {

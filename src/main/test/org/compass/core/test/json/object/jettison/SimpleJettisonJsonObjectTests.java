@@ -37,7 +37,7 @@ public class SimpleJettisonJsonObjectTests extends AbstractTestCase {
     }
 
     protected void addSettings(CompassSettings settings) {
-        settings.setClassSetting(CompassEnvironment.Converter.JsonContent.TYPE, JettisonContentConverter.class);
+        settings.setClassSetting(CompassEnvironment.Jsem.JsonContent.TYPE, JettisonContentConverter.class);
     }
 
     public void testDotPath() {

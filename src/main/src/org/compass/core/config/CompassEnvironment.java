@@ -377,11 +377,6 @@ public class CompassEnvironment {
             }
         }
 
-        public abstract class JsonContent {
-
-            public static final String TYPE = "compass.jsonContentConverter.type";
-        }
-
         /**
          * Formatted settings that apply to all the default date and number types.
          */
@@ -725,6 +720,17 @@ public class CompassEnvironment {
          * <code>false</code>.
          */
         public static final String FILTER_DUPLICATES = "compass.osem.filterDuplicates";
+    }
+
+    public abstract class Jsem {
+
+        /**
+         * Settings for Json Content converters.
+         */
+        public abstract class JsonContent {
+
+            public static final String TYPE = "compass.jsem.contentConverter.type";
+        }
     }
 
     public abstract class Xsem {

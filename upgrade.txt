@@ -8,6 +8,7 @@ VERSION 2.2.0 RC1
    NullFirstLevelCache.
 2. Removed SpringSyncTransactionGpsDeviceWrapper, no need for it anymore.
 3. Simplified XSEM XmlContentConverter configuration. Please refer to the XSEM XmlContent section in the reference docs.
+4. Changed JSEM ContentConverter setting from 'compass.jsonContentConverter.type' to 'compass.jsem.contentConverter.type'.
 
 VERSION 2.2.0 M2 (2 February, 2009)
 ===================================
