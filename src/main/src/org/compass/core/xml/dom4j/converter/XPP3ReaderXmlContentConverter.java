@@ -52,7 +52,7 @@ public class XPP3ReaderXmlContentConverter extends AbstractXmlWriterXmlContentCo
      * This converter does not support a singleton wrapper strategy.
      */
     public boolean supports(String wrapper) {
-        return !CompassEnvironment.Converter.XmlContent.WRAPPER_SINGLETON.equals(wrapper);
+        return !CompassEnvironment.Xsem.XmlContent.WRAPPER_SINGLETON.equals(wrapper);
     }
 
     /**

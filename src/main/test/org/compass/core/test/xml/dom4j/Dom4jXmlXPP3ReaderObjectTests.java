@@ -20,10 +20,12 @@ import java.io.Reader;
 
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
-import org.compass.core.converter.mapping.xsem.XmlContentMappingConverter;
+import org.compass.core.converter.xsem.XmlContentConverter;
 import org.compass.core.test.xml.AbstractXmlObjectTests;
 import org.compass.core.xml.AliasedXmlObject;
+import org.compass.core.xml.XmlObject;
 import org.compass.core.xml.dom4j.Dom4jAliasedXmlObject;
+import org.compass.core.xml.dom4j.Dom4jXmlObject;
 import org.compass.core.xml.dom4j.converter.XPP3ReaderXmlContentConverter;
 import org.dom4j.Document;
 import org.dom4j.io.SAXReader;
@@ -34,9 +36,11 @@ import org.dom4j.io.SAXReader;
 public class Dom4jXmlXPP3ReaderObjectTests extends AbstractXmlObjectTests {
 
     protected void addSettings(CompassSettings settings) {
-        settings.setGroupSettings(CompassEnvironment.Converter.PREFIX, CompassEnvironment.Converter.DefaultTypeNames.Mapping.XML_CONTENT_MAPPING,
-                new String[]{CompassEnvironment.Converter.TYPE, CompassEnvironment.Converter.XmlContent.TYPE},
-                new String[]{XmlContentMappingConverter.class.getName(), XPP3ReaderXmlContentConverter.class.getName()});
+        settings.setSetting(CompassEnvironment.Xsem.XmlContent.TYPE, CompassEnvironment.Xsem.XmlContent.Dom4j.TYPE_XPP3);
+    }
+
+    protected Class<? extends XmlContentConverter> getContentConverterType() {
+        return XPP3ReaderXmlContentConverter.class;
     }
 
     protected AliasedXmlObject buildAliasedXmlObject(String alias, Reader data) throws Exception {
@@ -51,5 +55,9 @@ public class Dom4jXmlXPP3ReaderObjectTests extends AbstractXmlObjectTests {
 
     public void testData5() throws Exception {
         innerTestData5WithNamespacePrefixXpath();
+    }
+
+    protected void verifyXmlObjectType(XmlObject xmlObject) {
+        assertTrue(xmlObject instanceof Dom4jXmlObject);
     }
 }

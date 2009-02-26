@@ -21,7 +21,7 @@ import org.compass.core.xml.XmlObject;
  *
  * @author kimchy
  */
-public class PoolXmlContentConverterWrapper implements XmlContentConverter, CompassConfigurable {
+public class PoolXmlContentConverterWrapper implements XmlContentConverterWrapper, CompassConfigurable {
 
     private CompassSettings settings;
 
@@ -36,13 +36,13 @@ public class PoolXmlContentConverterWrapper implements XmlContentConverter, Comp
     private final Object mutex = new Object();
 
     /**
-     * Configures the pool used from {@link CompassEnvironment.Converter.XmlContent#MIN_POOL_SIZE} and
-     * {@link CompassEnvironment.Converter.XmlContent#MAX_POOL_SIZE}.
+     * Configures the pool used from {@link CompassEnvironment.Xsem.XmlContent#MIN_POOL_SIZE} and
+     * {@link CompassEnvironment.Xsem.XmlContent#MAX_POOL_SIZE}.
      */
     public void configure(CompassSettings settings) throws CompassException {
         this.settings = settings;
-        this.initialPoolSize = settings.getSettingAsInt(CompassEnvironment.Converter.XmlContent.MIN_POOL_SIZE, 10);
-        this.maxPoolSize = settings.getSettingAsInt(CompassEnvironment.Converter.XmlContent.MAX_POOL_SIZE, 30);
+        this.initialPoolSize = settings.getGloablSettings().getSettingAsInt(CompassEnvironment.Xsem.XmlContent.MIN_POOL_SIZE, 10);
+        this.maxPoolSize = settings.getGloablSettings().getSettingAsInt(CompassEnvironment.Xsem.XmlContent.MAX_POOL_SIZE, 30);
         // warm up the pool
         XmlContentConverter converter = fetchFromPool();
         putInPool(converter);
@@ -78,6 +78,10 @@ public class PoolXmlContentConverterWrapper implements XmlContentConverter, Comp
         }
     }
 
+    public XmlContentConverter createContentConverter() {
+        return XmlContentConverterUtils.createXmlContentConverter(settings);
+    }
+
     private XmlContentConverter fetchFromPool() {
         XmlContentConverter result;
         synchronized (mutex) {
@@ -85,7 +89,7 @@ public class PoolXmlContentConverterWrapper implements XmlContentConverter, Comp
                 nextAvailable = -1;
                 pool = new XmlContentConverter[maxPoolSize];
                 for (int i = 0; i < initialPoolSize; i++) {
-                    putInPool(XmlContentConverterUtils.createXmlContentConverter(settings));
+                    putInPool(createContentConverter());
                 }
             }
             while (nextAvailable < 0) {
@@ -99,7 +103,7 @@ public class PoolXmlContentConverterWrapper implements XmlContentConverter, Comp
             nextAvailable--;
         }
         if (result == null) {
-            result = XmlContentConverterUtils.createXmlContentConverter(settings);
+            result = createContentConverter();
             putInPool(result);
         }
         return result;

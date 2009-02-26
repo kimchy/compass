@@ -16,15 +16,18 @@ import org.compass.core.xml.XmlObject;
  *
  * @author kimchy
  */
-public class SingletonXmlContentConverterWrapper implements XmlContentConverter, CompassConfigurable {
+public class SingletonXmlContentConverterWrapper implements XmlContentConverterWrapper, CompassConfigurable {
 
     private XmlContentConverter xmlContentConverter;
+
+    private CompassSettings settings;
 
     /**
      * Creates and configures a singleton {@link XmlContentConverter}.
      */
     public void configure(CompassSettings settings) throws CompassException {
-        this.xmlContentConverter = XmlContentConverterUtils.createXmlContentConverter(settings);
+        this.settings = settings;
+        this.xmlContentConverter = createContentConverter();
     }
 
     /**
@@ -45,5 +48,9 @@ public class SingletonXmlContentConverterWrapper implements XmlContentConverter,
      */
     public AliasedXmlObject fromXml(String alias, Reader xml) throws ConversionException {
         return xmlContentConverter.fromXml(alias, xml);
+    }
+
+    public XmlContentConverter createContentConverter() {
+        return XmlContentConverterUtils.createXmlContentConverter(settings);
     }
 }

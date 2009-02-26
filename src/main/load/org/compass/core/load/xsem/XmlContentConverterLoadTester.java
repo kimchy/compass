@@ -49,8 +49,8 @@ public class XmlContentConverterLoadTester {
         for (int i = 0; i < converters.length; i++) {
             System.gc();
             CompassSettings settings = new CompassSettings();
-            settings.setSetting(CompassEnvironment.Converter.XmlContent.TYPE, converters[i].getClass().getName());
-            settings.setSetting(CompassEnvironment.Converter.XmlContent.WRAPPER, CompassEnvironment.Converter.XmlContent.WRAPPER_PROTOTYPE);
+            settings.setSetting(CompassEnvironment.Xsem.XmlContent.TYPE, converters[i].getClass().getName());
+            settings.setSetting(CompassEnvironment.Xsem.XmlContent.WRAPPER, CompassEnvironment.Xsem.XmlContent.WRAPPER_PROTOTYPE);
             XmlContentMappingConverter xmlContentMappingConverter = new XmlContentMappingConverter();
             xmlContentMappingConverter.configure(settings);
             testConverter(xmlContentMappingConverter.getXmlContentConverter(), 500);

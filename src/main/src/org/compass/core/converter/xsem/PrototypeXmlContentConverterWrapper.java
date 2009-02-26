@@ -16,7 +16,7 @@ import org.compass.core.xml.XmlObject;
  *
  * @author kimchy
  */
-public class PrototypeXmlContentConverterWrapper implements XmlContentConverter, CompassConfigurable {
+public class PrototypeXmlContentConverterWrapper implements XmlContentConverterWrapper, CompassConfigurable {
 
     private CompassSettings settings;
 
@@ -31,7 +31,7 @@ public class PrototypeXmlContentConverterWrapper implements XmlContentConverter,
      * @see XmlContentConverter#toXml(org.compass.core.xml.XmlObject)
      */
     public String toXml(XmlObject xmlObject) throws ConversionException {
-        return XmlContentConverterUtils.createXmlContentConverter(settings).toXml(xmlObject);
+        return createContentConverter().toXml(xmlObject);
     }
 
     /**
@@ -41,7 +41,11 @@ public class PrototypeXmlContentConverterWrapper implements XmlContentConverter,
      * @see XmlContentConverter#fromXml(String, java.io.Reader)
      */
     public AliasedXmlObject fromXml(String alias, Reader xml) throws ConversionException {
-        return XmlContentConverterUtils.createXmlContentConverter(settings).fromXml(alias, xml);
+        return createContentConverter().fromXml(alias, xml);
+    }
+
+    public XmlContentConverter createContentConverter() {
+        return XmlContentConverterUtils.createXmlContentConverter(settings);
     }
 
     public String toString() {

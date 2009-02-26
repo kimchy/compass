@@ -20,10 +20,12 @@ import java.io.Reader;
 
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
-import org.compass.core.converter.mapping.xsem.XmlContentMappingConverter;
+import org.compass.core.converter.xsem.XmlContentConverter;
 import org.compass.core.test.xml.AbstractXmlObjectTests;
 import org.compass.core.xml.AliasedXmlObject;
+import org.compass.core.xml.XmlObject;
 import org.compass.core.xml.jdom.JDomAliasedXmlObject;
+import org.compass.core.xml.jdom.JDomXmlObject;
 import org.compass.core.xml.jdom.converter.SAXBuilderXmlContentConverter;
 import org.jdom.Document;
 import org.jdom.input.SAXBuilder;
@@ -34,9 +36,11 @@ import org.jdom.input.SAXBuilder;
 public class JDomXmlSAXBuilderObjectTests extends AbstractXmlObjectTests {
 
     protected void addSettings(CompassSettings settings) {
-        settings.setGroupSettings(CompassEnvironment.Converter.PREFIX, CompassEnvironment.Converter.DefaultTypeNames.Mapping.XML_CONTENT_MAPPING,
-                new String[]{CompassEnvironment.Converter.TYPE, CompassEnvironment.Converter.XmlContent.TYPE},
-                new String[]{XmlContentMappingConverter.class.getName(), SAXBuilderXmlContentConverter.class.getName()});
+        settings.setSetting(CompassEnvironment.Xsem.XmlContent.TYPE, CompassEnvironment.Xsem.XmlContent.Jdom.TYPE_SAX);
+    }
+
+    protected Class<? extends XmlContentConverter> getContentConverterType() {
+        return SAXBuilderXmlContentConverter.class;
     }
 
     protected AliasedXmlObject buildAliasedXmlObject(String alias, Reader data) throws Exception {
@@ -51,5 +55,9 @@ public class JDomXmlSAXBuilderObjectTests extends AbstractXmlObjectTests {
 
     public void testData5() throws Exception {
         innerTestData5WithNamespacePrefixXpath();
+    }
+
+    protected void verifyXmlObjectType(XmlObject xmlObject) {
+        assertTrue(xmlObject instanceof JDomXmlObject);
     }
 }

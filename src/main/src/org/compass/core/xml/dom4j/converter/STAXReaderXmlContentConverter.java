@@ -58,7 +58,7 @@ public class STAXReaderXmlContentConverter extends AbstractXmlWriterXmlContentCo
      */
     //TODO is this true?
     public boolean supports(String wrapper) {
-        return !CompassEnvironment.Converter.XmlContent.WRAPPER_SINGLETON.equals(wrapper);
+        return !CompassEnvironment.Xsem.XmlContent.WRAPPER_SINGLETON.equals(wrapper);
     }
 
     /**

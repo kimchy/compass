@@ -45,7 +45,7 @@ import org.compass.core.xml.XmlObject;
  *
  * <p>In order to perform the conversion between {@link XmlObject} and raw xml, the converter
  * uses a {@link XmlContentConverter} implementation. There is no default one, and it must
- * be cofigured for this converter to funtion using {@link CompassEnvironment.Converter.XmlContent#TYPE).
+ * be cofigured for this converter to funtion using {@link CompassEnvironment.Xsem.XmlContent#TYPE).
  *
  * <p>{@link XmlContentConverter} implementations are wrapped by one of the three built in strategies:
  * {@link PrototypeXmlContentConverterWrapper}, {@link PoolXmlContentConverterWrapper},
@@ -60,17 +60,16 @@ public class XmlContentMappingConverter implements Converter, CompassConfigurabl
     private XmlContentConverter xmlContentConverter;
 
     public void configure(CompassSettings settings) throws CompassException {
-        String wrapper = settings.getSetting(CompassEnvironment.Converter.XmlContent.WRAPPER,
-                CompassEnvironment.Converter.XmlContent.WRAPPER_PROTOTYPE);
+        String wrapper = settings.getGloablSettings().getSetting(CompassEnvironment.Xsem.XmlContent.WRAPPER, CompassEnvironment.Xsem.XmlContent.WRAPPER_PROTOTYPE);
         if (log.isDebugEnabled()) {
-            String type = settings.getSetting(CompassEnvironment.Converter.XmlContent.TYPE);
-            log.debug("Using xmlContentMapping [" + type + "] with wrapper [" + wrapper + "] and settings [" + settings + "]");
+            String type = settings.getGloablSettings().getSetting(CompassEnvironment.Xsem.XmlContent.TYPE);
+            log.debug("Using XSEM content converter [" + type + "] with wrapper [" + wrapper + "]");
         }
-        if (CompassEnvironment.Converter.XmlContent.WRAPPER_PROTOTYPE.equals(wrapper)) {
+        if (CompassEnvironment.Xsem.XmlContent.WRAPPER_PROTOTYPE.equals(wrapper)) {
             xmlContentConverter = new PrototypeXmlContentConverterWrapper();
-        } else if (CompassEnvironment.Converter.XmlContent.WRAPPER_SINGLETON.equals(wrapper)) {
+        } else if (CompassEnvironment.Xsem.XmlContent.WRAPPER_SINGLETON.equals(wrapper)) {
             xmlContentConverter = new SingletonXmlContentConverterWrapper();
-        } else if (CompassEnvironment.Converter.XmlContent.WRAPPER_POOL.equals(wrapper)) {
+        } else if (CompassEnvironment.Xsem.XmlContent.WRAPPER_POOL.equals(wrapper)) {
             xmlContentConverter = new PoolXmlContentConverterWrapper();
         } else {
             try {

@@ -18,7 +18,7 @@ package org.compass.core.test.xml.jdom;
 
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
-import org.compass.core.converter.mapping.xsem.XmlContentMappingConverter;
+import org.compass.core.converter.xsem.XmlContentConverter;
 import org.compass.core.xml.jdom.converter.STAXBuilderXmlContentConverter;
 
 /**
@@ -27,8 +27,11 @@ import org.compass.core.xml.jdom.converter.STAXBuilderXmlContentConverter;
 public class JDomXmlSTAXBuilderObjectTests extends JDomXmlSAXBuilderObjectTests {
 
     protected void addSettings(CompassSettings settings) {
-        settings.setGroupSettings(CompassEnvironment.Converter.PREFIX, CompassEnvironment.Converter.DefaultTypeNames.Mapping.XML_CONTENT_MAPPING,
-                new String[]{CompassEnvironment.Converter.TYPE, CompassEnvironment.Converter.XmlContent.TYPE},
-                new String[]{XmlContentMappingConverter.class.getName(), STAXBuilderXmlContentConverter.class.getName()});
+        settings.setSetting(CompassEnvironment.Xsem.XmlContent.TYPE, CompassEnvironment.Xsem.XmlContent.Jdom.TYPE_STAX);
+    }
+
+    @Override
+    protected Class<? extends XmlContentConverter> getContentConverterType() {
+        return STAXBuilderXmlContentConverter.class;
     }
 }

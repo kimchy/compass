@@ -343,7 +343,7 @@ public class CompassEnvironment {
                 public static final String CLASS_PROPERTY_MAPPING = "classPropertyMapping";
 
                 public static final String CLASS_DYNAMIC_PROPERTY_MAPPING = "classDynamicPropertyMapping";
-                
+
                 public static final String CLASS_ID_PROPERTY_MAPPING = "classIdPropertyMapping";
 
                 public static final String COMPONENT_MAPPING = "component";
@@ -375,30 +375,6 @@ public class CompassEnvironment {
 
                 public static final String GROOVY = "groovy";
             }
-        }
-
-        /**
-         * Settings applicable to xml content mapping converters
-         */
-        public abstract class XmlContent {
-
-            public static final String TYPE = "xmlContentConverter.type";
-
-            public static final String WRAPPER = "xmlContentConverter.wrapper";
-
-            public static final String WRAPPER_SINGLETON = "singleton";
-            public static final String WRAPPER_POOL = "pool";
-            public static final String WRAPPER_PROTOTYPE = "prototype";
-
-            /**
-             * The minimum pool size. Applies to pooled xml content converters.
-             */
-            public static final String MIN_POOL_SIZE = "xmlContentConverter.minPoolSize";
-
-            /**
-             * The maximum pool size. Applies to pooled xml content converters.
-             */
-            public static final String MAX_POOL_SIZE = "xmlContentConverter.maxPoolSize";
         }
 
         public abstract class JsonContent {
@@ -758,6 +734,88 @@ public class CompassEnvironment {
             public static final String PREFIX = "compass.xsem.namespace";
 
             public static final String URI = "uri";
+        }
+
+        /**
+         * Settings applicable to xml content mapping converters
+         */
+        public abstract class XmlContent {
+
+            public static final String TYPE = "compass.xsem.contentConverter.type";
+
+            public static final String WRAPPER = "compass.xsem.contentConverter.wrapper";
+
+            public static final String WRAPPER_SINGLETON = "singleton";
+            public static final String WRAPPER_POOL = "pool";
+            public static final String WRAPPER_PROTOTYPE = "prototype";
+
+            /**
+             * The minimum pool size. Applies to pooled xml content converters.
+             */
+            public static final String MIN_POOL_SIZE = "compass.xsem.contentConverter.minPoolSize";
+
+            /**
+             * The maximum pool size. Applies to pooled xml content converters.
+             */
+            public static final String MAX_POOL_SIZE = "compass.xsem.contentConverter.maxPoolSize";
+
+            /**
+             * Specific settings for dom4j.
+             */
+            public abstract class Dom4j {
+                /**
+                 * Shorthand configuration to set {@link org.compass.core.config.CompassEnvironment.Xsem.XmlContent#TYPE}
+                 * with {@link org.compass.core.xml.dom4j.converter.STAXReaderXmlContentConverter}.
+                 */
+                public static final String TYPE_STAX = "dom4j-stax";
+                /**
+                 * Shorthand configuration to set {@link org.compass.core.config.CompassEnvironment.Xsem.XmlContent#TYPE}
+                 * with {@link org.compass.core.xml.dom4j.converter.SAXReaderXmlContentConverter}.
+                 */
+                public static final String TYPE_SAX = "dom4j-sax";
+                /**
+                 * Shorthand configuration to set {@link org.compass.core.config.CompassEnvironment.Xsem.XmlContent#TYPE}
+                 * with {@link org.compass.core.xml.dom4j.converter.XPPReaderXmlContentConverter}.
+                 */
+                public static final String TYPE_XPP = "dom4j-xpp";
+                /**
+                 * Shorthand configuration to set {@link org.compass.core.config.CompassEnvironment.Xsem.XmlContent#TYPE}
+                 * with {@link org.compass.core.xml.dom4j.converter.XPP3ReaderXmlContentConverter}.
+                 */
+                public static final String TYPE_XPP3 = "dom4j-xpp3";
+            }
+
+            /**
+             * Specific settings for javax.
+             */
+            public abstract class Javax {
+                /**
+                 * Shorthand configuration to set {@link org.compass.core.config.CompassEnvironment.Xsem.XmlContent#TYPE}
+                 * with {@link org.compass.core.xml.javax.converter.NodeXmlContentConverter}.
+                 */
+                public static final String TYPE_NODE = "javax-node";
+                /**
+                 * Shorthand configuration to set {@link org.compass.core.config.CompassEnvironment.Xsem.XmlContent#TYPE}
+                 * with {@link org.compass.core.xml.javax.converter.StaxNodeXmlContentConverter}.
+                 */
+                public static final String TYPE_STAX = "javax-stax";
+            }
+
+            /**
+             * Specific settings for JDOM.
+             */
+            public abstract class Jdom {
+                /**
+                 * Shorthand configuration to set {@link org.compass.core.config.CompassEnvironment.Xsem.XmlContent#TYPE}
+                 * with {@link org.compass.core.xml.jdom.converter.SAXBuilderXmlContentConverter}.
+                 */
+                public static final String TYPE_SAX = "jdom-sax";
+                /**
+                 * Shorthand configuration to set {@link org.compass.core.config.CompassEnvironment.Xsem.XmlContent#TYPE}
+                 * with {@link org.compass.core.xml.jdom.converter.STAXBuilderXmlContentConverter}.
+                 */
+                public static final String TYPE_STAX = "jdom-stax";
+            }
         }
     }
 

@@ -21,10 +21,12 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
-import org.compass.core.converter.mapping.xsem.XmlContentMappingConverter;
+import org.compass.core.converter.xsem.XmlContentConverter;
 import org.compass.core.test.xml.AbstractXmlObjectTests;
 import org.compass.core.xml.AliasedXmlObject;
+import org.compass.core.xml.XmlObject;
 import org.compass.core.xml.javax.NodeAliasedXmlObject;
+import org.compass.core.xml.javax.NodeXmlObject;
 import org.compass.core.xml.javax.converter.NodeXmlContentConverter;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
@@ -35,9 +37,11 @@ import org.xml.sax.InputSource;
 public class NodeXmlObjectTests extends AbstractXmlObjectTests {
 
     protected void addSettings(CompassSettings settings) {
-        settings.setGroupSettings(CompassEnvironment.Converter.PREFIX, CompassEnvironment.Converter.DefaultTypeNames.Mapping.XML_CONTENT_MAPPING,
-                new String[]{CompassEnvironment.Converter.TYPE, CompassEnvironment.Converter.XmlContent.TYPE},
-                new String[]{XmlContentMappingConverter.class.getName(), NodeXmlContentConverter.class.getName()});
+        settings.setSetting(CompassEnvironment.Xsem.XmlContent.TYPE, CompassEnvironment.Xsem.XmlContent.Javax.TYPE_NODE);
+    }
+
+    protected Class<? extends XmlContentConverter> getContentConverterType() {
+        return NodeXmlContentConverter.class;
     }
 
     protected AliasedXmlObject buildAliasedXmlObject(String alias, Reader data) throws Exception {
@@ -51,5 +55,9 @@ public class NodeXmlObjectTests extends AbstractXmlObjectTests {
 
     public void testData5() throws Exception {
         innerTestData5WithoutNamespacePrefixXpath();
+    }
+
+    protected void verifyXmlObjectType(XmlObject xmlObject) {
+        assertTrue(xmlObject instanceof NodeXmlObject);
     }
 }

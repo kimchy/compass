@@ -25,6 +25,10 @@ import org.compass.core.CompassTransaction;
 import org.compass.core.Resource;
 import org.compass.core.config.CompassConfiguration;
 import org.compass.core.config.CompassEnvironment;
+import org.compass.core.converter.mapping.xsem.XmlContentMappingConverter;
+import org.compass.core.converter.xsem.XmlContentConverter;
+import org.compass.core.converter.xsem.XmlContentConverterWrapper;
+import org.compass.core.mapping.xsem.XmlContentMapping;
 import static org.compass.core.mapping.xsem.builder.XSEM.*;
 import org.compass.core.test.AbstractTestCase;
 import org.compass.core.xml.AliasedXmlObject;
@@ -114,6 +118,17 @@ public abstract class AbstractXmlObjectTests extends AbstractTestCase {
         path = "org/compass/core/test/xml/" + path + ".xml";
         return new InputStreamReader(Thread.currentThread().getContextClassLoader().getResourceAsStream(path));
     }
+
+    public void testConverterType() {
+        XmlContentMappingConverter converter = (XmlContentMappingConverter) getCompass().getConverterLookup().lookupConverter(XmlContentMapping.class);
+        XmlContentConverter xmlContentConverter = converter.getXmlContentConverter();
+        if (xmlContentConverter instanceof XmlContentConverterWrapper) {
+            xmlContentConverter = ((XmlContentConverterWrapper) xmlContentConverter).createContentConverter();
+        }
+        assertTrue(getContentConverterType().isAssignableFrom(xmlContentConverter.getClass()));
+    }
+
+    protected abstract Class<? extends XmlContentConverter> getContentConverterType(); 
 
     public void testData1() throws Exception {
         CompassSession session = openSession();
@@ -222,6 +237,8 @@ public abstract class AbstractXmlObjectTests extends AbstractTestCase {
 
         xmlObject = (AliasedXmlObject) session.get("data4", "1");
         assertNotNull(xmlObject);
+        verifyXmlObjectType(xmlObject);
+        
         XmlObject[] ids = xmlObject.selectPath("/data/id/@value");
         assertEquals(1, ids.length);
         assertEquals("1", ids[0].getValue());
@@ -332,4 +349,6 @@ public abstract class AbstractXmlObjectTests extends AbstractTestCase {
         tr.commit();
         session.close();
     }
+
+    protected abstract void verifyXmlObjectType(XmlObject xmlObject);
 }
