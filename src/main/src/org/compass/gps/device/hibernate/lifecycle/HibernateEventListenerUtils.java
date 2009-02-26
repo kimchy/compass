@@ -86,7 +86,10 @@ public abstract class HibernateEventListenerUtils {
         EntityPersister persister = sessionFactory.getEntityPersister(entityName);
 
         CompassMapping compassMapping = ((InternalCompass) compassGps.getIndexCompass()).getMapping();
-        ClassMapping classMapping = (ClassMapping) compassMapping.getRootMappingByClass(entity.getClass());
+        ClassMapping classMapping = (ClassMapping) compassMapping.getMappingByClass(entity.getClass());
+        if (classMapping == null) {
+            return Collections.EMPTY_SET;
+        }
 
 //        CascadeStyle[] cascadeStyles = persister.getEntityMetamodel().getCascadeStyles();
         String[] propertyNames = persister.getPropertyNames();
