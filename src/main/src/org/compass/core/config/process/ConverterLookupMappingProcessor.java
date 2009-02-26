@@ -258,7 +258,9 @@ public class ConverterLookupMappingProcessor implements MappingProcessor {
                     } else {
                         keyType = AccessorUtils.getMapKeyParameter(dynamicPropertyMapping.getGetter());
                     }
-                    converter = (ResourcePropertyConverter) MappingProcessorUtils.resolveConverter(dynamicPropertyMapping.getNameConverterName(), null, keyType, converterLookup);
+                    if (dynamicPropertyMapping.getNameConverterName() != null || keyType != null) {
+                        converter = (ResourcePropertyConverter) MappingProcessorUtils.resolveConverter(dynamicPropertyMapping.getNameConverterName(), null, keyType, converterLookup);
+                    }
                 } else {
                     converter = (ResourcePropertyConverter) MappingProcessorUtils.resolveConverter(dynamicPropertyMapping.getNameConverterName(), null, dynamicPropertyMapping.getNameGetter(), converterLookup);
                 }
@@ -271,7 +273,7 @@ public class ConverterLookupMappingProcessor implements MappingProcessor {
             }
 
             if (dynamicPropertyMapping.getValueConverter() == null || dynamicPropertyMapping.getValueConverter() instanceof DelegateConverter) {
-                ResourcePropertyConverter converter;
+                ResourcePropertyConverter converter = null;
                 if (dynamicPropertyMapping.getObjectType() == ClassDynamicPropertyMapping.ObjectType.MAP) {
                     Class valueType;
                     if (dynamicPropertyMapping.getValueGetter() != null) {
@@ -279,7 +281,9 @@ public class ConverterLookupMappingProcessor implements MappingProcessor {
                     } else {
                         valueType = AccessorUtils.getMapValueParameter(dynamicPropertyMapping.getGetter());
                     }
-                    converter = (ResourcePropertyConverter) MappingProcessorUtils.resolveConverter(dynamicPropertyMapping.getValueConverterName(), null, valueType, converterLookup);
+                    if (dynamicPropertyMapping.getValueConverterName() != null || valueType != null) {
+                        converter = (ResourcePropertyConverter) MappingProcessorUtils.resolveConverter(dynamicPropertyMapping.getValueConverterName(), null, valueType, converterLookup);
+                    }
                 } else {
                     converter = (ResourcePropertyConverter) MappingProcessorUtils.resolveConverter(dynamicPropertyMapping.getValueConverterName(), null, dynamicPropertyMapping.getValueGetter(), converterLookup);
                 }

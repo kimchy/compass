@@ -25,6 +25,7 @@ import org.compass.core.Property;
 import org.compass.core.Resource;
 import org.compass.core.converter.ConversionException;
 import org.compass.core.converter.Converter;
+import org.compass.core.converter.mapping.ResourcePropertyConverter;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.mapping.osem.ClassDynamicPropertyMapping;
@@ -66,7 +67,11 @@ public class ClassDynamicPropertyMappingConverter implements Converter {
             if (nameObj == null) {
                 continue;
             }
-            String name = dynamicPropertyMapping.getNameConverter().toString(nameObj, null);
+            ResourcePropertyConverter nameConverter = dynamicPropertyMapping.getNameConverter();
+            if (nameConverter == null) {
+                nameConverter = (ResourcePropertyConverter) context.getConverterLookup().lookupConverter(nameObj.getClass());
+            }
+            String name = nameConverter.toString(nameObj, null);
             if (dynamicPropertyMapping.getNamePrefix() != null) {
                 name = dynamicPropertyMapping.getNamePrefix() + name;
             }
@@ -150,7 +155,11 @@ public class ClassDynamicPropertyMappingConverter implements Converter {
                 addProperty(resource, dynamicPropertyMapping, context, name, valueItem);
             }
         } else {
-            String value = dynamicPropertyMapping.getValueConverter().toString(valueObj, dynamicPropertyMapping.getResourcePropertyMapping());
+            ResourcePropertyConverter valueConverter = dynamicPropertyMapping.getValueConverter();
+            if (valueConverter == null) {
+                valueConverter = (ResourcePropertyConverter) context.getConverterLookup().lookupConverter(valueObj.getClass());
+            }
+            String value = valueConverter.toString(valueObj, dynamicPropertyMapping.getResourcePropertyMapping());
             Property property = context.getResourceFactory().createProperty(name, value, dynamicPropertyMapping.getResourcePropertyMapping());
             resource.addProperty(property);
         }

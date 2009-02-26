@@ -128,7 +128,7 @@ public class DynamicPropertyProcessor implements MappingProcessor {
                     dynamicPropertyMapping.setValueType(ClassDynamicPropertyMapping.ValueType.ARRAY);
                 } else if (AccessorUtils.isMapValueParameterCollection(dynamicPropertyMapping.getGetter())) {
                     dynamicPropertyMapping.setValueType(ClassDynamicPropertyMapping.ValueType.COLLECTION);
-                } else {
+                } else if (valueType != null) {
                     processValueType(dynamicPropertyMapping, valueType);
                 }
             }
