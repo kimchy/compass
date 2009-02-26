@@ -984,12 +984,12 @@ public abstract class PlainMappingBinding extends AbstractConfigurationHelperMap
         dynamicPropertyMapping.setDefinedInAlias(classMapping.getAlias());
 
         dynamicPropertyMapping.setOverrideByName(dynamicPropertyConf.getAttributeAsBoolean("override", true));
-        
+
         dynamicPropertyMapping.setAccessor(dynamicPropertyConf.getAttribute("accessor", null));
         dynamicPropertyMapping.setPropertyName(name);
 
         dynamicPropertyMapping.setNamePrefix(dynamicPropertyConf.getAttribute("name-prefix", null));
-        
+
         dynamicPropertyMapping.setNameProperty(dynamicPropertyConf.getAttribute("name-property", null));
         dynamicPropertyMapping.setValueProperty(dynamicPropertyConf.getAttribute("value-property", null));
 
@@ -999,12 +999,10 @@ public abstract class PlainMappingBinding extends AbstractConfigurationHelperMap
         String nameFormat = dynamicPropertyConf.getAttribute("name-format", null);
         if (nameFormat != null) {
             dynamicPropertyMapping.setNameFormat(nameFormat);
-            dynamicPropertyMapping.setNameConverter(new FormatDelegateConverter(nameFormat));
         }
         String valueFormat = dynamicPropertyConf.getAttribute("value-format", null);
         if (valueFormat != null) {
             dynamicPropertyMapping.setValueFormat(valueFormat);
-            dynamicPropertyMapping.setValueConverter(new FormatDelegateConverter(valueFormat));
         }
 
         bindConverter(dynamicPropertyConf, dynamicPropertyMapping);

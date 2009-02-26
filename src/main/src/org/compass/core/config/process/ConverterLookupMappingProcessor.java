@@ -266,7 +266,9 @@ public class ConverterLookupMappingProcessor implements MappingProcessor {
                 }
 
                 if (dynamicPropertyMapping.getNameConverter() instanceof DelegateConverter) {
-                    ((DelegateConverter) dynamicPropertyMapping.getNameConverter()).setDelegatedConverter(converter);
+                    if (converter != null) {
+                        ((DelegateConverter) dynamicPropertyMapping.getNameConverter()).setDelegatedConverter(converter);
+                    }
                 } else {
                     dynamicPropertyMapping.setNameConverter(converter);
                 }
@@ -289,7 +291,9 @@ public class ConverterLookupMappingProcessor implements MappingProcessor {
                 }
 
                 if (dynamicPropertyMapping.getValueConverter() instanceof DelegateConverter) {
-                    ((DelegateConverter) dynamicPropertyMapping.getValueConverter()).setDelegatedConverter(converter);
+                    if (converter != null) {
+                        ((DelegateConverter) dynamicPropertyMapping.getValueConverter()).setDelegatedConverter(converter);
+                    }
                 } else {
                     dynamicPropertyMapping.setValueConverter(converter);
                 }

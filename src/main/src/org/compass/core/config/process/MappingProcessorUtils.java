@@ -221,7 +221,7 @@ public abstract class MappingProcessorUtils {
         InternalResourcePropertyMapping intMapping = (InternalResourcePropertyMapping) mapping;
         ResourcePropertyConverter converter = mapping.getResourcePropertyConverter();
         if (intMapping.getIndex() == null) {
-            if (converter != null) {
+            if (!isNullConverter(converter)) {
                 intMapping.setIndex(converter.suggestIndex());
             }
             if (intMapping.getIndex() == null) {
@@ -233,7 +233,7 @@ public abstract class MappingProcessorUtils {
             }
         }
         if (intMapping.getStore() == null) {
-            if (converter != null) {
+            if (!isNullConverter(converter)) {
                 intMapping.setStore(converter.suggestStore());
             }
             if (intMapping.getStore() == null) {
@@ -241,7 +241,7 @@ public abstract class MappingProcessorUtils {
             }
         }
         if (intMapping.getTermVector() == null) {
-            if (converter != null) {
+            if (!isNullConverter(converter)) {
                 intMapping.setTermVector(converter.suggestTermVector());
             }
             if (intMapping.getTermVector() == null) {
@@ -249,7 +249,7 @@ public abstract class MappingProcessorUtils {
             }
         }
         if (intMapping.isOmitNorms() == null) {
-            if (converter != null) {
+            if (!isNullConverter(converter)) {
                 intMapping.setOmitNorms(converter.suggestOmitNorms());
             }
             if (intMapping.isOmitNorms() == null) {
@@ -257,12 +257,25 @@ public abstract class MappingProcessorUtils {
             }
         }
         if (intMapping.isOmitTf() == null) {
-            if (converter != null) {
+            if (!isNullConverter(converter)) {
                 intMapping.setOmitTf(converter.suggestOmitTf());
             }
             if (intMapping.isOmitTf() == null) {
                 intMapping.setOmitTf(settings.getSettingAsBoolean(CompassEnvironment.Mapping.GLOBAL_OMIT_TF, false));
             }
         }
+    }
+
+    public static boolean isNullConverter(Converter converter) {
+        if (converter == null) {
+            return true;
+        }
+        if (converter instanceof DelegateConverter) {
+            converter = ((DelegateConverter) converter).getDelegatedConverter();
+        }
+        if (converter == null) {
+            return true;
+        }
+        return false;
     }
 }

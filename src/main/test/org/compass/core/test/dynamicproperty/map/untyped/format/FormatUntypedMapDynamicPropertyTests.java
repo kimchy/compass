@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.compass.core.test.dynamicproperty.map.format;
+package org.compass.core.test.dynamicproperty.map.untyped.format;
 
 import java.util.HashMap;
 
@@ -24,19 +24,19 @@ import org.compass.core.test.AbstractTestCase;
 /**
  * @author kimchy
  */
-public class FormatMapDynamicPropertyTests extends AbstractTestCase {
+public class FormatUntypedMapDynamicPropertyTests extends AbstractTestCase {
 
     @Override
     protected String[] getMappings() {
-        return new String[]{"dynamicproperty/map/format/mapping.cpm.xml"};
+        return new String[]{"dynamicproperty/map/untyped/format/mapping.cpm.xml"};
     }
 
-    public void testFormatMapDynamicProperty() {
+    public void testSimpleUntypedMapDynamicProperty() {
         CompassSession session = openSession();
 
         A a = new A();
         a.id = 1;
-        a.values = new HashMap<Integer, Integer>();
+        a.values = new HashMap<String, String>();
         a.values.put(2, 4);
 
         session.save(a);

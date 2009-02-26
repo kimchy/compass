@@ -30,7 +30,7 @@ import org.compass.core.accessor.PropertyAccessor;
 import org.compass.core.accessor.PropertyAccessorFactory;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.converter.ConverterLookup;
-import org.compass.core.converter.mapping.support.FormatDelegateConverter;
+import org.compass.core.converter.mapping.support.DynamicFormatDelegateConverter;
 import org.compass.core.engine.naming.PropertyNamingStrategy;
 import org.compass.core.mapping.AliasMapping;
 import org.compass.core.mapping.CompassMapping;
@@ -57,7 +57,7 @@ public class DynamicPropertyProcessor implements MappingProcessor {
                 for (Iterator<Mapping> it = classMapping.mappingsIt(); it.hasNext();) {
                     Mapping m = it.next();
                     if (m instanceof ClassDynamicPropertyMapping) {
-                        processDynamicMapping((ClassDynamicPropertyMapping) m, settings, propertyAccessorFactory);
+                        processDynamicMapping((ClassDynamicPropertyMapping) m, settings, propertyAccessorFactory, converterLookup);
                     }
                 }
             }
@@ -66,7 +66,9 @@ public class DynamicPropertyProcessor implements MappingProcessor {
         return compassMapping;
     }
 
-    private void processDynamicMapping(ClassDynamicPropertyMapping dynamicPropertyMapping, CompassSettings settings, PropertyAccessorFactory propertyAccessorFactory) {
+    private void processDynamicMapping(ClassDynamicPropertyMapping dynamicPropertyMapping, CompassSettings settings,
+                                       PropertyAccessorFactory propertyAccessorFactory, ConverterLookup converterLookup) {
+
         PropertyAccessor pAccessor = propertyAccessorFactory.getPropertyAccessor(dynamicPropertyMapping.getAccessor(), settings);
 
         Class getterType = dynamicPropertyMapping.getGetter().getReturnType();
@@ -99,7 +101,7 @@ public class DynamicPropertyProcessor implements MappingProcessor {
                 if (dynamicPropertyMapping.getNameProperty() != null) {
                     dynamicPropertyMapping.setNameGetter(pAccessor.getGetter(keyType, dynamicPropertyMapping.getNameProperty()));
                 } else {
-                    processSearchableDynamicName(dynamicPropertyMapping, settings, propertyAccessorFactory, keyType);
+                    processSearchableDynamicName(dynamicPropertyMapping, settings, propertyAccessorFactory, keyType, converterLookup);
                 }
             }
 
@@ -107,7 +109,7 @@ public class DynamicPropertyProcessor implements MappingProcessor {
                 if (dynamicPropertyMapping.getValueProperty() != null) {
                     dynamicPropertyMapping.setValueGetter(pAccessor.getGetter(valueType, dynamicPropertyMapping.getValueProperty()));
                 } else {
-                    processSearchableDynamicValue(dynamicPropertyMapping, settings, propertyAccessorFactory, valueType);
+                    processSearchableDynamicValue(dynamicPropertyMapping, settings, propertyAccessorFactory, valueType, converterLookup);
                 }
             }
 
@@ -136,18 +138,25 @@ public class DynamicPropertyProcessor implements MappingProcessor {
             if (dynamicPropertyMapping.getNameProperty() != null) {
                 dynamicPropertyMapping.setNameGetter(pAccessor.getGetter(dynaType, dynamicPropertyMapping.getNameProperty()));
             } else if (dynaType != null) {
-                processSearchableDynamicName(dynamicPropertyMapping, settings, propertyAccessorFactory, dynaType);
+                processSearchableDynamicName(dynamicPropertyMapping, settings, propertyAccessorFactory, dynaType, converterLookup);
             }
 
             if (dynamicPropertyMapping.getValueProperty() != null) {
                 dynamicPropertyMapping.setValueGetter(pAccessor.getGetter(dynaType, dynamicPropertyMapping.getValueProperty()));
             } else {
-                processSearchableDynamicValue(dynamicPropertyMapping, settings, propertyAccessorFactory, dynaType);
+                processSearchableDynamicValue(dynamicPropertyMapping, settings, propertyAccessorFactory, dynaType, converterLookup);
             }
 
             // ok, we set the value getter, we can now derive the value type
             Getter valueGetter = dynamicPropertyMapping.getValueGetter();
             processValueType(dynamicPropertyMapping, valueGetter.getReturnType());
+        }
+
+        if (dynamicPropertyMapping.getNameFormat() != null) {
+            dynamicPropertyMapping.setNameConverter(new DynamicFormatDelegateConverter(dynamicPropertyMapping.getNameFormat(), converterLookup));
+        }
+        if (dynamicPropertyMapping.getValueFormat() != null) {
+            dynamicPropertyMapping.setValueConverter(new DynamicFormatDelegateConverter(dynamicPropertyMapping.getValueFormat(), converterLookup));
         }
     }
 
@@ -161,7 +170,9 @@ public class DynamicPropertyProcessor implements MappingProcessor {
         }
     }
 
-    private void processSearchableDynamicValue(ClassDynamicPropertyMapping dynamicPropertyMapping, CompassSettings settings, PropertyAccessorFactory propertyAccessorFactory, Class dynaType) {
+    private void processSearchableDynamicValue(ClassDynamicPropertyMapping dynamicPropertyMapping, CompassSettings settings,
+                                               PropertyAccessorFactory propertyAccessorFactory, Class dynaType,
+                                               ConverterLookup converterLookup) {
         SearchableDynamicValue dynamicValue = null;
         Method method = AnnotationUtils.findAnnotatedMethod(SearchableDynamicValue.class, dynaType);
         if (method != null) {
@@ -180,7 +191,6 @@ public class DynamicPropertyProcessor implements MappingProcessor {
             }
             if (dynamicPropertyMapping.getValueFormat() == null && StringUtils.hasText(dynamicValue.format())) {
                 dynamicPropertyMapping.setValueFormat(dynamicValue.format());
-                dynamicPropertyMapping.setValueConverter(new FormatDelegateConverter(dynamicValue.format()));
             }
             if (dynamicPropertyMapping.getResourcePropertyMapping().getNullValue().length() == 0 && StringUtils.hasText(dynamicValue.nullValue())) {
                 dynamicPropertyMapping.getResourcePropertyMapping().setNullValue(dynamicValue.nullValue());
@@ -188,7 +198,9 @@ public class DynamicPropertyProcessor implements MappingProcessor {
         }
     }
 
-    private void processSearchableDynamicName(ClassDynamicPropertyMapping dynamicPropertyMapping, CompassSettings settings, PropertyAccessorFactory propertyAccessorFactory, Class dynaType) {
+    private void processSearchableDynamicName(ClassDynamicPropertyMapping dynamicPropertyMapping, CompassSettings settings,
+                                              PropertyAccessorFactory propertyAccessorFactory, Class dynaType,
+                                              ConverterLookup converterLookup) {
         SearchableDynamicName dynamicName = null;
         Method method = AnnotationUtils.findAnnotatedMethod(SearchableDynamicName.class, dynaType);
         if (method != null) {
@@ -210,7 +222,6 @@ public class DynamicPropertyProcessor implements MappingProcessor {
             }
             if (dynamicPropertyMapping.getNameFormat() == null && StringUtils.hasText(dynamicName.format())) {
                 dynamicPropertyMapping.setNameFormat(dynamicName.format());
-                dynamicPropertyMapping.setNameConverter(new FormatDelegateConverter(dynamicName.format()));
             }
         }
     }
