@@ -53,6 +53,7 @@ import org.compass.core.mapping.internal.InternalCompassMapping;
 import org.compass.core.mapping.internal.InternalMapping;
 import org.compass.core.mapping.internal.InternalResourcePropertyMapping;
 import org.compass.core.mapping.osem.ClassBoostPropertyMapping;
+import org.compass.core.mapping.osem.ClassDynamicPropertyMapping;
 import org.compass.core.mapping.osem.ClassIdPropertyMapping;
 import org.compass.core.mapping.osem.ClassMapping;
 import org.compass.core.mapping.osem.ClassPropertyAnalyzerController;
@@ -515,6 +516,12 @@ public class AnnotationsMappingBinding extends AbstractClassMetaDataMappingBindi
             bindObjectMapping(classPropertyMapping, accessor, name, searchableProperty.accessor(), searchableClass);
             bindClassPropertyMapping(searchableProperty, classPropertyMapping, annotatedElement, clazz, type);
             classMapping.addMapping(classPropertyMapping);
+        } else if (annotation instanceof SearchableDynamicProperty) {
+            ClassDynamicPropertyMapping dynamicPropertyMapping = new ClassDynamicPropertyMapping();
+            SearchableDynamicProperty searchableDynamicProperty = (SearchableDynamicProperty) annotation;
+            bindObjectMapping(dynamicPropertyMapping, accessor, name, searchableDynamicProperty.accessor(), searchableClass);
+            bindClassDynamicPropertyMapping(searchableDynamicProperty, dynamicPropertyMapping, annotatedElement, clazz, type);
+            classMapping.addMapping(dynamicPropertyMapping);
         } else if (annotation instanceof SearchableComponent) {
             ComponentMapping componentMapping = new ComponentMapping();
             SearchableComponent searchableComponent = (SearchableComponent) annotation;
@@ -732,6 +739,45 @@ public class AnnotationsMappingBinding extends AbstractClassMetaDataMappingBindi
             for (SearchableMetaData searchableMetaData : metaDatas.value()) {
                 bindMetaData(searchableMetaData, classPropertyMapping, clazz, type);
             }
+        }
+    }
+
+    private void bindClassDynamicPropertyMapping(SearchableDynamicProperty searchableDynamicProperty, ClassDynamicPropertyMapping dynamicPropertyMapping,
+                                                 AnnotatedElement annotatedElement, Class<?> clazz, Type type) {
+        bindConverter(dynamicPropertyMapping, searchableDynamicProperty.converter(), clazz, type);
+
+        dynamicPropertyMapping.setOverrideByName(searchableDynamicProperty.override());
+        if (StringUtils.hasText(searchableDynamicProperty.namePrefix())) {
+            dynamicPropertyMapping.setNamePrefix(searchableDynamicProperty.namePrefix());
+        }
+        if (StringUtils.hasText(searchableDynamicProperty.nameProperty())) {
+            dynamicPropertyMapping.setNameProperty(searchableDynamicProperty.nameProperty());
+        }
+        if (StringUtils.hasText(searchableDynamicProperty.valueProperty())) {
+            dynamicPropertyMapping.setValueProperty(searchableDynamicProperty.valueProperty());
+        }
+        if (StringUtils.hasText(searchableDynamicProperty.nameFormat())) {
+            dynamicPropertyMapping.setNameFormat(searchableDynamicProperty.nameFormat());
+        }
+        if (StringUtils.hasText(searchableDynamicProperty.valueFormat())) {
+            dynamicPropertyMapping.setValueFormat(searchableDynamicProperty.valueFormat());
+        }
+        if (StringUtils.hasText(searchableDynamicProperty.nameConverter())) {
+            dynamicPropertyMapping.setNameConverterName(searchableDynamicProperty.nameConverter());
+        }
+        if (StringUtils.hasText(searchableDynamicProperty.valueConverter())) {
+            dynamicPropertyMapping.setValueConverterName(searchableDynamicProperty.valueConverter());
+        }
+
+        dynamicPropertyMapping.getResourcePropertyMapping().setBoost(searchableDynamicProperty.boost());
+        dynamicPropertyMapping.getResourcePropertyMapping().setStore(AnnotationsBindingUtils.convert(searchableDynamicProperty.store()));
+        dynamicPropertyMapping.getResourcePropertyMapping().setIndex(AnnotationsBindingUtils.convert(searchableDynamicProperty.index()));
+        dynamicPropertyMapping.getResourcePropertyMapping().setTermVector(AnnotationsBindingUtils.convert(searchableDynamicProperty.termVector()));
+        dynamicPropertyMapping.getResourcePropertyMapping().setOmitNorms(AnnotationsBindingUtils.convert(searchableDynamicProperty.omitNorms()));
+        dynamicPropertyMapping.getResourcePropertyMapping().setOmitTf(AnnotationsBindingUtils.convert(searchableDynamicProperty.omitTf()));
+
+        if (StringUtils.hasLength(searchableDynamicProperty.nullValue())) {
+            dynamicPropertyMapping.getResourcePropertyMapping().setNullValue(searchableDynamicProperty.nullValue());
         }
     }
 
