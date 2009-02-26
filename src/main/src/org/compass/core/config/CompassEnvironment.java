@@ -747,9 +747,11 @@ public class CompassEnvironment {
          */
         public abstract class XmlContent {
 
-            public static final String TYPE = "compass.xsem.contentConverter.type";
+            public static final String PREFIX = "compass.xsem.contentConverter.";
 
-            public static final String WRAPPER = "compass.xsem.contentConverter.wrapper";
+            public static final String TYPE = PREFIX + "type";
+
+            public static final String WRAPPER = PREFIX + "wrapper";
 
             public static final String WRAPPER_SINGLETON = "singleton";
             public static final String WRAPPER_POOL = "pool";
@@ -758,12 +760,12 @@ public class CompassEnvironment {
             /**
              * The minimum pool size. Applies to pooled xml content converters.
              */
-            public static final String MIN_POOL_SIZE = "compass.xsem.contentConverter.minPoolSize";
+            public static final String MIN_POOL_SIZE = PREFIX + "minPoolSize";
 
             /**
              * The maximum pool size. Applies to pooled xml content converters.
              */
-            public static final String MAX_POOL_SIZE = "compass.xsem.contentConverter.maxPoolSize";
+            public static final String MAX_POOL_SIZE = PREFIX + "maxPoolSize";
 
             /**
              * Specific settings for dom4j.
@@ -789,6 +791,12 @@ public class CompassEnvironment {
                  * with {@link org.compass.core.xml.dom4j.converter.XPP3ReaderXmlContentConverter}.
                  */
                 public static final String TYPE_XPP3 = "dom4j-xpp3";
+
+                /**
+                 * Controls the output format for dom4j. Values are <code>default</code> and <code>compact</code>.
+                 * Defaults to <code>default</code>.
+                 */
+                public static final String OUTPUT_FORMAT = PREFIX + "dom4j.outputFormat";
             }
 
             /**
@@ -810,7 +818,7 @@ public class CompassEnvironment {
             /**
              * Specific settings for JDOM.
              */
-            public abstract class Jdom {
+            public abstract class JDom {
                 /**
                  * Shorthand configuration to set {@link org.compass.core.config.CompassEnvironment.Xsem.XmlContent#TYPE}
                  * with {@link org.compass.core.xml.jdom.converter.SAXBuilderXmlContentConverter}.
@@ -821,6 +829,12 @@ public class CompassEnvironment {
                  * with {@link org.compass.core.xml.jdom.converter.STAXBuilderXmlContentConverter}.
                  */
                 public static final String TYPE_STAX = "jdom-stax";
+
+                /**
+                 * Controls the output format for dom4j. Values are <code>default</code> and <code>compact</code>.
+                 * Defaults to <code>default</code>.
+                 */
+                public static final String OUTPUT_FORMAT = PREFIX + "dom4j.outputFormat";
             }
         }
     }

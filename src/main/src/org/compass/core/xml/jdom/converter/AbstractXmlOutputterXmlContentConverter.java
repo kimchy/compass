@@ -18,6 +18,10 @@ package org.compass.core.xml.jdom.converter;
 
 import java.io.IOException;
 
+import org.compass.core.CompassException;
+import org.compass.core.config.CompassConfigurable;
+import org.compass.core.config.CompassEnvironment;
+import org.compass.core.config.CompassSettings;
 import org.compass.core.converter.ConversionException;
 import org.compass.core.converter.xsem.XmlContentConverter;
 import org.compass.core.util.StringBuilderWriter;
@@ -32,7 +36,18 @@ import org.jdom.output.XMLOutputter;
  *
  * @author kimchy
  */
-public abstract class AbstractXmlOutputterXmlContentConverter implements XmlContentConverter {
+public abstract class AbstractXmlOutputterXmlContentConverter implements XmlContentConverter, CompassConfigurable {
+
+    private boolean compact;
+
+    public void configure(CompassSettings settings) throws CompassException {
+        String outputFormat = settings.getGloablSettings().getSetting(CompassEnvironment.Xsem.XmlContent.JDom.OUTPUT_FORMAT, "default");
+        if ("default".equals(outputFormat)) {
+            compact = false;
+        } else if ("compact".equals(outputFormat)) {
+            compact = true;
+        }
+    }
 
     /**
      * Converts the {@link org.compass.core.xml.XmlObject} (assumes it is a {@link org.compass.core.xml.jdom.JDomXmlObject}) into
@@ -47,7 +62,9 @@ public abstract class AbstractXmlOutputterXmlContentConverter implements XmlCont
     public String toXml(XmlObject xmlObject) throws ConversionException {
         JDomXmlObject jDomXmlObject = (JDomXmlObject) xmlObject;
         XMLOutputter outp = new XMLOutputter();
-        outp.setFormat(Format.getCompactFormat());
+        if (compact) {
+            outp.setFormat(Format.getCompactFormat());
+        }
         StringBuilderWriter stringWriter = StringBuilderWriter.Cached.cached();
         try {
             outp.output(jDomXmlObject.getElement(), stringWriter);

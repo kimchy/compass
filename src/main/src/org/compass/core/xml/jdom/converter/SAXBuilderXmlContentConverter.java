@@ -41,6 +41,7 @@ public class SAXBuilderXmlContentConverter extends AbstractXmlOutputterXmlConten
     private SAXBuilder saxBuilder;
 
     public void configure(CompassSettings settings) throws CompassException {
+        super.configure(settings);
         saxBuilder = doCreateSAXBuilder(settings);
     }
 

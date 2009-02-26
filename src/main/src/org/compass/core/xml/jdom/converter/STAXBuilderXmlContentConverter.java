@@ -44,6 +44,7 @@ public class STAXBuilderXmlContentConverter extends AbstractXmlOutputterXmlConte
     javax.xml.stream.XMLInputFactory xmlInputFactory = javax.xml.stream.XMLInputFactory.newInstance();
 
     public void configure(CompassSettings settings) throws CompassException {
+        super.configure(settings);
         stAXBuilder = doCreateStAXBuilder(settings);
     }
 

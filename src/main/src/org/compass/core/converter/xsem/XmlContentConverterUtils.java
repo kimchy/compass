@@ -30,9 +30,9 @@ public abstract class XmlContentConverterUtils {
             throw new ConfigurationException("[" + CompassEnvironment.Xsem.XmlContent.TYPE + "] configuration can not be found, please set it in the configuration settings");
         }
         XmlContentConverter xmlContentConverter;
-        if (CompassEnvironment.Xsem.XmlContent.Jdom.TYPE_SAX.equals(type)) {
+        if (CompassEnvironment.Xsem.XmlContent.JDom.TYPE_SAX.equals(type)) {
             xmlContentConverter = new SAXBuilderXmlContentConverter();
-        } else if (CompassEnvironment.Xsem.XmlContent.Jdom.TYPE_STAX.equals(type)) {
+        } else if (CompassEnvironment.Xsem.XmlContent.JDom.TYPE_STAX.equals(type)) {
             xmlContentConverter = new STAXBuilderXmlContentConverter();
         } else if (CompassEnvironment.Xsem.XmlContent.Dom4j.TYPE_STAX.equals(type)) {
             xmlContentConverter = new STAXReaderXmlContentConverter();

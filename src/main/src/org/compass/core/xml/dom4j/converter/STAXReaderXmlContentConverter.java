@@ -46,6 +46,7 @@ public class STAXReaderXmlContentConverter extends AbstractXmlWriterXmlContentCo
     private STAXEventReader staxEventReader;
 
     public void configure(CompassSettings settings) throws CompassException {
+        super.configure(settings);
         staxEventReader = doCreateStaxReader(settings);
     }
 

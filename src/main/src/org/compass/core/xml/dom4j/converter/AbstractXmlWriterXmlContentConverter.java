@@ -18,6 +18,10 @@ package org.compass.core.xml.dom4j.converter;
 
 import java.io.IOException;
 
+import org.compass.core.CompassException;
+import org.compass.core.config.CompassConfigurable;
+import org.compass.core.config.CompassEnvironment;
+import org.compass.core.config.CompassSettings;
 import org.compass.core.converter.ConversionException;
 import org.compass.core.converter.xsem.XmlContentConverter;
 import org.compass.core.util.StringBuilderWriter;
@@ -32,7 +36,18 @@ import org.dom4j.io.XMLWriter;
  *
  * @author kimchy
  */
-public abstract class AbstractXmlWriterXmlContentConverter implements XmlContentConverter {
+public abstract class AbstractXmlWriterXmlContentConverter implements XmlContentConverter, CompassConfigurable {
+
+    private boolean compact;
+
+    public void configure(CompassSettings settings) throws CompassException {
+        String outputFormat = settings.getGloablSettings().getSetting(CompassEnvironment.Xsem.XmlContent.Dom4j.OUTPUT_FORMAT, "default");
+        if ("default".equals(outputFormat)) {
+            compact = false;
+        } else if ("compact".equals(outputFormat)) {
+            compact = true;
+        }
+    }
 
     /**
      * Converts the {@link XmlObject} (assumes it is a {@link org.compass.core.xml.dom4j.Dom4jXmlObject}) into
@@ -46,8 +61,16 @@ public abstract class AbstractXmlWriterXmlContentConverter implements XmlContent
     public String toXml(XmlObject xmlObject) throws ConversionException {
         Dom4jXmlObject dom4jXmlObject = (Dom4jXmlObject) xmlObject;
         StringBuilderWriter stringWriter = StringBuilderWriter.Cached.cached();
-        OutputFormat outputFormat = OutputFormat.createCompactFormat();
-        XMLWriter xmlWriter = new XMLWriter(stringWriter, outputFormat);
+        OutputFormat outputFormat = null;
+        if (compact) {
+            outputFormat = OutputFormat.createCompactFormat();
+        }
+        XMLWriter xmlWriter;
+        if (outputFormat != null) {
+            xmlWriter = new XMLWriter(stringWriter, outputFormat);
+        } else {
+            xmlWriter = new XMLWriter(stringWriter);
+        }
         try {
             xmlWriter.write(dom4jXmlObject.getNode());
             xmlWriter.close();

@@ -27,7 +27,7 @@ import org.compass.core.xml.jdom.converter.STAXBuilderXmlContentConverter;
 public class JDomXmlSTAXBuilderObjectTests extends JDomXmlSAXBuilderObjectTests {
 
     protected void addSettings(CompassSettings settings) {
-        settings.setSetting(CompassEnvironment.Xsem.XmlContent.TYPE, CompassEnvironment.Xsem.XmlContent.Jdom.TYPE_STAX);
+        settings.setSetting(CompassEnvironment.Xsem.XmlContent.TYPE, CompassEnvironment.Xsem.XmlContent.JDom.TYPE_STAX);
     }
 
     @Override

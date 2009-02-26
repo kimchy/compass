@@ -42,6 +42,7 @@ public class SAXReaderXmlContentConverter extends AbstractXmlWriterXmlContentCon
     private SAXReader saxReader;
 
     public void configure(CompassSettings settings) throws CompassException {
+        super.configure(settings);
         saxReader = doCreateSAXReader(settings);
     }
 

@@ -41,6 +41,7 @@ public class XPP3ReaderXmlContentConverter extends AbstractXmlWriterXmlContentCo
     private XPP3Reader xppReader;
 
     public void configure(CompassSettings settings) throws CompassException {
+        super.configure(settings);
         xppReader = doCreateXPP3Reader(settings);
     }
 
