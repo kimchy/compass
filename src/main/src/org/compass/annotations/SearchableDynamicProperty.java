@@ -22,6 +22,26 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * Specifies a searchable dynamic property on property or field of the {@link Searchable} class.
+ *
+ * <p>Dynamic property is a proeprty where the Resource Property name is dynamic in addition to the value itself.
+ *
+ * <p>The annotation can be placed on a custom type (or an array / collection of it). When used on a custom type,
+ * the field/property of the custom type for the dynamic name, and the field/property of the custom type for the dynamic value
+ * should be explciitly set using {@link #nameProperty()} and {@link #valueProperty()}. Another option, instead of setting
+ * them, is by using {@link org.compass.annotations.SearchableDynamicName} on the custom type field/property and
+ * {@link org.compass.annotations.SearchableDynamicValue} on the custom type field/property.
+ *
+ * <p>The annotation can also be placed on a {@link java.util.Map} type, where its key will act as the Resource property
+ * name and its value will act as the Resource property value. The Map value can also be an array or collection. It is
+ * best to use generics when defining the Map.
+ *
+ * <p>When annotating a Map, the {@link #nameProperty()} or {@link #valueConverter()} (or their respective annotation)
+ * can also be used in case the Map key and/or Map value are custom types.
+ *
+ * <p>The format for the name can be set using {@link #nameFormat()} and the format for the value can be set using
+ * {@link #valueFormat()}.
+ *
  * @author kimchy
  */
 @Target({ElementType.METHOD, ElementType.FIELD})
@@ -90,42 +110,42 @@ public @interface SearchableDynamicProperty {
      * The boost level for the meta-data. Will cause hits
      * based on this meta-data to rank higher.
      */
-    public abstract float boost() default 1.0f;
+    float boost() default 1.0f;
 
     /**
      * Specifies whether and how a meta-data property will be stored.
      */
-    public abstract Store store() default Store.NA;
+    Store store() default Store.NA;
 
     /**
      * Specifies whether and how a meta-data proeprty should be indexed.
      */
-    public abstract Index index() default Index.NA;
+    Index index() default Index.NA;
 
     /**
      * Specifies whether and how a meta-data property should have term vectors.
      */
-    public abstract TermVector termVector() default TermVector.NA;
+    TermVector termVector() default TermVector.NA;
 
     /**
      * Expert:
      * If set, omit normalization factors associated with this indexed field.
      * This effectively disables indexing boosts and length normalization for this field.
      */
-    public abstract OmitNorms omitNorms() default OmitNorms.NA;
+    OmitNorms omitNorms() default OmitNorms.NA;
 
     /**
      * Expert:
      * If set, omit tf from postings of this indexed field.
      */
-    public abstract OmitTf omitTf() default OmitTf.NA;
+    OmitTf omitTf() default OmitTf.NA;
 
     /**
      * The converter lookup name for the given meta-data.
      * <p/>
      * Defaults to one of Compass internal converters.
      */
-    public abstract String converter() default "";
+    String converter() default "";
 
     /**
      * A null value to use to store in the index when the property has a <code>null</code>
@@ -134,5 +154,5 @@ public @interface SearchableDynamicProperty {
      * value can be done by setting it to {@link org.compass.core.config.CompassEnvironment.NullValue#DISABLE_NULL_VALUE_FOR_MAPPING}
      * value (<code>$disable$</code>).
      */
-    public abstract String nullValue() default "";
+    String nullValue() default "";
 }

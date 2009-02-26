@@ -289,6 +289,15 @@ public class SearchableMappingBuilder implements ResourceMappingProvider {
     }
 
     /**
+     * Adds a dynamic property mapping to searchable class.
+     */
+    public SearchableMappingBuilder add(SearchableDynamicPropertyMappingBuilder builder) {
+        builder.mapping.setDefinedInAlias(mapping.getAlias());
+        mapping.addMapping(builder.mapping);
+        return this;
+    }
+
+    /**
      * Adds an analyzer proeprty mapping to the searchable class.
      */
     public SearchableMappingBuilder add(SearchableAnalyzerMappingBuilder builder) {

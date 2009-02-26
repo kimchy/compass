@@ -113,6 +113,15 @@ public abstract class OSEM {
     }
 
     /**
+     * Constructs a new searchable dynamic property mapping builder.
+     *
+     * @see SearchableMappingBuilder#add(SearchableDynamicPropertyMappingBuilder) 
+     */
+    public static SearchableDynamicPropertyMappingBuilder dynamicProperty(String name) {
+        return new SearchableDynamicPropertyMappingBuilder(name);
+    }
+
+    /**
      * Constructs a new searchable metadata mapping builder.
      *
      * @see SearchablePropertyMappingBuilder#add(SearchableMetaDataMappingBuilder)
