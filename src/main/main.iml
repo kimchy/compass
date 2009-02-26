@@ -58,5 +58,10 @@
     <orderEntry type="library" name="jettison" level="project" />
     <orderEntry type="library" name="mvel" level="project" />
   </component>
+  <component name="copyright">
+    <Base>
+      <setting name="state" value="2" />
+    </Base>
+  </component>
 </module>
 
