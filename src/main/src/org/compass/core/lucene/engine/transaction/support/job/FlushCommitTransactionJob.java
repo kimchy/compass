@@ -49,4 +49,18 @@ public class FlushCommitTransactionJob implements TransactionJob {
     public String toString() {
         return "Job Flush [" + subIndex + "]";
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        FlushCommitTransactionJob that = (FlushCommitTransactionJob) o;
+        return subIndex.equals(that.subIndex);
+    }
+
+    @Override
+    public int hashCode() {
+        return 53 * subIndex.hashCode();
+    }
 }

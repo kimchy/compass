@@ -58,4 +58,19 @@ public class DeleteByQueryTransactionJob implements TransactionJob {
     public String toString() {
         return "Job Delete [" + query + "]";
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        DeleteByQueryTransactionJob that = (DeleteByQueryTransactionJob) o;
+        return subIndex.equals(that.subIndex) && query.equals(that.query);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return 31 * query.hashCode() + subIndex.hashCode();
+    }
 }

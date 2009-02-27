@@ -58,4 +58,18 @@ public class UpdateTransactionJob implements TransactionJob {
     public String toString() {
         return "Job Update [" + resource.getResourceKey() + "] Resource [" + resource + "]";
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        UpdateTransactionJob that = (UpdateTransactionJob) o;
+        return resourceUID.equals(that.resourceUID);
+    }
+
+    @Override
+    public int hashCode() {
+        return 29 * resourceUID.hashCode();
+    }
 }

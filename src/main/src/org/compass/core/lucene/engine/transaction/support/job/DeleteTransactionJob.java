@@ -57,4 +57,22 @@ public class DeleteTransactionJob implements TransactionJob {
     public String toString() {
         return "Job Delete [" + resourceKey + "]";
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        DeleteTransactionJob that = (DeleteTransactionJob) o;
+
+        if (resourceKey != null ? !resourceKey.equals(that.resourceKey) : that.resourceKey != null) return false;
+        if (resourceUID != null ? !resourceUID.equals(that.resourceUID) : that.resourceUID != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return 31 * resourceUID.hashCode();
+    }
 }

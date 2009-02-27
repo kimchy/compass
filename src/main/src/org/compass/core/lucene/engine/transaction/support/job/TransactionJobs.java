@@ -83,4 +83,24 @@ public class TransactionJobs implements Serializable {
         }
         return sb.toString();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        TransactionJobs that = (TransactionJobs) o;
+
+        if (subIndexes != null ? !subIndexes.equals(that.subIndexes) : that.subIndexes != null) return false;
+        if (jobs != null ? !jobs.equals(that.jobs) : that.jobs != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = jobs != null ? jobs.hashCode() : 0;
+        result = 31 * result + (subIndexes != null ? subIndexes.hashCode() : 0);
+        return result;
+    }
 }

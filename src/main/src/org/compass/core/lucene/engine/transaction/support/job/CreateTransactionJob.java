@@ -58,4 +58,18 @@ public class CreateTransactionJob implements TransactionJob {
     public String toString() {
         return "Job Create [" + resource.getResourceKey() + "] Resource [" + resource + "]";
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        CreateTransactionJob that = (CreateTransactionJob) o;
+        return (resourceUID.equals(that.resourceUID));
+    }
+
+    @Override
+    public int hashCode() {
+        return 37 * resourceUID.hashCode();
+    }
 }
