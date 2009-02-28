@@ -170,6 +170,7 @@ public class ReadCommittedTransactionProcessor extends AbstractConcurrentTransac
             try {
                 if (transIndexManager.hasTransIndex(entry.getKey())) {
                     transIndexManager.rollback(entry.getKey());
+                    transIndexManager.close(entry.getKey());
                 }
             } catch (Exception e) {
                 // ignore this exception
