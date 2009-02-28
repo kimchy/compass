@@ -28,6 +28,7 @@ import org.compass.core.impl.DefaultCompass;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.metadata.impl.DefaultCompassMetaData;
+import org.compass.core.util.FileHandlerMonitor;
 
 /**
  * @author kimchy
@@ -37,6 +38,8 @@ public abstract class AbstractSearchEngineTests extends AbstractEngineTests {
     private SearchEngine searchEngine;
 
     private SearchEngineFactory searchEngineFactory;
+
+    private FileHandlerMonitor fileHandlerMonitor;
 
     // we have it here for transactional settings
     protected Compass compass;
@@ -58,6 +61,8 @@ public abstract class AbstractSearchEngineTests extends AbstractEngineTests {
         this.searchEngineFactory = createSearchEngineFactory();
         this.compass = new DefaultCompass(getMapping(), new DefaultConverterLookup(), new DefaultCompassMetaData(),
                 new StaticPropertyNamingStrategy(), getSettings(), (LuceneSearchEngineFactory) searchEngineFactory);
+        this.fileHandlerMonitor = FileHandlerMonitor.getFileHandlerMonitor(compass);
+        fileHandlerMonitor.verifyNoHandlers();
         this.searchEngine = searchEngineFactory.openSearchEngine(new RuntimeCompassSettings(compass.getSettings()));
     }
 
@@ -69,6 +74,7 @@ public abstract class AbstractSearchEngineTests extends AbstractEngineTests {
         searchEngine.close();
         compass.close();
         searchEngineFactory.getIndexManager().deleteIndex();
+        fileHandlerMonitor.verifyNoHandlers();
         super.tearDown();
     }
 
