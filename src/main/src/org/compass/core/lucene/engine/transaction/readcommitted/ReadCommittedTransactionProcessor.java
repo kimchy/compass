@@ -168,6 +168,13 @@ public class ReadCommittedTransactionProcessor extends AbstractConcurrentTransac
         SearchEngineException lastException = null;
         for (Map.Entry<String, IndexWriter> entry : indexWriterBySubIndex.entrySet()) {
             try {
+                if (transIndexManager.hasTransIndex(entry.getKey())) {
+                    transIndexManager.rollback(entry.getKey());
+                }
+            } catch (Exception e) {
+                // ignore this exception
+            }
+            try {
                 entry.getValue().rollback();
             } catch (AlreadyClosedException e) {
                 if (logger.isTraceEnabled()) {

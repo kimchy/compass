@@ -137,6 +137,17 @@ public class TransIndex implements CompassConfigurable {
         directory.close();
     }
 
+    public void rollback() throws IOException {
+        if (indexSearcher != null) {
+            indexSearcher.close();
+        }
+        if (indexReader != null) {
+            indexReader.close();
+        }
+        indexWriter.rollback();
+        indexWriter = null;
+    }
+
     private void refreshIfNeeded() throws IOException {
         if (concurrent) {
             synchronized (this) {
@@ -160,9 +171,9 @@ public class TransIndex implements CompassConfigurable {
                 if (tmpReader != indexReader) {
                     indexReader.close();
                     indexSearcher.close();
+                    indexReader = tmpReader;
                     indexSearcher = searchEngineFactory.getLuceneIndexManager().openIndexSearcher(tmpReader);
                 }
-                indexReader = tmpReader;
             }
             flushRequired = false;
         }

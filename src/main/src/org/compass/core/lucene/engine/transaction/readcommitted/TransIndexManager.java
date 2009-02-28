@@ -95,8 +95,18 @@ public class TransIndexManager implements CompassConfigurable {
         }
     }
 
+    public void rollback() throws IOException {
+        for (TransIndex transIndex : transIndexMap.values()) {
+            transIndex.rollback();
+        }
+    }
+
     public void commit(String subIndex) throws IOException {
         transIndexMap.get(subIndex).commit();
+    }
+
+    public void rollback(String subIndex) throws IOException {
+        transIndexMap.get(subIndex).rollback();
     }
 
     public void close(String subIndex) throws IOException {
