@@ -21,6 +21,7 @@ import org.compass.core.Compass;
 import org.compass.core.CompassSession;
 import org.compass.core.config.CompassConfiguration;
 import org.compass.core.impl.ExistingCompassSession;
+import org.compass.core.util.FileHandlerMonitor;
 import org.compass.gps.device.hibernate.HibernateSyncTransactionFactory;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -38,6 +39,8 @@ public class HibernateJustCloseTransactionTests extends TestCase {
 
     private Compass compass;
 
+    private FileHandlerMonitor fileHandlerMonitor;
+
     private SessionFactory sessionFactory;
 
     protected void setUp() throws Exception {
@@ -52,6 +55,10 @@ public class HibernateJustCloseTransactionTests extends TestCase {
         CompassConfiguration cpConf = new CompassConfiguration()
                 .configure("/org/compass/gps/device/hibernate/transaction/compass.cfg.xml");
         compass = cpConf.buildCompass();
+
+        fileHandlerMonitor = FileHandlerMonitor.getFileHandlerMonitor(compass);
+        fileHandlerMonitor.verifyNoHandlers();
+
         compass.getSearchEngineIndexManager().deleteIndex();
         compass.getSearchEngineIndexManager().verifyIndex();
 
@@ -59,6 +66,7 @@ public class HibernateJustCloseTransactionTests extends TestCase {
 
     protected void tearDown() throws Exception {
         compass.close();
+        fileHandlerMonitor.verifyNoHandlers();
         sessionFactory.close();
     }
 
