@@ -148,9 +148,11 @@ public class IndexHoldersCache {
     }
 
     public void clearCache(String subIndex) throws SearchEngineException {
-        LuceneIndexHolder indexHolder = indexHolders.remove(subIndex);
-        if (indexHolder != null) {
-            indexHolder.markForClose();
+        synchronized (subIndexCacheLocks.get(subIndex)) {
+            LuceneIndexHolder indexHolder = indexHolders.remove(subIndex);
+            if (indexHolder != null) {
+                indexHolder.markForClose();
+            }
         }
     }
 
