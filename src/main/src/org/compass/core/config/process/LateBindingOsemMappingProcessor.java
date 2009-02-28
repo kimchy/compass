@@ -38,6 +38,7 @@ import org.compass.core.mapping.internal.InternalMapping;
 import org.compass.core.mapping.osem.*;
 import org.compass.core.marshall.MarshallingEnvironment;
 import org.compass.core.util.IdentityHashSet;
+import org.compass.core.util.StringUtils;
 
 /**
  * @author kimchy
@@ -132,7 +133,9 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
                 removeMapping = secondPass((IdComponentMapping) copyMapping, classMapping);
             } else {
                 if (!onlyProperties) {
-                    if (copyMapping instanceof ComponentMapping) {
+                    if (copyMapping instanceof ClassDynamicPropertyMapping) {
+                        removeMapping = secondPass((ClassDynamicPropertyMapping) copyMapping);
+                    } else if (copyMapping instanceof ComponentMapping) {
                         removeMapping = secondPass((ComponentMapping) copyMapping, classMapping);
                     } else if (copyMapping instanceof ReferenceMapping) {
                         removeMapping = secondPass((ReferenceMapping) copyMapping, classMapping);
@@ -310,9 +313,26 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
         return false;
     }
 
+    private boolean secondPass(ClassDynamicPropertyMapping dynamicPropertyMapping) {
+        dynamicPropertyMapping.setNamePrefix(buildDynamicNamePrefix(dynamicPropertyMapping.getNamePrefix()));
+        return false;
+    }
+
     private void clearRootClassMappingState() {
         chainedComponents.clear();
         prefixes.clear();
+    }
+
+    private String buildDynamicNamePrefix(String namePrefix) {
+        if (namePrefix == null) {
+            namePrefix = buildFullName("");
+        } else {
+            namePrefix = buildFullName(namePrefix);
+        }
+        if (StringUtils.hasText(namePrefix)) {
+            return namePrefix;
+        }
+        return null;
     }
 
     private String buildFullName(String name) {
@@ -410,7 +430,10 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
             if (classMapping == rootClassMapping) {
                 PropertyPath aliasedPath = namingStrategy.buildPath(compassMapping.getPath(), dynamicPropertyMapping.getDefinedInAlias());
                 dynamicPropertyMapping.setPath(namingStrategy.buildPath(aliasedPath, dynamicPropertyMapping.getName()));
+            } else {
+                dynamicPropertyMapping.setPath(namingStrategy.buildPath(classMapping.getPath(), dynamicPropertyMapping.getName()));
             }
+            dynamicPropertyMapping.setNamePrefix(buildDynamicNamePrefix(dynamicPropertyMapping.getNamePrefix()));
         }
 
         public void onParentMapping(ClassMapping classMapping, ParentMapping parentMapping) {

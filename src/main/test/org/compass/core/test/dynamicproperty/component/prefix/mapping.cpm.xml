@@ -1,0 +1,15 @@
+<!DOCTYPE compass-core-mapping PUBLIC
+        "-//Compass/Compass Core Mapping DTD 2.2//EN"
+        "http://www.compass-project.org/dtd/compass-core-mapping-2.2.dtd">
+
+<compass-core-mapping package="org.compass.core.test.dynamicproperty.component.prefix">
+
+    <class name="A" alias="a">
+        <id name="id" accessor="field"/>
+        <component name="b" prefix="moo_" accessor="field"/>
+    </class>
+
+    <class name="B" alias="b" root="false">
+        <dynamic-property name="values" accessor="field"/>
+    </class>
+</compass-core-mapping>
