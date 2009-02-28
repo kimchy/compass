@@ -16,8 +16,6 @@
 
 package org.compass.gps.device.hibernate.simple;
 
-import java.io.IOException;
-
 import org.compass.core.CompassHits;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
@@ -34,10 +32,6 @@ public class SpellCheckSimpleHibernateGpsDeviceTests extends ScrollableSimpleHib
     protected void setUpCoreCompass(CompassConfiguration conf) {
         super.setUpCoreCompass(conf);
         conf.setSetting(LuceneEnvironment.SpellCheck.ENABLE, "true");
-    }
-
-    protected void setUpCompass() throws IOException {
-        super.setUpCompass();
     }
 
     protected void doTearDown() throws Exception {

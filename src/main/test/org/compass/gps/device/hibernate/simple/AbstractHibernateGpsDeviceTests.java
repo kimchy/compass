@@ -25,6 +25,7 @@ import junit.framework.TestCase;
 import org.compass.core.Compass;
 import org.compass.core.config.CompassConfiguration;
 import org.compass.core.config.CompassEnvironment;
+import org.compass.core.util.FileHandlerMonitor;
 import org.compass.gps.CompassGps;
 import org.compass.gps.device.hibernate.HibernateGpsDevice;
 import org.compass.gps.impl.SingleCompassGps;
@@ -41,6 +42,8 @@ public abstract class AbstractHibernateGpsDeviceTests extends TestCase {
 
     protected Compass compass;
 
+    private FileHandlerMonitor fileHandlerMonitor;
+
     protected HibernateGpsDevice hibernateGpsDevice;
 
     protected CompassGps compassGps;
@@ -48,6 +51,13 @@ public abstract class AbstractHibernateGpsDeviceTests extends TestCase {
     protected void setUp() throws Exception {
         sessionFactory = doSetUpSessionFactory();
         setUpCompass();
+
+        fileHandlerMonitor = FileHandlerMonitor.getFileHandlerMonitor(compass);
+        fileHandlerMonitor.verifyNoHandlers();
+
+        compass.getSearchEngineIndexManager().deleteIndex();
+        compass.getSearchEngineIndexManager().verifyIndex();
+
         setUpGps();
         compassGps.start();
         setUpDB();
@@ -57,6 +67,9 @@ public abstract class AbstractHibernateGpsDeviceTests extends TestCase {
         tearDownDB();
         compassGps.stop();
         compass.close();
+        
+        fileHandlerMonitor.verifyNoHandlers();
+
         sessionFactory.close();
 
         try {
@@ -93,8 +106,6 @@ public abstract class AbstractHibernateGpsDeviceTests extends TestCase {
         setUpCoreCompass(cpConf);
         cpConf.getSettings().setBooleanSetting(CompassEnvironment.DEBUG, true);
         compass = cpConf.buildCompass();
-        compass.getSearchEngineIndexManager().deleteIndex();
-        compass.getSearchEngineIndexManager().verifyIndex();
     }
 
     protected void setUpGps() {

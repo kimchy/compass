@@ -19,8 +19,6 @@ public class EmbeddedHibernateTests extends ScrollableSimpleHibernateGpsDeviceTe
 
     protected void setUpCompass() {
         compass = HibernateHelper.getCompass(sessionFactory);
-        compass.getSearchEngineIndexManager().deleteIndex();
-        compass.getSearchEngineIndexManager().verifyIndex();
     }
 
     protected void setUpGpsDevice() {
