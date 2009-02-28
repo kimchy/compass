@@ -41,7 +41,7 @@ public class NamedThreadFactory implements ThreadFactory {
     public Thread newThread(Runnable r) {
         Thread t = defaultThreadFactory.newThread(r);
         t.setDaemon(daemon);
-        t.setName(name + "[" + t.getName() + "]");
+        t.setName(name + " [" + t.getName() + "]");
         return t;
     }
 }
