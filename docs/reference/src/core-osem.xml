@@ -380,6 +380,8 @@ public class Author {
           A Searchable Dynamic Property maps a Class attribute/property that has both its Resource Property name and value evaluated dynamically (the Searchable Property mapping only allows for the value to be evaluated, with the name being a constant value). There are two main types it is used with, user defined classes (and array / collection of them), and <literal>java.util.Map</literal>.
         </para>
         
+        <para>Note: The Searchable Dynamic Property does not support unmarshalling (due to the overhead in terms of data to store in the index for correct unmarshalling). It means that when loading the object from the index, the property will be null. Note, this might be supported in the future, but with an explicit setting for it.</para>
+        
         <para>
             User defined mapping allows to define a Class attribute/property that will be used as the Resource Property name, and a Class attribute/property that will be used as the Resource Property value. Here is an example:
 <programlisting><![CDATA[

@@ -40,6 +40,10 @@ public class SimpleDynamicPropertyTests extends AbstractTestCase {
 
         assertEquals(1, session.find("tag1:value1").length());
 
+        a = session.load(A.class, 1);
+        assertNotNull(a);
+        assertNull(a.dyna);
+
         session.close();
     }
 }
