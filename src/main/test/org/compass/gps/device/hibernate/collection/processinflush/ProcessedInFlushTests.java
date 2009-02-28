@@ -18,6 +18,7 @@ package org.compass.gps.device.hibernate.collection.processinflush;
 import junit.framework.TestCase;
 import org.compass.core.Compass;
 import org.compass.core.config.CompassConfiguration;
+import org.compass.core.util.FileHandlerMonitor;
 import org.compass.gps.CompassGpsDevice;
 import org.compass.gps.device.hibernate.HibernateGpsDevice;
 import org.compass.gps.device.hibernate.HibernateSyncTransactionFactory;
@@ -34,9 +35,12 @@ import org.hibernate.cfg.Environment;
 public class ProcessedInFlushTests extends TestCase {
 
     private SessionFactory sessionFactory;
+
     private Compass compass;
 
-    public void setUp() {
+    private FileHandlerMonitor fileHandlerMonitor;
+
+    public void setUp() throws Exception {
         Configuration conf = new Configuration().configure("/org/compass/gps/device/hibernate/collection/processinflush/hibernate.cfg.xml")
                 .setProperty(Environment.HBM2DDL_AUTO, "create");
         sessionFactory = conf.buildSessionFactory();
@@ -47,6 +51,10 @@ public class ProcessedInFlushTests extends TestCase {
         CompassConfiguration cpConf = new CompassConfiguration()
                 .configure("/org/compass/gps/device/hibernate/collection/processinflush/compass.cfg.xml");
         compass = cpConf.buildCompass();
+
+        fileHandlerMonitor = FileHandlerMonitor.getFileHandlerMonitor(compass);
+        fileHandlerMonitor.verifyNoHandlers();
+
         compass.getSearchEngineIndexManager().deleteIndex();
         compass.getSearchEngineIndexManager().verifyIndex();
 
@@ -66,6 +74,9 @@ public class ProcessedInFlushTests extends TestCase {
 
     protected void tearDown() throws Exception {
         compass.close();
+
+        fileHandlerMonitor.verifyNoHandlers();
+
         sessionFactory.close();
 
         try {
