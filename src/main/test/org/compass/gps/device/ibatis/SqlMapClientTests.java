@@ -35,6 +35,7 @@ import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
 import org.compass.core.config.CompassConfiguration;
 import org.compass.core.config.CompassEnvironment;
+import org.compass.core.util.FileHandlerMonitor;
 import org.compass.gps.device.jdbc.datasource.SingleConnectionDataSource;
 import org.compass.gps.impl.SingleCompassGps;
 
@@ -63,6 +64,8 @@ public class SqlMapClientTests extends TestCase {
 
     private Compass compass;
 
+    private FileHandlerMonitor fileHandlerMonitor;
+
     protected void setUp() throws Exception {
         dataSource = new SingleConnectionDataSource("org.hsqldb.jdbcDriver", "jdbc:hsqldb:mem:test", "sa", "", true);
 
@@ -83,6 +86,10 @@ public class SqlMapClientTests extends TestCase {
                 .configure("/org/compass/gps/device/ibatis/compass.cfg.xml");
         cpConf.getSettings().setBooleanSetting(CompassEnvironment.DEBUG, true);
         compass = cpConf.buildCompass();
+
+        fileHandlerMonitor = FileHandlerMonitor.getFileHandlerMonitor(compass);
+        fileHandlerMonitor.verifyNoHandlers();
+
         compass.getSearchEngineIndexManager().deleteIndex();
         compass.getSearchEngineIndexManager().verifyIndex();
 
@@ -96,6 +103,7 @@ public class SqlMapClientTests extends TestCase {
     protected void tearDown() throws Exception {
         compassGps.stop();
         compass.close();
+        fileHandlerMonitor.verifyNoHandlers();
         tearDownDB();
         dataSource.destroy();
     }
