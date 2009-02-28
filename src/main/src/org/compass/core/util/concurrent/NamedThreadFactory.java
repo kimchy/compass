@@ -34,14 +34,14 @@ public class NamedThreadFactory implements ThreadFactory {
     private final boolean daemon;
 
     public NamedThreadFactory(String name, boolean daemon) {
-        this.name = name + "-";
+        this.name = name;
         this.daemon = daemon;
     }
 
     public Thread newThread(Runnable r) {
         Thread t = defaultThreadFactory.newThread(r);
         t.setDaemon(daemon);
-        t.setName(name + t.getName());
+        t.setName(name + "[" + t.getName() + "]");
         return t;
     }
 }
