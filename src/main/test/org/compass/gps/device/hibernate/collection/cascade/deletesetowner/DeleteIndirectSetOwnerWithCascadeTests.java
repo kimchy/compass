@@ -22,6 +22,7 @@ import junit.framework.TestCase;
 import org.compass.core.Compass;
 import org.compass.core.config.CompassConfiguration;
 import org.compass.core.test.map.MapConverter;
+import org.compass.core.util.FileHandlerMonitor;
 import org.compass.gps.CompassGpsDevice;
 import org.compass.gps.device.hibernate.HibernateGpsDevice;
 import org.compass.gps.device.hibernate.HibernateSyncTransactionFactory;
@@ -38,9 +39,12 @@ import org.hibernate.cfg.Environment;
 public class DeleteIndirectSetOwnerWithCascadeTests extends TestCase {
 
     private SessionFactory sessionFactory;
+
     private Compass compass;
 
-    public void setUp() {
+    private FileHandlerMonitor fileHandlerMonitor;
+
+    public void setUp() throws Exception {
         Configuration conf = new Configuration().configure("/org/compass/gps/device/hibernate/collection/cascade/deletesetowner/hibernate.cfg.xml")
                 .setProperty(Environment.HBM2DDL_AUTO, "create");
         sessionFactory = conf.buildSessionFactory();
@@ -52,6 +56,10 @@ public class DeleteIndirectSetOwnerWithCascadeTests extends TestCase {
                 .configure("/org/compass/gps/device/hibernate/collection/cascade/deletesetowner/compass.cfg.xml");
         cpConf.registerConverter("stringmap", new MapConverter());
         compass = cpConf.buildCompass();
+
+        fileHandlerMonitor = FileHandlerMonitor.getFileHandlerMonitor(compass);
+        fileHandlerMonitor.verifyNoHandlers();
+
         compass.getSearchEngineIndexManager().deleteIndex();
         compass.getSearchEngineIndexManager().verifyIndex();
 
@@ -71,6 +79,9 @@ public class DeleteIndirectSetOwnerWithCascadeTests extends TestCase {
 
     protected void tearDown() throws Exception {
         compass.close();
+
+        fileHandlerMonitor.verifyNoHandlers();
+
         sessionFactory.close();
 
         try {
