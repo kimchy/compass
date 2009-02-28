@@ -323,6 +323,7 @@
         <junit forkmode="${junit.forkmode}" printsummary="yes" haltonfailure="yes" haltonerror="yes">
 
             <jvmarg line="-Djava.awt.headless=true -Xmx768m -XX:MaxPermSize=128m"/>
+            <jvmarg line="-Dcompass.test.validateFileHandler=false"/>
             <!--<jvmarg line="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005"/>-->
 
             <!-- Must go first to ensure any jndi.properties files etc take precedence  -->

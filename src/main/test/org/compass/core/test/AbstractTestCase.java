@@ -46,16 +46,8 @@ public abstract class AbstractTestCase extends ExtendedTestCase {
 
     protected void beforeTestCase() throws Exception {
         compass = (InternalCompass) buildCompass();
-        if (System.getProperty("compass.test.validateFileHandler", "false").equals("true")) {
-            String connection = compass.getSettings().getSetting(CompassEnvironment.CONNECTION);
-            if (connection.startsWith("file://") || connection.indexOf("://") == -1) {
-                if (connection.startsWith("file://")) {
-                    connection = connection.substring("file://".length());
-                }
-                fileHandlerMonitor = new FileHandlerMonitor(connection);
-            }
-        }
-        verifyNoHandlers();
+        fileHandlerMonitor = FileHandlerMonitor.getFileHandlerMonitor(compass);
+        fileHandlerMonitor.verifyNoHandlers();
     }
 
     protected void setUp() throws Exception {
@@ -94,7 +86,7 @@ public abstract class AbstractTestCase extends ExtendedTestCase {
 
     protected void afterTestCase() throws Exception {
         compass.close();
-        verifyNoHandlers();
+        fileHandlerMonitor.verifyNoHandlers();
     }
 
     protected Compass buildCompass() throws IOException {
@@ -147,18 +139,5 @@ public abstract class AbstractTestCase extends ExtendedTestCase {
 
     public ResourceFactory getResourceFactory() {
         return getCompass().getResourceFactory();
-    }
-
-    private void verifyNoHandlers() throws Exception {
-        if (fileHandlerMonitor == null) {
-            return;
-        }
-        FileHandlerMonitor.FileHandlers handlers = fileHandlerMonitor.handlers();
-        if (handlers == null) {
-            return;
-        }
-        if (handlers.hasHandlers()) {
-            throw new Exception("File Handlers still exist \n" + handlers.getRawOutput());
-        }
     }
 }

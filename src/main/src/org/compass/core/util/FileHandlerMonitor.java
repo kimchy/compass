@@ -20,43 +20,70 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
 
+import org.compass.core.Compass;
+import org.compass.core.config.CompassEnvironment;
+
 /**
  * @author kimchy
  */
 public class FileHandlerMonitor {
 
+    private static final boolean windows;
+    private static final boolean enabled;
+
+    static {
+        windows = System.getProperty("os.name").toLowerCase().startsWith("windows");
+        enabled = System.getProperty("compass.test.validateFileHandler", "false").equals("true");
+    }
+
+    public static FileHandlerMonitor getFileHandlerMonitor(Compass compass) {
+        String connection = compass.getSettings().getSetting(CompassEnvironment.CONNECTION);
+        if (connection.startsWith("file://") || connection.indexOf("://") == -1) {
+            if (connection.startsWith("file://")) {
+                connection = connection.substring("file://".length());
+            }
+            return new FileHandlerMonitor(connection);
+        }
+        return new FileHandlerMonitor(null);
+    }
+
     private File file;
 
     public FileHandlerMonitor(String filePath) {
-        file = new File(filePath);
+        if (filePath != null) {
+            file = new File(filePath);
+        }
     }
 
-    public FileHandlerMonitor(File file) {
-        this.file = file;
+    public void verifyNoHandlers() throws Exception {
+        FileHandlerMonitor.FileHandlers handlers = handlers();
+        if (handlers == null) {
+            return;
+        }
+        if (handlers.hasHandlers()) {
+            throw new Exception("File Handlers still exist \n" + handlers.getRawOutput());
+        }
     }
 
     public FileHandlers handlers() throws Exception {
-        String osName = System.getProperty("os.name");
-        if (osName.toLowerCase().startsWith("windows")) {
-            throw new UnsupportedOperationException("File handlers not supported on windows");
+        if (!enabled || file == null) {
+            return new FileHandlers(null);
         }
-        String command = "lsof | grep " + file.getAbsolutePath();
+        String command;
+        if (windows) {
+            command = "lib/handle/handle.exe " + file.getAbsolutePath();
+        } else {
+            command = "lsof | grep " + file.getAbsolutePath();
+        }
         Process process = Runtime.getRuntime().exec(command);
         BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
         StringBuilder sb = new StringBuilder();
         try {
-            int val = reader.read();
-            while (val != -1) {
-                sb.append((char) val);
-                val = reader.read();
-                try {
-                    process.exitValue();
-                    // process died, bail
-                    break;
-                } catch (IllegalThreadStateException e) {
-                    // all is well, process still alive
-                }
+            String line;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line).append("\n");
             }
+            process.waitFor();
         } finally {
             try {
                 process.getInputStream().close();
@@ -87,7 +114,11 @@ public class FileHandlerMonitor {
         }
 
         public boolean hasHandlers() {
-            return StringUtils.hasLength(output);
+            if (windows) {
+                return output != null && output.indexOf("pid") != -1;
+            } else {
+                return StringUtils.hasLength(output);
+            }
         }
 
         public String getRawOutput() {

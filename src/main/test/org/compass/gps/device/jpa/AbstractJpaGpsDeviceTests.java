@@ -29,6 +29,7 @@ import org.compass.core.Compass;
 import org.compass.core.config.CompassConfiguration;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.lucene.LuceneEnvironment;
+import org.compass.core.util.FileHandlerMonitor;
 import org.compass.gps.CompassGps;
 import org.compass.gps.impl.SingleCompassGps;
 
@@ -43,10 +44,19 @@ public abstract class AbstractJpaGpsDeviceTests extends TestCase {
 
     protected CompassGps compassGps;
 
+    private FileHandlerMonitor fileHandlerMonitor;
+
     @Override
     protected void setUp() throws Exception {
         entityManagerFactory = doSetUpEntityManagerFactory();
         setUpCompass();
+
+        fileHandlerMonitor = FileHandlerMonitor.getFileHandlerMonitor(compass);
+        fileHandlerMonitor.verifyNoHandlers();
+
+        compass.getSearchEngineIndexManager().deleteIndex();
+        compass.getSearchEngineIndexManager().verifyIndex();
+        
         setUpGps();
         compassGps.start();
         setUpDB();
@@ -58,6 +68,8 @@ public abstract class AbstractJpaGpsDeviceTests extends TestCase {
         compassGps.stop();
         compass.close();
         entityManagerFactory.close();
+
+        fileHandlerMonitor.verifyNoHandlers();
 
         try {
             compass.getSearchEngineIndexManager().deleteIndex();
@@ -90,8 +102,6 @@ public abstract class AbstractJpaGpsDeviceTests extends TestCase {
         }
         setUpCoreCompass(cpConf);
         compass = cpConf.buildCompass();
-        compass.getSearchEngineIndexManager().deleteIndex();
-        compass.getSearchEngineIndexManager().verifyIndex();
     }
 
     protected void setUpGps() {
