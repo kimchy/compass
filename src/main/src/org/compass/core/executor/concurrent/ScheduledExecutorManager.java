@@ -30,7 +30,7 @@ import org.compass.core.config.CompassConfigurable;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.executor.spi.InternalExecutorManager;
-import org.compass.core.util.concurrent.SingleThreadThreadFactory;
+import org.compass.core.util.concurrent.NamedThreadFactory;
 
 /**
  * An executor manager based on {@link java.util.concurrent.ScheduledExecutorService}.
@@ -46,7 +46,7 @@ public class ScheduledExecutorManager implements InternalExecutorManager, Compas
 
     public void configure(CompassSettings settings) throws CompassException {
         int corePoolSize = settings.getSettingAsInt(CompassEnvironment.ExecutorManager.Scheduled.CORE_POOL_SIZE, 10);
-        executorService = Executors.newScheduledThreadPool(corePoolSize, new SingleThreadThreadFactory("Compass Executor Thread", true));
+        executorService = Executors.newScheduledThreadPool(corePoolSize, new NamedThreadFactory("Compass Executor Thread", true));
     }
 
     public void submit(Runnable task) {

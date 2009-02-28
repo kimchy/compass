@@ -29,7 +29,7 @@ import org.apache.lucene.store.IndexOutput;
 import org.apache.lucene.store.Lock;
 import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.store.RAMOutputStream;
-import org.compass.core.util.concurrent.SingleThreadThreadFactory;
+import org.compass.core.util.concurrent.NamedThreadFactory;
 
 /**
  * Wraps a Lucene {@link org.apache.lucene.store.Directory} with
@@ -66,7 +66,7 @@ public class AsyncMemoryMirrorDirectoryWrapper extends Directory {
     }
 
     public AsyncMemoryMirrorDirectoryWrapper(Directory dir, long awaitTermination) throws IOException {
-        this(dir, awaitTermination, Executors.newSingleThreadExecutor(new SingleThreadThreadFactory("AsyncMirror[" + dir + "]", false)));
+        this(dir, awaitTermination, Executors.newSingleThreadExecutor(new NamedThreadFactory("AsyncMirror[" + dir + "]", false)));
     }
 
     public AsyncMemoryMirrorDirectoryWrapper(Directory dir, long awaitTermination, ExecutorService executorService) throws IOException {

@@ -30,7 +30,7 @@ import org.apache.commons.logging.LogFactory;
 import org.compass.core.CompassCallbackWithoutResult;
 import org.compass.core.CompassException;
 import org.compass.core.CompassSession;
-import org.compass.core.util.concurrent.SingleThreadThreadFactory;
+import org.compass.core.util.concurrent.NamedThreadFactory;
 import org.compass.gps.CompassGpsException;
 import org.compass.gps.spi.CompassGpsInterfaceDevice;
 
@@ -92,7 +92,7 @@ public class ConcurrentParallelIndexExecutor implements ParallelIndexExecutor {
             maxThreads = entities.length;
         }
         ExecutorService executorService = Executors.newFixedThreadPool(maxThreads,
-                new SingleThreadThreadFactory("Compass Gps Index", false));
+                new NamedThreadFactory("Compass Gps Index", false));
         try {
             ArrayList tasks = new ArrayList();
             for (int i = 0; i < entities.length; i++) {

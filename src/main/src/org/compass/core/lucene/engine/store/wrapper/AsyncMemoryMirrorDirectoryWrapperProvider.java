@@ -26,7 +26,7 @@ import org.compass.core.CompassException;
 import org.compass.core.config.CompassConfigurable;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.engine.SearchEngineException;
-import org.compass.core.util.concurrent.SingleThreadThreadFactory;
+import org.compass.core.util.concurrent.NamedThreadFactory;
 
 /**
  * Wraps a Lucene {@link Directory} with {@link AsyncMemoryMirrorDirectoryWrapper}.
@@ -55,6 +55,6 @@ public class AsyncMemoryMirrorDirectoryWrapperProvider implements DirectoryWrapp
     }
 
     protected ExecutorService doCreateExecutorService() {
-        return Executors.newSingleThreadExecutor(new SingleThreadThreadFactory("AsyncMirror Directory Wrapper", false));
+        return Executors.newSingleThreadExecutor(new NamedThreadFactory("AsyncMirror Directory Wrapper", false));
     }
 }

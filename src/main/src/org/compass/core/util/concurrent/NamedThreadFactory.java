@@ -16,26 +16,32 @@
 
 package org.compass.core.util.concurrent;
 
+import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
 
 /**
+ * A thread factory that accepts a name prefix and if the thread is going to be a daemon thread or not.
+ *
  * @author kimchy
  */
-public class SingleThreadThreadFactory implements ThreadFactory {
+public class NamedThreadFactory implements ThreadFactory {
 
-    private String name;
+    private final ThreadFactory defaultThreadFactory = Executors.defaultThreadFactory();
 
-    private boolean daemon;
+    private final String name;
 
-    public SingleThreadThreadFactory(String name, boolean daemon) {
-        this.name = name;
+    private final boolean daemon;
+
+    public NamedThreadFactory(String name, boolean daemon) {
+        this.name = name + "-";
         this.daemon = daemon;
     }
 
     public Thread newThread(Runnable r) {
-        Thread t = new Thread(null, r, name);
+        Thread t = defaultThreadFactory.newThread(r);
         t.setDaemon(daemon);
+        t.setName(name + t.getName());
         return t;
     }
 }

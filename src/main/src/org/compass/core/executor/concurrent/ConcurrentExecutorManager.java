@@ -33,8 +33,8 @@ import org.compass.core.config.CompassConfigurable;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.executor.spi.InternalExecutorManager;
+import org.compass.core.util.concurrent.NamedThreadFactory;
 import org.compass.core.util.concurrent.ScalingExecutros;
-import org.compass.core.util.concurrent.SingleThreadThreadFactory;
 
 /**
  * An executor manager based on {@link java.util.concurrent.ThreadPoolExecutor} for tasks and a slim
@@ -58,7 +58,7 @@ public class ConcurrentExecutorManager implements InternalExecutorManager, Compa
         int maximumPoolSize = settings.getSettingAsInt(CompassEnvironment.ExecutorManager.Concurrent.MAXIMUM_POOL_SIZE, 50);
         long keepAliveTime = settings.getSettingAsTimeInMillis(CompassEnvironment.ExecutorManager.Concurrent.KEEP_ALIVE_TIME, 60000);
 
-        executorService = ScalingExecutros.newScalingThreadPool(corePoolSize, maximumPoolSize, keepAliveTime, new SingleThreadThreadFactory("Compass Executor Thread", true));
+        executorService = ScalingExecutros.newScalingThreadPool(corePoolSize, maximumPoolSize, keepAliveTime, new NamedThreadFactory("Compass Executor Thread", true));
 
         if (log.isDebugEnabled()) {
             log.debug("Using concurrent executor manager with core size [" + corePoolSize + "], max size [" + maximumPoolSize + "], and keep alive time [" + keepAliveTime + "ms]");
@@ -66,7 +66,7 @@ public class ConcurrentExecutorManager implements InternalExecutorManager, Compa
 
         int scheduledCorePoolSize = settings.getSettingAsInt(CompassEnvironment.ExecutorManager.Concurrent.SCHEDULED_CORE_POOL_SIZE, 1);
         scheduledExecutorService = Executors.newScheduledThreadPool(scheduledCorePoolSize,
-                new SingleThreadThreadFactory("Compass Scheduled Executor Thread", true));
+                new NamedThreadFactory("Compass Scheduled Executor Thread", true));
 
         if (log.isDebugEnabled()) {
             log.debug("Using concurrent executor manager scheduler with size [" + scheduledCorePoolSize + "]");
