@@ -5,6 +5,7 @@ import org.compass.core.Compass;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
 import org.compass.core.config.CompassConfiguration;
+import org.compass.core.util.FileHandlerMonitor;
 import org.compass.gps.CompassGpsDevice;
 import org.compass.gps.device.hibernate.HibernateGpsDevice;
 import org.compass.gps.device.hibernate.HibernateSyncTransactionFactory;
@@ -19,9 +20,11 @@ public class NullIdCollectionTests extends TestCase {
 
     private Compass compass;
 
+    private FileHandlerMonitor fileHandlerMonitor;
+
     private SessionFactory sessionFactory;
 
-    public void setUp() {
+    public void setUp() throws Exception {
         Configuration conf = new Configuration().configure("/org/compass/gps/device/hibernate/collection/nullid/hibernate.cfg.xml")
                 .setProperty(Environment.HBM2DDL_AUTO, "create");
         sessionFactory = conf.buildSessionFactory();
@@ -32,6 +35,10 @@ public class NullIdCollectionTests extends TestCase {
         CompassConfiguration cpConf = new CompassConfiguration()
                 .configure("/org/compass/gps/device/hibernate/collection/nullid/compass.cfg.xml");
         compass = cpConf.buildCompass();
+
+        fileHandlerMonitor = FileHandlerMonitor.getFileHandlerMonitor(compass);
+        fileHandlerMonitor.verifyNoHandlers();
+
         compass.getSearchEngineIndexManager().deleteIndex();
         compass.getSearchEngineIndexManager().verifyIndex();
 
@@ -51,6 +58,9 @@ public class NullIdCollectionTests extends TestCase {
 
     protected void tearDown() throws Exception {
         compass.close();
+
+        fileHandlerMonitor.verifyNoHandlers();
+        
         sessionFactory.close();
         compass.getSearchEngineIndexManager().deleteIndex();
     }
