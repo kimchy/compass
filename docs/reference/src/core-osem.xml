@@ -329,7 +329,7 @@ public class B {
       <title>Searchable Property and Searchable Meta Data</title>
       
       <para>
-        A Searchable Property maps to a Class attribute/property which is a simple relationship. The searchable property maps to a class attribute that ends up as a String within the search engine. This include primitive types, primitive wrapper types, java.util.Date, java.util.Calendar and many more types that are automatically supported by Compass (please see the converter section). A user defined type can be used as well using a custom converter (though most times, a component relationship is more suited - explained later). A Searchable Mata Data uses the Searchable Property value (converted String value using its registered converter) and stores it in the index against a name.
+        A Searchable Property maps to a Class attribute/property which is of a simple type. The searchable property maps to a class attribute that ends up as a String within the search engine. This include primitive types, primitive wrapper types, java.util.Date, java.util.Calendar and many more types that are automatically supported by Compass (please see the converter section). A user defined type can be used as well using a custom converter (though most times, a component relationship is more suited - explained later). A Searchable Meta Data uses the Searchable Property value (converted String value using its registered converter) and stores it in the index against a name.
       </para>
       
       <para>
@@ -371,6 +371,102 @@ public class Author {
 ]]></programlisting>
       </para>
       
+    </sect2>
+    
+    <sect2 id="core-osem-dynamicproperty">
+        <title>Searchable Dynamic Property</title>
+        
+        <para>
+          A Searchable Dynamic Property maps a Class attribute/property that has both its Resource Property name and value evaluated dynamically (the Searchable Property mapping only allows for the value to be evaluated, with the name being a constant value). There are two main types it is used with, user defined classes (and array / collection of them), and <literal>java.util.Map</literal>.
+        </para>
+        
+        <para>
+            User defined mapping allows to define a Class attribute/property that will be used as the Resource Property name, and a Class attribute/property that will be used as the Resource Property value. Here is an example:
+<programlisting><![CDATA[
+public class Tag {
+
+    @SearchableDynamicName
+    String name;
+    
+    @SearchableDynamicValue
+    String value;
+}
+
+@Searchable
+public class Book {
+
+    // ....
+
+    @SearchableDynamicProperty
+    List<Tag> tags;
+}
+]]></programlisting>
+        </para>
+        
+        <para>
+            The <literal>tags</literal> dynamic property will automatically scan the <literal>Tag</literal> class for <literal>@SearchableDynamicName</literal> and <literal>@SearchableDynamicValue</literal> in order to find the class properties that will be used as the Resource Property name and Resource Property value. The annotations on the Tag class are not required, and the class property names can be set on the <literal>SearchableDynamicProperty</literal> itself. Here is an example of xml based mappings that overrides the annotation defined on the <literal>Tag</literal> class:
+            
+<programlisting><![CDATA[<class name="Book" alias="book">
+  <! ... -->
+  <dynamic-property name="tags" name-property="name" value-property="value">
+  <!-- ... -->
+</class>
+]]></programlisting>
+        </para>
+        
+        <para>
+            Both the value and the name support formatting configuration, as well as custom converter lookup name setting. The dynamic property can be of the user type, as well as a collection or array of it. The value itself can be of simple type, or a collection/array of it (in which case there will be several dynamic values against the dynamic name).
+        </para>
+        
+        <para>
+            <literal>java.util.Map</literal> is also supported, allowing for Resource Property name to be derived from the Map key, and the Resource Property Value to be derived from the Map value. Simple Map key/value types are supported (with formatting and custom converters), as well as custom user classes for either the Map key or the value (with explicit setting of the class attribute/property to use, either using name-proeprty/value-property or using annotations).
+        </para>
+        
+        <para>
+            Here is a simple example of dynamic property mapping a <literal>java.util.Map</literal> (with formattable values):
+<programlisting><![CDATA[
+@Searchable
+public class Book {
+
+    // ....
+
+    @SearchableDynamicProperty(value-format = "00000")
+    Map<String, Integer> tags;
+}
+]]></programlisting>
+        </para>
+        
+        <para>
+            And here is the same mapping using xml:
+<programlisting><![CDATA[<class name="Book" alias="book">
+  <! ... -->
+  <dynamic-property name="tags" value-format="00000">
+  <!-- ... -->
+</class>
+]]></programlisting>
+        </para>
+        
+        <para>
+            Here is a more complex Map example, with two custom classes, one for the key, and one for the value. From the key, we use the value1 property as the Resource Property name, and from the value we use value2 as the Resource Property value:
+<programlisting><![CDATA[
+public class Key {
+    String value1;
+}    
+
+public class Value {
+    String value2;
+}
+
+@Searchable
+public class Book {
+
+    // ....
+
+    @SearchableDynamicProperty(name-property="value1", value-property="value2")
+    Map<Key, Value> tags;
+}
+]]></programlisting>
+        </para>
     </sect2>
     
     <sect2 id="core-osem-constant">
