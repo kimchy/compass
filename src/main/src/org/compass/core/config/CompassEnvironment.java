@@ -995,11 +995,11 @@ public class CompassEnvironment {
 
         /**
          * The time to sleep before closing a Compass instnace that was replaced by a rebuild
-         * process. Defaults to 60 seconds. Set in <b>milliseconds</b>.
+         * process. Defaults to 5 seconds. Set in <b>milliseconds</b>.
          */
         public static final String SLEEP_BEFORE_CLOSE = "compass.rebuild.sleepBeforeClose";
 
-        public static final long DEFAULT_SLEEP_BEFORE_CLOSE = 60 * 1000;
+        public static final long DEFAULT_SLEEP_BEFORE_CLOSE = 5 * 1000;
     }
 
     /**
