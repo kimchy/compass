@@ -30,6 +30,7 @@ import org.compass.core.CompassSession;
 import org.compass.core.CompassTemplate;
 import org.compass.core.config.CompassConfiguration;
 import org.compass.core.lucene.LuceneEnvironment;
+import org.compass.core.util.FileHandlerMonitor;
 
 /**
  * Base class for simple concurrency tests for Compass. Starts several threads, each reads and writes data.
@@ -81,6 +82,9 @@ public abstract class AbstractMultiLoadTests extends AbstractAnnotationsTestCase
             templates[i] = new CompassTemplate(compass);
         }
 
+        FileHandlerMonitor fileHandlerMonitor = FileHandlerMonitor.getFileHandlerMonitor(templates[0].getCompass());
+        fileHandlerMonitor.verifyNoHandlers();
+
         templates[0].getCompass().getSearchEngineIndexManager().deleteIndex();
         templates[0].getCompass().getSearchEngineIndexManager().createIndex();
 
@@ -109,11 +113,19 @@ public abstract class AbstractMultiLoadTests extends AbstractAnnotationsTestCase
             templates[i].getCompass().close();
         }
 
+        fileHandlerMonitor.verifyNoHandlers();
+
         logger.info("VERIFYING INDEX USING NEW COMPASS INSTANCE");
         // now build a new one and check again
         CompassTemplate template = new CompassTemplate(conf.buildCompass());
+
+        fileHandlerMonitor = FileHandlerMonitor.getFileHandlerMonitor(template.getCompass());
+        fileHandlerMonitor.verifyNoHandlers();
+
         check(template);
         template.getCompass().close();
+
+        fileHandlerMonitor.verifyNoHandlers();
 
         if (error) {
             fail("Multi Concurrent Test Failed, check logs...");
