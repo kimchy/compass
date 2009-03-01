@@ -68,10 +68,17 @@ public class RefreshableCompass implements InternalCompass {
             compass.start();
             throw e;
         }
-        // schedule Compass to be closed
-        Thread t = new Thread(new CloseCompassRunnable(compass), "Close Compass");
-        t.start();
+        // do the switch
+        Compass oldCompass = compass;
         compass = rebuiltCompass;
+
+        long sleepBeforeClose = getConfig().getSettings().getSettingAsTimeInMillis(CompassEnvironment.Rebuild.SLEEP_BEFORE_CLOSE, CompassEnvironment.Rebuild.DEFAULT_SLEEP_BEFORE_CLOSE);        // schedule Compass to be closed
+        if (sleepBeforeClose <= 0) {
+            oldCompass.close();
+        } else {
+            Thread t = new Thread(new CloseCompassRunnable(oldCompass, sleepBeforeClose), "Close Compass");
+            t.start();
+        }
 
         for (RebuildEventListener eventListener : rebuildEventListeners) {
             eventListener.onCompassRebuild(compass);
@@ -199,15 +206,18 @@ public class RefreshableCompass implements InternalCompass {
 
     private class CloseCompassRunnable implements Runnable {
 
-        private Compass compass;
+        private final Compass compass;
 
-        private CloseCompassRunnable(Compass compass) {
+        private final long timeout;
+
+        private CloseCompassRunnable(Compass compass, long timeout) {
             this.compass = compass;
+            this.timeout = timeout;
         }
 
         public void run() {
             try {
-                Thread.sleep(getConfig().getSettings().getSettingAsLong(CompassEnvironment.Rebuild.SLEEP_BEFORE_CLOSE, CompassEnvironment.Rebuild.DEFAULT_SLEEP_BEFORE_CLOSE));
+                Thread.sleep(timeout);
             } catch (InterruptedException e) {
                 // do nothing
             }
