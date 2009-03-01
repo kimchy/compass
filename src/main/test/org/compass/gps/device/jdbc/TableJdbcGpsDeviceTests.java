@@ -25,6 +25,7 @@ import org.compass.core.CompassTemplate;
 import org.compass.core.Resource;
 import org.compass.core.config.CompassConfiguration;
 import org.compass.core.config.CompassEnvironment;
+import org.compass.core.util.FileHandlerMonitor;
 import org.compass.gps.device.jdbc.mapping.DataColumnToPropertyMapping;
 import org.compass.gps.device.jdbc.mapping.TableToResourceMapping;
 import org.compass.gps.device.jdbc.mapping.VersionColumnMapping;
@@ -40,6 +41,8 @@ public class TableJdbcGpsDeviceTests extends AbstractJdbcGpsDeviceTests {
 
     protected Compass compass;
 
+    private FileHandlerMonitor fileHandlerMonitor;
+
     protected CompassTemplate compassTemplate;
 
     private ResultSetJdbcGpsDevice gpsDevice;
@@ -48,7 +51,10 @@ public class TableJdbcGpsDeviceTests extends AbstractJdbcGpsDeviceTests {
 
     protected void tearDown() throws Exception {
         if (gps != null) gps.stop();
-        if (compass != null) compass.close();
+        if (compass != null) {
+            compass.close();
+            fileHandlerMonitor.verifyNoHandlers();
+        }
         super.tearDown();
     }
 
@@ -67,6 +73,10 @@ public class TableJdbcGpsDeviceTests extends AbstractJdbcGpsDeviceTests {
         conf.addMappingResolver(new ResultSetResourceMappingResolver(parentMapping, dataSource));
         conf.addMappingResolver(new ResultSetResourceMappingResolver(childMapping, dataSource));
         compass = conf.buildCompass();
+
+        fileHandlerMonitor = FileHandlerMonitor.getFileHandlerMonitor(compass);
+        fileHandlerMonitor.verifyNoHandlers();
+
         compass.getSearchEngineIndexManager().deleteIndex();
         compass.getSearchEngineIndexManager().verifyIndex();
 
@@ -114,6 +124,10 @@ public class TableJdbcGpsDeviceTests extends AbstractJdbcGpsDeviceTests {
         conf.addMappingResolver(new ResultSetResourceMappingResolver(parentMapping, dataSource));
         conf.addMappingResolver(new ResultSetResourceMappingResolver(childMapping, dataSource));
         compass = conf.buildCompass();
+
+        fileHandlerMonitor = FileHandlerMonitor.getFileHandlerMonitor(compass);
+        fileHandlerMonitor.verifyNoHandlers();
+
         compass.getSearchEngineIndexManager().deleteIndex();
         compass.getSearchEngineIndexManager().verifyIndex();
 
