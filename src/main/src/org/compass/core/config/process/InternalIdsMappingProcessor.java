@@ -24,9 +24,11 @@ import org.compass.core.Property;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.converter.ConverterLookup;
+import org.compass.core.converter.mapping.SuggestManagedIdConverter;
 import org.compass.core.engine.naming.PropertyNamingStrategy;
 import org.compass.core.mapping.AliasMapping;
 import org.compass.core.mapping.CompassMapping;
+import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.mapping.osem.ClassIdPropertyMapping;
@@ -124,11 +126,33 @@ public class InternalIdsMappingProcessor implements MappingProcessor {
             // first, set the managed id if not set usign default (up to class mapping, and if
             // not set, up to Compass settings, and if not there, default to auto).
             if (classPropertyMapping.getManagedId() == null) {
-                if (classMapping.getManagedId() == null) {
-                    String globalManagedId = settings.getSetting(CompassEnvironment.Osem.MANAGED_ID_DEFAULT, ManagedId.NO_STORE.toString());
-                    classPropertyMapping.setManagedId(ManagedId.fromString(globalManagedId));
+                // check if a converter has a ManagedId suggestion
+                ManagedId suggestedManagedIdByConverter = null;
+                // first check on the property converter
+                if (classPropertyMapping.getConverter() instanceof SuggestManagedIdConverter) {
+                    suggestedManagedIdByConverter = ((SuggestManagedIdConverter) classPropertyMapping.getConverter()).suggestManagedId();
+                }
+                // check if one of the meta data converter suggests a managed id
+                if (suggestedManagedIdByConverter == null) {
+                    for (Iterator<Mapping> it = classPropertyMapping.mappingsIt(); it.hasNext();) {
+                        Mapping m = it.next();
+                        if (m.getConverter() instanceof SuggestManagedIdConverter) {
+                            suggestedManagedIdByConverter = ((SuggestManagedIdConverter) m.getConverter()).suggestManagedId();
+                            if (suggestedManagedIdByConverter != null) {
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (suggestedManagedIdByConverter != null) {
+                    classPropertyMapping.setManagedId(suggestedManagedIdByConverter);
                 } else {
-                    classPropertyMapping.setManagedId(classMapping.getManagedId());
+                    if (classMapping.getManagedId() == null) {
+                        String globalManagedId = settings.getSetting(CompassEnvironment.Osem.MANAGED_ID_DEFAULT, ManagedId.NO_STORE.toString());
+                        classPropertyMapping.setManagedId(ManagedId.fromString(globalManagedId));
+                    } else {
+                        classPropertyMapping.setManagedId(classMapping.getManagedId());
+                    }
                 }
             }
 

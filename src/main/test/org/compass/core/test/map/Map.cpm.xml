@@ -8,7 +8,7 @@
 
         <id name="id" accessor="field" />
 
-        <property name="data" managed-id="false" accessor="field">
+        <property name="data" accessor="field">
             <meta-data converter="map">value</meta-data>
         </property>
 

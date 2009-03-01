@@ -28,9 +28,11 @@ import org.compass.core.config.CompassConfigurable;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.converter.ConversionException;
 import org.compass.core.converter.Converter;
+import org.compass.core.converter.mapping.SuggestManagedIdConverter;
 import org.compass.core.engine.naming.PropertyNamingStrategy;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.mapping.osem.ManagedId;
 import org.compass.core.marshall.MarshallingContext;
 import org.compass.core.util.StringUtils;
 
@@ -54,12 +56,16 @@ import org.compass.core.util.StringUtils;
  *
  * @author kimchy
  */
-public class MapConverter implements Converter, CompassConfigurable {
+public class MapConverter implements Converter, CompassConfigurable, SuggestManagedIdConverter {
 
     private boolean supportUnmarshall = true;
 
     public void configure(CompassSettings settings) throws CompassException {
         supportUnmarshall = settings.getSettingAsBoolean("supportUnmarshall", true);
+    }
+
+    public ManagedId suggestManagedId() {
+        return ManagedId.FALSE;
     }
 
     public boolean marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context) throws ConversionException {
