@@ -25,6 +25,7 @@ import org.compass.core.CompassTemplate;
 import org.compass.core.Resource;
 import org.compass.core.config.CompassConfiguration;
 import org.compass.core.config.CompassEnvironment;
+import org.compass.core.util.FileHandlerMonitor;
 import org.compass.gps.device.jdbc.mapping.DataColumnToPropertyMapping;
 import org.compass.gps.device.jdbc.mapping.IdColumnToPropertyMapping;
 import org.compass.gps.device.jdbc.mapping.ResultSetToResourceMapping;
@@ -37,6 +38,8 @@ import org.compass.gps.impl.SingleCompassGps;
 public class ResultSetJdbcGpsDeviceTests extends AbstractJdbcGpsDeviceTests {
 
     protected Compass compass;
+
+    private FileHandlerMonitor fileHandlerMonitor;
 
     protected CompassTemplate compassTemplate;
 
@@ -51,6 +54,9 @@ public class ResultSetJdbcGpsDeviceTests extends AbstractJdbcGpsDeviceTests {
         if (compass != null) {
             compass.close();
         }
+
+        fileHandlerMonitor.verifyNoHandlers();
+
         super.tearDown();
     }
 
@@ -74,6 +80,10 @@ public class ResultSetJdbcGpsDeviceTests extends AbstractJdbcGpsDeviceTests {
                 "target/test-index");
         conf.addMappingResolver(new ResultSetResourceMappingResolver(mapping, dataSource));
         compass = conf.buildCompass();
+
+        fileHandlerMonitor = FileHandlerMonitor.getFileHandlerMonitor(compass);
+        fileHandlerMonitor.verifyNoHandlers();
+
         compass.getSearchEngineIndexManager().deleteIndex();
         compass.getSearchEngineIndexManager().verifyIndex();
 
@@ -126,6 +136,10 @@ public class ResultSetJdbcGpsDeviceTests extends AbstractJdbcGpsDeviceTests {
                 "target/test-index");
         conf.addMappingResolver(new ResultSetResourceMappingResolver(mapping, this.dataSource));
         compass = conf.buildCompass();
+
+        fileHandlerMonitor = FileHandlerMonitor.getFileHandlerMonitor(compass);
+        fileHandlerMonitor.verifyNoHandlers();
+
         compass.getSearchEngineIndexManager().deleteIndex();
         compass.getSearchEngineIndexManager().verifyIndex();
 
@@ -184,6 +198,10 @@ public class ResultSetJdbcGpsDeviceTests extends AbstractJdbcGpsDeviceTests {
                 "target/testindex");
         conf.addMappingResolver(new ResultSetResourceMappingResolver(mapping, this.dataSource));
         compass = conf.buildCompass();
+
+        fileHandlerMonitor = FileHandlerMonitor.getFileHandlerMonitor(compass);
+        fileHandlerMonitor.verifyNoHandlers();
+
         compass.getSearchEngineIndexManager().deleteIndex();
         compass.getSearchEngineIndexManager().verifyIndex();
 
