@@ -24,6 +24,7 @@ import org.compass.core.CompassSession;
 import org.compass.core.config.CompassConfiguration;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.impl.ExistingCompassSession;
+import org.compass.core.util.FileHandlerMonitor;
 import org.compass.spring.transaction.SpringSyncTransactionFactory;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
@@ -38,6 +39,8 @@ import org.springframework.transaction.support.TransactionTemplate;
 public class SpringSyncJustCloseTransactionTests extends TestCase {
 
     private Compass compass;
+
+    private FileHandlerMonitor fileHandlerMonitor;
 
     private JotmFactoryBean jotmFactoryBean;
 
@@ -56,12 +59,19 @@ public class SpringSyncJustCloseTransactionTests extends TestCase {
         conf.getSettings().setBooleanSetting(CompassEnvironment.DEBUG, true);
         SpringSyncTransactionFactory.setTransactionManager(transactionManager);
         compass = conf.buildCompass();
+
+        fileHandlerMonitor = FileHandlerMonitor.getFileHandlerMonitor(compass);
+        fileHandlerMonitor.verifyNoHandlers();
+
         compass.getSearchEngineIndexManager().deleteIndex();
         compass.getSearchEngineIndexManager().verifyIndex();
     }
 
     protected void tearDown() throws Exception {
         compass.close();
+
+        fileHandlerMonitor.verifyNoHandlers();
+
         compass.getSearchEngineIndexManager().deleteIndex();
 
         jotmFactoryBean.destroy();
