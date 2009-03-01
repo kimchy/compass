@@ -23,6 +23,7 @@ import junit.framework.TestCase;
 import org.compass.core.Compass;
 import org.compass.core.CompassTemplate;
 import org.compass.core.config.CompassConfiguration;
+import org.compass.core.config.CompassEnvironment;
 import org.compass.core.util.FileHandlerMonitor;
 import org.compass.gps.device.hibernate.HibernateGpsDevice;
 import org.compass.gps.impl.SingleCompassGps;
@@ -66,6 +67,7 @@ public class CollectionTests extends TestCase {
 
         CompassConfiguration cpConf = new CompassConfiguration()
                 .configure("/org/compass/gps/device/hibernate/collection/compass.cfg.xml");
+        cpConf.getSettings().setBooleanSetting(CompassEnvironment.DEBUG, true);
         compass = cpConf.buildCompass();
 
         fileHandlerMonitor = FileHandlerMonitor.getFileHandlerMonitor(compass);

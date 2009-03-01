@@ -20,6 +20,7 @@ import junit.framework.TestCase;
 import org.compass.core.Compass;
 import org.compass.core.CompassSession;
 import org.compass.core.config.CompassConfiguration;
+import org.compass.core.config.CompassEnvironment;
 import org.compass.core.impl.ExistingCompassSession;
 import org.compass.core.util.FileHandlerMonitor;
 import org.compass.gps.device.hibernate.HibernateSyncTransactionFactory;
@@ -51,6 +52,7 @@ public class HibernateNoExplicitTransactionTests extends TestCase {
 
         CompassConfiguration cpConf = new CompassConfiguration()
                 .configure("/org/compass/gps/device/hibernate/transaction/compass.cfg.xml");
+        cpConf.getSettings().setBooleanSetting(CompassEnvironment.DEBUG, true);
         compass = cpConf.buildCompass();
 
         fileHandlerMonitor = FileHandlerMonitor.getFileHandlerMonitor(compass);

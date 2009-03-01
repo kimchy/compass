@@ -72,6 +72,7 @@ public class TableJdbcGpsDeviceTests extends AbstractJdbcGpsDeviceTests {
                 "target/test-index");
         conf.addMappingResolver(new ResultSetResourceMappingResolver(parentMapping, dataSource));
         conf.addMappingResolver(new ResultSetResourceMappingResolver(childMapping, dataSource));
+        conf.getSettings().setBooleanSetting(CompassEnvironment.DEBUG, true);
         compass = conf.buildCompass();
 
         fileHandlerMonitor = FileHandlerMonitor.getFileHandlerMonitor(compass);
@@ -123,6 +124,7 @@ public class TableJdbcGpsDeviceTests extends AbstractJdbcGpsDeviceTests {
                 "target/testindex");
         conf.addMappingResolver(new ResultSetResourceMappingResolver(parentMapping, dataSource));
         conf.addMappingResolver(new ResultSetResourceMappingResolver(childMapping, dataSource));
+        conf.getSettings().setBooleanSetting(CompassEnvironment.DEBUG, true);
         compass = conf.buildCompass();
 
         fileHandlerMonitor = FileHandlerMonitor.getFileHandlerMonitor(compass);

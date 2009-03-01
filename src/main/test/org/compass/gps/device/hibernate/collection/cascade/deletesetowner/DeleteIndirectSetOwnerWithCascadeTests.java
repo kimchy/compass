@@ -21,6 +21,7 @@ import java.util.Set;
 import junit.framework.TestCase;
 import org.compass.core.Compass;
 import org.compass.core.config.CompassConfiguration;
+import org.compass.core.config.CompassEnvironment;
 import org.compass.core.test.map.MapConverter;
 import org.compass.core.util.FileHandlerMonitor;
 import org.compass.gps.CompassGpsDevice;
@@ -55,6 +56,7 @@ public class DeleteIndirectSetOwnerWithCascadeTests extends TestCase {
         CompassConfiguration cpConf = new CompassConfiguration()
                 .configure("/org/compass/gps/device/hibernate/collection/cascade/deletesetowner/compass.cfg.xml");
         cpConf.registerConverter("stringmap", new MapConverter());
+        cpConf.getSettings().setBooleanSetting(CompassEnvironment.DEBUG, true);
         compass = cpConf.buildCompass();
 
         fileHandlerMonitor = FileHandlerMonitor.getFileHandlerMonitor(compass);

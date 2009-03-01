@@ -20,6 +20,7 @@ import junit.framework.TestCase;
 import org.compass.core.Compass;
 import org.compass.core.CompassTemplate;
 import org.compass.core.config.CompassConfiguration;
+import org.compass.core.config.CompassEnvironment;
 import org.compass.core.util.FileHandlerMonitor;
 import org.compass.gps.device.hibernate.CompassTransactionInterceptor;
 import org.compass.gps.device.hibernate.HibernateGpsDevice;
@@ -49,6 +50,7 @@ public class SharedPrimaryKeyAssociationTests extends TestCase {
 
         CompassConfiguration cpConf = new CompassConfiguration()
                 .configure("/org/compass/gps/device/hibernate/onetoone/compass-nonjta.cfg.xml");
+        cpConf.getSettings().setBooleanSetting(CompassEnvironment.DEBUG, true);
         compass = cpConf.buildCompass();
 
         fileHandlerMonitor = FileHandlerMonitor.getFileHandlerMonitor(compass);

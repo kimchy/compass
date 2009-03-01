@@ -7,6 +7,7 @@ import org.compass.core.Compass;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
 import org.compass.core.config.CompassConfiguration;
+import org.compass.core.config.CompassEnvironment;
 import org.compass.core.util.FieldInvoker;
 import org.compass.core.util.FileHandlerMonitor;
 import org.compass.gps.CompassGpsDevice;
@@ -42,6 +43,7 @@ public abstract class AbstractCascadeManyTests extends TestCase {
 
         CompassConfiguration cpConf = new CompassConfiguration()
                 .configure(getCompassConfigLocation());
+        cpConf.getSettings().setBooleanSetting(CompassEnvironment.DEBUG, true);
         compass = cpConf.buildCompass();
 
         fileHandlerMonitor = FileHandlerMonitor.getFileHandlerMonitor(compass);

@@ -79,6 +79,7 @@ public class ResultSetJdbcGpsDeviceTests extends AbstractJdbcGpsDeviceTests {
         CompassConfiguration conf = new CompassConfiguration().setSetting(CompassEnvironment.CONNECTION,
                 "target/test-index");
         conf.addMappingResolver(new ResultSetResourceMappingResolver(mapping, dataSource));
+        conf.getSettings().setBooleanSetting(CompassEnvironment.DEBUG, true);
         compass = conf.buildCompass();
 
         fileHandlerMonitor = FileHandlerMonitor.getFileHandlerMonitor(compass);
@@ -135,6 +136,7 @@ public class ResultSetJdbcGpsDeviceTests extends AbstractJdbcGpsDeviceTests {
         CompassConfiguration conf = new CompassConfiguration().setSetting(CompassEnvironment.CONNECTION,
                 "target/test-index");
         conf.addMappingResolver(new ResultSetResourceMappingResolver(mapping, this.dataSource));
+        conf.getSettings().setBooleanSetting(CompassEnvironment.DEBUG, true);
         compass = conf.buildCompass();
 
         fileHandlerMonitor = FileHandlerMonitor.getFileHandlerMonitor(compass);
@@ -197,6 +199,7 @@ public class ResultSetJdbcGpsDeviceTests extends AbstractJdbcGpsDeviceTests {
         CompassConfiguration conf = new CompassConfiguration().setSetting(CompassEnvironment.CONNECTION,
                 "target/testindex");
         conf.addMappingResolver(new ResultSetResourceMappingResolver(mapping, this.dataSource));
+        conf.getSettings().setBooleanSetting(CompassEnvironment.DEBUG, true);
         compass = conf.buildCompass();
 
         fileHandlerMonitor = FileHandlerMonitor.getFileHandlerMonitor(compass);

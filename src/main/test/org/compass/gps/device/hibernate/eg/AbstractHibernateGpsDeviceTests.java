@@ -22,6 +22,7 @@ import javax.naming.InitialContext;
 import junit.framework.TestCase;
 import org.compass.core.Compass;
 import org.compass.core.config.CompassConfiguration;
+import org.compass.core.config.CompassEnvironment;
 import org.compass.core.util.FileHandlerMonitor;
 import org.compass.gps.impl.DualCompassGps;
 import org.objectweb.jotm.Jotm;
@@ -57,6 +58,7 @@ public abstract class AbstractHibernateGpsDeviceTests extends TestCase {
 
         CompassConfiguration cpConf = new CompassConfiguration()
                 .configure("/org/compass/gps/device/hibernate/eg/compass-mirror.cfg.xml");
+        cpConf.getSettings().setBooleanSetting(CompassEnvironment.DEBUG, true);
         mirrorCompass = cpConf.buildCompass();
         fileHandlerMonitorMirror = FileHandlerMonitor.getFileHandlerMonitor(mirrorCompass);
         fileHandlerMonitorMirror.verifyNoHandlers();
@@ -65,6 +67,7 @@ public abstract class AbstractHibernateGpsDeviceTests extends TestCase {
 
         CompassConfiguration cpBatchConf = new CompassConfiguration()
                 .configure("/org/compass/gps/device/hibernate/eg/compass-index.cfg.xml");
+        cpBatchConf.getSettings().setBooleanSetting(CompassEnvironment.DEBUG, true);
         indexCompass = cpBatchConf.buildCompass();
         fileHandlerMonitorIndex = FileHandlerMonitor.getFileHandlerMonitor(indexCompass);
         fileHandlerMonitorIndex.verifyNoHandlers();

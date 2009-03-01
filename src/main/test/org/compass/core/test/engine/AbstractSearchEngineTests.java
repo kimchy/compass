@@ -17,6 +17,7 @@
 package org.compass.core.test.engine;
 
 import org.compass.core.Compass;
+import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.RuntimeCompassSettings;
 import org.compass.core.converter.DefaultConverterLookup;
 import org.compass.core.engine.SearchEngine;
@@ -59,6 +60,7 @@ public abstract class AbstractSearchEngineTests extends AbstractEngineTests {
     protected void setUp() throws Exception {
         super.setUp();
         this.searchEngineFactory = createSearchEngineFactory();
+        getSettings().setBooleanSetting(CompassEnvironment.DEBUG, true);
         this.compass = new DefaultCompass(getMapping(), new DefaultConverterLookup(), new DefaultCompassMetaData(),
                 new StaticPropertyNamingStrategy(), getSettings(), (LuceneSearchEngineFactory) searchEngineFactory);
         this.fileHandlerMonitor = FileHandlerMonitor.getFileHandlerMonitor(compass);

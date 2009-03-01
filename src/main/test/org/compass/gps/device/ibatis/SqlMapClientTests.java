@@ -85,6 +85,7 @@ public class SqlMapClientTests extends TestCase {
         CompassConfiguration cpConf = new CompassConfiguration()
                 .configure("/org/compass/gps/device/ibatis/compass.cfg.xml");
         cpConf.getSettings().setBooleanSetting(CompassEnvironment.DEBUG, true);
+        cpConf.getSettings().setBooleanSetting(CompassEnvironment.DEBUG, true);
         compass = cpConf.buildCompass();
 
         fileHandlerMonitor = FileHandlerMonitor.getFileHandlerMonitor(compass);
@@ -94,8 +95,7 @@ public class SqlMapClientTests extends TestCase {
         compass.getSearchEngineIndexManager().verifyIndex();
 
         compassGps = new SingleCompassGps(compass);
-        SqlMapClientGpsDevice gpsDevice = new SqlMapClientGpsDevice("sqlMap", sqlMapClient,
-                new String[] { "getContacts" });
+        SqlMapClientGpsDevice gpsDevice = new SqlMapClientGpsDevice("sqlMap", sqlMapClient, "getContacts");
         compassGps.addGpsDevice(gpsDevice);
         compassGps.start();
     }
