@@ -6,6 +6,7 @@ import junit.framework.TestCase;
 import org.compass.core.Compass;
 import org.compass.core.CompassTemplate;
 import org.compass.core.config.CompassConfiguration;
+import org.compass.core.util.FileHandlerMonitor;
 import org.compass.gps.CompassGpsDevice;
 import org.compass.gps.device.hibernate.HibernateGpsDevice;
 import org.compass.gps.device.hibernate.HibernateSyncTransactionFactory;
@@ -25,7 +26,9 @@ public class CascadeInheritanceTests extends TestCase {
     private Compass compass;
     private CompassTemplate template;
 
-    public void setUp() {
+    private FileHandlerMonitor fileHandlerMonitor;
+
+    public void setUp() throws Exception {
         Configuration conf = new Configuration().configure("/org/compass/gps/device/hibernate/cascade/inheritance/hibernate.cfg.xml")
                 .setProperty(Environment.HBM2DDL_AUTO, "create");
         sessionFactory = conf.buildSessionFactory();
@@ -36,6 +39,10 @@ public class CascadeInheritanceTests extends TestCase {
         CompassConfiguration cpConf = new CompassConfiguration()
                 .configure("/org/compass/gps/device/hibernate/cascade/inheritance/compass.cfg.xml");
         compass = cpConf.buildCompass();
+
+        fileHandlerMonitor = FileHandlerMonitor.getFileHandlerMonitor(compass);
+        fileHandlerMonitor.verifyNoHandlers();
+
         compass.getSearchEngineIndexManager().deleteIndex();
         compass.getSearchEngineIndexManager().verifyIndex();
 
@@ -57,6 +64,8 @@ public class CascadeInheritanceTests extends TestCase {
 
     protected void tearDown() throws Exception {
         compass.close();
+        fileHandlerMonitor.verifyNoHandlers();
+
         sessionFactory.close();
         template = null;
 
