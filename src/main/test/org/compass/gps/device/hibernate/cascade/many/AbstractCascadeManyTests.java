@@ -8,6 +8,7 @@ import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
 import org.compass.core.config.CompassConfiguration;
 import org.compass.core.util.FieldInvoker;
+import org.compass.core.util.FileHandlerMonitor;
 import org.compass.gps.CompassGpsDevice;
 import org.compass.gps.device.hibernate.HibernateGpsDevice;
 import org.compass.gps.device.hibernate.HibernateSyncTransactionFactory;
@@ -28,9 +29,10 @@ import org.hibernate.impl.SessionFactoryImpl;
 public abstract class AbstractCascadeManyTests extends TestCase {
     private SessionFactory sessionFactory;
     private Compass compass;
+    private FileHandlerMonitor fileHandlerMonitor;
     private HibernateEventListener hibernateEventListener = null;
 
-    public void setUp() {
+    public void setUp() throws Exception {
         Configuration conf = new Configuration().configure("/org/compass/gps/device/hibernate/cascade/many/hibernate.cfg.xml")
                 .setProperty(Environment.HBM2DDL_AUTO, "create");
         sessionFactory = conf.buildSessionFactory();
@@ -41,6 +43,10 @@ public abstract class AbstractCascadeManyTests extends TestCase {
         CompassConfiguration cpConf = new CompassConfiguration()
                 .configure(getCompassConfigLocation());
         compass = cpConf.buildCompass();
+
+        fileHandlerMonitor = FileHandlerMonitor.getFileHandlerMonitor(compass);
+        fileHandlerMonitor.verifyNoHandlers();
+
         compass.getSearchEngineIndexManager().deleteIndex();
         compass.getSearchEngineIndexManager().verifyIndex();
 
@@ -70,6 +76,7 @@ public abstract class AbstractCascadeManyTests extends TestCase {
 
     protected void tearDown() throws Exception {
         compass.close();
+        fileHandlerMonitor.verifyNoHandlers();
         sessionFactory.close();
 
         try {
