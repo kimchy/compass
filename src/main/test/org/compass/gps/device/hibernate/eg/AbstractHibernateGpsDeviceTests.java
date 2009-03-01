@@ -22,6 +22,7 @@ import javax.naming.InitialContext;
 import junit.framework.TestCase;
 import org.compass.core.Compass;
 import org.compass.core.config.CompassConfiguration;
+import org.compass.core.util.FileHandlerMonitor;
 import org.compass.gps.impl.DualCompassGps;
 import org.objectweb.jotm.Jotm;
 
@@ -32,6 +33,9 @@ public abstract class AbstractHibernateGpsDeviceTests extends TestCase {
     protected Compass mirrorCompass;
 
     protected Compass indexCompass;
+
+    private FileHandlerMonitor fileHandlerMonitorIndex;
+    private FileHandlerMonitor fileHandlerMonitorMirror;
 
     protected DualCompassGps compassGps;
 
@@ -54,12 +58,16 @@ public abstract class AbstractHibernateGpsDeviceTests extends TestCase {
         CompassConfiguration cpConf = new CompassConfiguration()
                 .configure("/org/compass/gps/device/hibernate/eg/compass-mirror.cfg.xml");
         mirrorCompass = cpConf.buildCompass();
+        fileHandlerMonitorMirror = FileHandlerMonitor.getFileHandlerMonitor(mirrorCompass);
+        fileHandlerMonitorMirror.verifyNoHandlers();
         mirrorCompass.getSearchEngineIndexManager().deleteIndex();
         mirrorCompass.getSearchEngineIndexManager().verifyIndex();
 
         CompassConfiguration cpBatchConf = new CompassConfiguration()
                 .configure("/org/compass/gps/device/hibernate/eg/compass-index.cfg.xml");
         indexCompass = cpBatchConf.buildCompass();
+        fileHandlerMonitorIndex = FileHandlerMonitor.getFileHandlerMonitor(indexCompass);
+        fileHandlerMonitorIndex.verifyNoHandlers();
         indexCompass.getSearchEngineIndexManager().deleteIndex();
         indexCompass.getSearchEngineIndexManager().verifyIndex();
 
@@ -70,6 +78,9 @@ public abstract class AbstractHibernateGpsDeviceTests extends TestCase {
         jotm.stop();
         mirrorCompass.close();
         indexCompass.close();
+
+        fileHandlerMonitorMirror.verifyNoHandlers();
+        fileHandlerMonitorIndex.verifyNoHandlers();
         super.tearDown();
     }
 
