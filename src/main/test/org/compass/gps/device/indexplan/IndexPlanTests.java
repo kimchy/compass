@@ -17,6 +17,7 @@
 package org.compass.gps.device.indexplan;
 
 import org.compass.annotations.test.AbstractAnnotationsTestCase;
+import org.compass.core.Compass;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
 import org.compass.core.config.CompassConfiguration;
@@ -31,21 +32,30 @@ public class IndexPlanTests extends AbstractAnnotationsTestCase {
         conf.addClass(A.class).addClass(B.class).addClass(C.class).addClass(D.class);
     }
 
+    private Compass compass;
+
     private IndexPlanGpsDevice device;
 
     private SingleCompassGps gps;
 
     protected void setUp() throws Exception {
+        // close the original Compass
+        getCompass().close();
+
         super.setUp();
+        compass  = buildCompass();
+        getFileHandlerMonitor().verifyNoHandlers();
         device = new IndexPlanGpsDevice();
         device.setName("mock");
-        gps = new SingleCompassGps(getCompass());
+        gps = new SingleCompassGps(compass);
         gps.addGpsDevice(device);
         gps.start();
     }
 
     protected void tearDown() throws Exception {
         gps.stop();
+        compass.close();
+        getFileHandlerMonitor().verifyNoHandlers();
         super.tearDown();
     }
 
@@ -163,7 +173,7 @@ public class IndexPlanTests extends AbstractAnnotationsTestCase {
     }
 
     private <T> void assertExists(Class<T> type, int id) {
-        CompassSession session = openSession();
+        CompassSession session = compass.openSession();
         CompassTransaction tr = session.beginTransaction();
         assertNotNull(session.get(type, id));
         tr.commit();
@@ -171,7 +181,7 @@ public class IndexPlanTests extends AbstractAnnotationsTestCase {
     }
 
     private <T> void assertNotExists(Class<T> type, int id) {
-        CompassSession session = openSession();
+        CompassSession session = compass.openSession();
         CompassTransaction tr = session.beginTransaction();
         assertNull(session.get(type, id));
         tr.commit();
