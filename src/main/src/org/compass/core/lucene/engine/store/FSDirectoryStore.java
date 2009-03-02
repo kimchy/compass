@@ -24,6 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.store.SimpleFSLockFactory;
 import org.compass.core.CompassException;
 import org.compass.core.config.CompassConfigurable;
 import org.compass.core.config.CompassEnvironment;
@@ -71,7 +72,10 @@ public class FSDirectoryStore extends AbstractDirectoryStore implements CompassC
 
     public Directory open(String subContext, String subIndex) throws SearchEngineException {
         try {
-            return FSDirectory.getDirectory(buildPath(subContext, subIndex));
+            String path = buildPath(subContext, subIndex);
+            Directory dir =  FSDirectory.getDirectory(path);
+            dir.setLockFactory(new SimpleFSLockFactory(path));
+            return dir;
         } catch (IOException e) {
             throw new SearchEngineException("Failed to open directory for path [" + subIndex + "]", e);
         }
