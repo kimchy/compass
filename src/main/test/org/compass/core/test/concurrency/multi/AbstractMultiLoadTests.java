@@ -75,6 +75,9 @@ public abstract class AbstractMultiLoadTests extends AbstractAnnotationsTestCase
     private volatile boolean error = false;
 
     public void testMultiConcurrentThreads() throws Exception {
+        // no need for the original Compass ...
+        getCompass().close();
+
         CompassConfiguration conf = buildConf();
         CompassTemplate[] templates = new CompassTemplate[getNumberOfCompassInstances()];
         for (int i = 0; i < getNumberOfCompassInstances(); i++) {
