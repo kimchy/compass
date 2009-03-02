@@ -329,7 +329,7 @@ compass.engine.store.lockFactory.path=test/#subContext#/#subindex#
     </para>
     
     <para>
-        The lock factory type can have the following values: <literal>simplefs</literal>, <literal>nativefs</literal> (both file system based locks), <literal>nolock</literal>, and <literal>singleinstance</literal>. A fully qualified class name of <literal>LockFactory</literal> implementation or <literal>LockFactoryProvider</literal> can also be provided.
+        The lock factory type can have the following values: <literal>simplefs</literal>, <literal>nativefs</literal> (both file system based locks), <literal>nolock</literal>, and <literal>singleinstance</literal>. A fully qualified class name of <literal>LockFactory</literal> implementation or <literal>LockFactoryProvider</literal> can also be provided. Note, when using the <literal>nativefs</literal> locks, it is recommended to specific a lock directory different than the index directory, especially when using Compass Gps.
     </para>
     
     <para>
