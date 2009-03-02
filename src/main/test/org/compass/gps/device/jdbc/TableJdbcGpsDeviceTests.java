@@ -53,7 +53,9 @@ public class TableJdbcGpsDeviceTests extends AbstractJdbcGpsDeviceTests {
         if (gps != null) gps.stop();
         if (compass != null) {
             compass.close();
-            fileHandlerMonitor.verifyNoHandlers();
+            if (fileHandlerMonitor != null) {
+                fileHandlerMonitor.verifyNoHandlers();
+            }
         }
         super.tearDown();
     }
@@ -163,6 +165,8 @@ public class TableJdbcGpsDeviceTests extends AbstractJdbcGpsDeviceTests {
 
     public void testAutomaticMappingWithMirroringAndFSPersister() throws Exception {
         setUpAutomaticMapping();
+        // don't check file handles, since there will be a snapshot for it
+        fileHandlerMonitor = null;
         gpsDevice.setMirrorDataChanges(true);
         gps.index();
         Resource r = compassTemplate.getResource("parent", "1");
