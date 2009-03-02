@@ -72,6 +72,8 @@ public class RefreshableCompass implements InternalCompass {
         Compass oldCompass = compass;
         compass = rebuiltCompass;
 
+        oldCompass.getSearchEngineIndexManager().clearCache();
+
         long sleepBeforeClose = getConfig().getSettings().getSettingAsTimeInMillis(CompassEnvironment.Rebuild.SLEEP_BEFORE_CLOSE, CompassEnvironment.Rebuild.DEFAULT_SLEEP_BEFORE_CLOSE);        // schedule Compass to be closed
         if (sleepBeforeClose <= 0) {
             oldCompass.close();
