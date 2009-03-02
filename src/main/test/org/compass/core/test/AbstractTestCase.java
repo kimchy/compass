@@ -140,4 +140,8 @@ public abstract class AbstractTestCase extends ExtendedTestCase {
     public ResourceFactory getResourceFactory() {
         return getCompass().getResourceFactory();
     }
+
+    public FileHandlerMonitor getFileHandlerMonitor() {
+        return fileHandlerMonitor;
+    }
 }
