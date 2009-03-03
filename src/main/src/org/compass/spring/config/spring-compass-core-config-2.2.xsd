@@ -1588,10 +1588,10 @@
                 </xsd:documentation>
             </xsd:annotation>
         </xsd:attribute>
-        <xsd:attribute name="managed" type="xsd:boolean" use="optional">
+        <xsd:attribute name="type" type="xsd:string" use="optional">
             <xsd:annotation>
                 <xsd:documentation>
-                    Should the terracotta directory be managed with global transactions. Defaults to true.
+                    The type of Terracotta directory store. Can be "managed", "chm" and "csm".
                 </xsd:documentation>
             </xsd:annotation>
         </xsd:attribute>

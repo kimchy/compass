@@ -3,6 +3,13 @@
               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:schemaLocation="http://www.terracotta.org/schema/terracotta-4.xsd">
 
+
+    <clients>
+        <modules>
+            <module name="tim-concurrent-collections" version="1.0.2"/>
+        </modules>
+    </clients>
+
     <application>
         <dso>
 
@@ -79,10 +86,13 @@
                     <field-name>org.compass.needle.terracotta.TerracottaLockFactoryProvider.lockFactories</field-name>
                 </root>
                 <root>
-                    <field-name>org.compass.needle.terracotta.TerracottaManagerUtilLockFactoryProvider.lockFactories</field-name>
+                    <field-name>org.compass.needle.terracotta.TerracottaManagerUtilLockFactoryProvider.lockFactories
+                    </field-name>
                 </root>
                 <root>
-                    <field-name>org.compass.needle.terracotta.transaction.processor.TerracottaTransactionProcessorFactory.holder</field-name>
+                    <field-name>
+                        org.compass.needle.terracotta.transaction.processor.TerracottaTransactionProcessorFactory.holder
+                    </field-name>
                 </root>
                 <root>
                     <field-name>org.compass.core.lucene.engine.transaction.support.orderLocks</field-name>

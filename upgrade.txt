@@ -9,6 +9,8 @@ VERSION 2.2.0 RC1
 2. Removed SpringSyncTransactionGpsDeviceWrapper, no need for it anymore.
 3. Simplified XSEM XmlContentConverter configuration. Please refer to the XSEM XmlContent section in the reference docs.
 4. Changed JSEM ContentConverter setting from 'compass.jsonContentConverter.type' to 'compass.jsem.contentConverter.type'.
+5. Renamed 'compass.engine.store.tc.managed' to 'compass.engine.store.tc.type' (with values of "managed", "chm" and "csm"),
+   default is still 'managed'.
 
 VERSION 2.2.0 M2 (2 February, 2009)
 ===================================

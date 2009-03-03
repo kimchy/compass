@@ -27,6 +27,7 @@ import org.compass.core.CompassException;
 import org.compass.core.config.CompassConfigurable;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
+import org.compass.core.config.ConfigurationException;
 import org.compass.core.engine.SearchEngine;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.event.SearchEngineEventManager;
@@ -36,7 +37,8 @@ import org.compass.core.lucene.engine.store.AbstractDirectoryStore;
 import org.compass.core.lucene.engine.store.CopyFromHolder;
 
 /**
- * A Compass direcoty store that will use the {@link org.compass.needle.terracotta.TerracottaDirectory}.
+ * A Compass direcoty store that will use the {@link org.compass.needle.terracotta.TerracottaDirectory} (or one
+ * of its sub classes).
  *
  * @author kimchy
  */
@@ -70,11 +72,14 @@ public class TerracottaDirectoryStore extends AbstractDirectoryStore implements 
     public static final String CHM_CONCURRENCY_LEVEL_PROP = "compass.engine.store.tc.chm.concurrencyLevel";
 
     /**
-     * Uses {@link org.compass.needle.terracotta.ManagedTerracottaDirectory} if set to <code>true</code>. Uses
-     * plain {@link org.compass.needle.terracotta.TerracottaDirectory} if set to <code>false</code>. Defaults to
-     * <code>true</code>.
+     * Allows to control which type of terracotta store will be used. Options are:
+     * <ul>
+     * <li>managed: Uses {@link ManagedTerracottaDirectory}</li>
+     * <li>chm: Uses {@link TerracottaDirectory}</li>
+     * <li>csm: USes {@link CSMTerracottaDirectory}</li>.
+     * </ul>
      */
-    public static final String MANAGED = "compass.engine.store.tc.managed";
+    public static final String TYPE = "compass.engine.store.tc.type";
 
     /**
      * Should operations performed within a single "Compass transaction" be performed in a concurrent manner.
@@ -96,6 +101,8 @@ public class TerracottaDirectoryStore extends AbstractDirectoryStore implements 
 
     private int chmConcurrencyLevel;
 
+    private String type;
+
     private boolean managed;
 
     private boolean concurrent;
@@ -106,7 +113,8 @@ public class TerracottaDirectoryStore extends AbstractDirectoryStore implements 
         indexName = settings.getSetting(CompassEnvironment.CONNECTION).substring(PROTOCOL.length());
         bufferSize = (int) settings.getSettingAsBytes(BUFFER_SIZE_PROP, TerracottaDirectory.DEFAULT_BUFFER_SIZE);
         flushRate = settings.getSettingAsInt(FLUSH_RATE_PROP, TerracottaDirectory.DEFAULT_FLUSH_RATE);
-        managed = settings.getSettingAsBoolean(MANAGED, true);
+        type = settings.getSetting(TYPE, "managed");
+        managed = type.equals("managed");
         concurrent = settings.getSettingAsBoolean(CONCURRENT, false);
         if (managed) {
             // when working in managed mode, we can't have concurrent commits, since we run into deadlock
@@ -118,7 +126,7 @@ public class TerracottaDirectoryStore extends AbstractDirectoryStore implements 
         chmLoadFactor = settings.getSettingAsFloat(CHM_LOAD_FACTOR_PROP, TerracottaDirectory.DEFAULT_CHM_LOAD_FACTOR);
         chmConcurrencyLevel = settings.getSettingAsInt(CHM_CONCURRENCY_LEVEL_PROP, TerracottaDirectory.DEFAULT_CHM_CONCURRENCY_LEVEL);
         if (log.isDebugEnabled()) {
-            log.debug("Terracotta directory store configured with index [" + indexName + "], bufferSize [" + bufferSize + "], flushRate [" + flushRate + "], managed [" + managed + "], concurrent [" + concurrent + "]");
+            log.debug("Terracotta directory store configured with index [" + indexName + "], bufferSize [" + bufferSize + "], flushRate [" + flushRate + "], type [" + type + "], concurrent [" + concurrent + "]");
         }
     }
 
@@ -136,10 +144,14 @@ public class TerracottaDirectoryStore extends AbstractDirectoryStore implements 
             }
             TerracottaDirectory dir = subIndexDirs.get(subIndex);
             if (dir == null) {
-                if (managed) {
+                if (type.equals("managed")) {
                     dir = new ManagedTerracottaDirectory(managedRWL, bufferSize, flushRate, chmInitialCapacity, chmLoadFactor, chmConcurrencyLevel);
-                } else {
+                } else if (type.equals("csm")) {
+                    dir = new CSMTerracottaDirectory(bufferSize, flushRate);
+                } else if (type.equals("chm")) {
                     dir = new TerracottaDirectory(bufferSize, flushRate, chmInitialCapacity, chmLoadFactor, chmConcurrencyLevel);
+                } else {
+                    throw new ConfigurationException("No terracotta directory type [" + type + "]");
                 }
                 subIndexDirs.put(subIndex, dir);
             }

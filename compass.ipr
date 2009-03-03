@@ -1135,6 +1135,13 @@
       <JAVADOC />
       <SOURCES />
     </library>
+    <library name="terracotta">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/terracotta/tim-concurrent-collections-1.0.2.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
   </component>
 </project>
 
