@@ -48,6 +48,14 @@ public abstract class NativeJpaHelper {
             log.warn("Faiiled to regsiter Spring native JPA extractor", t);
         }
         try {
+            ClassUtils.forName("org.apache.openejb.persistence.JtaEntityManager", NativeJpaHelper.class.getClassLoader());
+            extractorsList.add(new OpenEjbNativeJpaExtractor());
+        } catch (ClassNotFoundException e) {
+            // not in classpath
+        } catch (Throwable t) {
+            log.warn("Faiiled to regsiter OpenEJB native JPA extractor", t);
+        }
+        try {
             ClassUtils.forName("org.jboss.ejb3.entity.InjectedEntityManagerFactory", NativeJpaHelper.class.getClassLoader());
             extractorsList.add(new JBossNativeJpaExtractor());
         } catch (ClassNotFoundException e) {
@@ -95,8 +103,7 @@ public abstract class NativeJpaHelper {
         T retVal;
         if (interfacesAsStrings.contains("org.hibernate.ejb.HibernateEntityManagerFactory")) {
             retVal = callback.onHibernate();
-        } else
-        if (interfacesAsStrings.contains("oracle.toplink.essentials.internal.ejb.cmp3.EntityManagerFactoryImpl")) {
+        } else if (interfacesAsStrings.contains("oracle.toplink.essentials.internal.ejb.cmp3.EntityManagerFactoryImpl")) {
             retVal = callback.onTopLinkEssentials();
         } else if (interfacesAsStrings.contains("org.eclipse.persistence.internal.jpa.EntityManagerFactoryImpl")) {
             retVal = callback.onEclipseLink();
