@@ -59,17 +59,18 @@ public class LuceneSearchEngine implements SearchEngine {
 
     private volatile int transactionState;
 
+    private final LuceneSearchEngineFactory searchEngineFactory;
+
+    private final RuntimeCompassSettings runtimeSettings;
+    
+    private final SearchEngineEventManager eventManager = new SearchEngineEventManager();
+
+
     private TransactionProcessor transactionProcessor;
-
-    private LuceneSearchEngineFactory searchEngineFactory;
-
-    private SearchEngineEventManager eventManager = new SearchEngineEventManager();
 
     private boolean onlyReadOnlyOperations;
 
     private boolean readOnly;
-
-    private RuntimeCompassSettings runtimeSettings;
 
     private final ArrayList<LuceneDelegatedClose> delegateClose = new ArrayList<LuceneDelegatedClose>();
 
@@ -215,7 +216,6 @@ public class LuceneSearchEngine implements SearchEngine {
                 log.warn("Failed to rollback transcation, ignoring", e);
             }
         }
-        eventManager = null;
     }
 
     public void delete(Resource resource) throws SearchEngineException {
