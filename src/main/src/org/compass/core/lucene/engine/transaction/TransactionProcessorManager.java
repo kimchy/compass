@@ -42,7 +42,7 @@ import org.compass.core.util.ClassUtils;
  */
 public class TransactionProcessorManager {
 
-    private Map<String, TransactionProcessorFactory> transactionProcessors = new HashMap<String, TransactionProcessorFactory>();
+    private final Map<String, TransactionProcessorFactory> transactionProcessors = new HashMap<String, TransactionProcessorFactory>();
 
     public TransactionProcessorManager(LuceneSearchEngineFactory searchEngineFactory) {
         CompassSettings settings = searchEngineFactory.getLuceneSettings().getSettings();
