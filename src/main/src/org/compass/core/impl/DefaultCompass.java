@@ -81,31 +81,31 @@ public class DefaultCompass implements InternalCompass {
 
     private String uuid;
 
-    private CompassMapping mapping;
+    private final CompassMapping mapping;
 
-    private InternalSearchEngineFactory searchEngineFactory;
+    private final InternalSearchEngineFactory searchEngineFactory;
 
-    private TransactionFactory transactionFactory;
+    private final TransactionFactory transactionFactory;
 
-    private LocalTransactionFactory localTransactionFactory;
+    private final LocalTransactionFactory localTransactionFactory;
 
-    private ConverterLookup converterLookup;
+    private final ConverterLookup converterLookup;
 
-    private CompassMetaData compassMetaData;
+    private final CompassMetaData compassMetaData;
 
-    private PropertyNamingStrategy propertyNamingStrategy;
+    private final PropertyNamingStrategy propertyNamingStrategy;
 
-    private ExecutorManager executorManager;
+    private final ExecutorManager executorManager;
 
-    private CompassEventManager eventManager;
+    private final CompassEventManager eventManager;
 
-    protected CompassSettings settings;
+    protected final CompassSettings settings;
 
-    private FirstLevelCacheFactory firstLevelCacheFactory;
+    private final FirstLevelCacheFactory firstLevelCacheFactory;
 
     private volatile ShutdownThread shutdownThread;
 
-    private boolean duplicate;
+    private final boolean duplicate;
 
     private volatile boolean closed = false;
 
