@@ -27,8 +27,6 @@ import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.LockFactory;
 import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.store.SingleInstanceLockFactory;
-import org.compass.core.CompassException;
-import org.compass.core.config.CompassConfigurable;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.LuceneEnvironment;
@@ -42,29 +40,24 @@ import org.compass.core.util.FileSystemUtils;
 /**
  * @author kimchy
  */
-public class LocalCacheManager implements CompassConfigurable {
+public class LocalCacheManager {
 
     private static final Log log = LogFactory.getLog(LocalCacheManager.class);
 
-    private boolean disableLocalCache = false;
+    private final boolean disableLocalCache;
 
-    private Map<String, CompassSettings> subIndexLocalCacheGroups;
+    private final Map<String, CompassSettings> subIndexLocalCacheGroups;
 
-    private LuceneSearchEngineFactory searchEngineFactory;
+    private final LuceneSearchEngineFactory searchEngineFactory;
 
-    private LockFactory lockFactory = new SingleInstanceLockFactory();
+    private final LockFactory lockFactory = new SingleInstanceLockFactory();
 
     public LocalCacheManager(LuceneSearchEngineFactory searchEngineFactory) {
         this.searchEngineFactory = searchEngineFactory;
-    }
 
-    public LuceneSearchEngineFactory getSearchEngineFactory() {
-        return searchEngineFactory;
-    }
+        disableLocalCache = searchEngineFactory.getSettings().getSettingAsBoolean(LuceneEnvironment.LocalCache.DISABLE_LOCAL_CACHE, false);
 
-    public void configure(CompassSettings settings) throws CompassException {
-        disableLocalCache = settings.getSettingAsBoolean(LuceneEnvironment.LocalCache.DISABLE_LOCAL_CACHE, false);
-        this.subIndexLocalCacheGroups = settings.getSettingGroups(LuceneEnvironment.LocalCache.PREFIX);
+        this.subIndexLocalCacheGroups = searchEngineFactory.getSettings().getSettingGroups(LuceneEnvironment.LocalCache.PREFIX);
 
         // just iterate through this to print out our cache
         for (Map.Entry<String, CompassSettings> entry : subIndexLocalCacheGroups.entrySet()) {
@@ -73,6 +66,10 @@ public class LocalCacheManager implements CompassConfigurable {
                 log.debug("Local Cache for [" + entry.getKey() + "] configured with connection [" + connection + "]");
             }
         }
+    }
+
+    public LuceneSearchEngineFactory getSearchEngineFactory() {
+        return searchEngineFactory;
     }
 
     public Directory createLocalCache(String subContext, String subIndex, Directory dir) throws SearchEngineException {

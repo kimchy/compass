@@ -141,8 +141,7 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
                 log.debug("Spell index uses Compass store [" + spellCheckSettings.getSetting(CompassEnvironment.CONNECTION) + "]");
             }
         } else {
-            spellCheckStore = new DefaultLuceneSearchEngineStore();
-            spellCheckStore.configure(searchEngineFactory, spellCheckSettings, mapping);
+            spellCheckStore = new DefaultLuceneSearchEngineStore(searchEngineFactory, spellCheckSettings, mapping);
             closeStore = true;
             if (log.isDebugEnabled()) {
                 log.debug("Spell index uses specialized store [" + spellCheckSettings.getSetting(CompassEnvironment.CONNECTION) + "]");

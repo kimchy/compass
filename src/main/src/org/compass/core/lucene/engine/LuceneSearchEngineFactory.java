@@ -120,8 +120,7 @@ public class LuceneSearchEngineFactory implements InternalSearchEngineFactory {
         analyzerManager.configure(settings, mapping, luceneSettings);
 
         // build the search engine store
-        LuceneSearchEngineStore searchEngineStore = new DefaultLuceneSearchEngineStore();
-        searchEngineStore.configure(this, settings, mapping);
+        LuceneSearchEngineStore searchEngineStore = new DefaultLuceneSearchEngineStore(this, settings, mapping);
         indexManager = new DefaultLuceneSearchEngineIndexManager(this, searchEngineStore);
 
         // build the index deletion policy manager

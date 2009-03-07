@@ -64,39 +64,39 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
 
     private static Log log = LogFactory.getLog(DefaultLuceneSearchEngineStore.class);
 
-    private CompassMapping mapping;
+    private final CompassMapping mapping;
 
-    private CompassSettings settings;
+    private final CompassSettings settings;
 
-    private DirectoryStore directoryStore;
+    private final DirectoryStore directoryStore;
 
-    private Map<String, List<String>> aliasesBySubIndex = new HashMap<String, List<String>>();
+    private final Map<String, List<String>> aliasesBySubIndex = new HashMap<String, List<String>>();
 
-    private Map<String, List<String>> subIndexesByAlias = new HashMap<String, List<String>>();
+    private final Map<String, List<String>> subIndexesByAlias = new HashMap<String, List<String>>();
 
-    private String defaultSubContext;
+    private final String defaultSubContext;
 
-    private String[] subIndexes;
+    private final String[] subIndexes;
 
-    private Set<String> subIndexesSet;
+    private final Set<String> subIndexesSet;
 
-    private String connectionString;
+    private final String connectionString;
 
-    private DirectoryWrapperProvider[] directoryWrapperProviders;
+    private final DirectoryWrapperProvider[] directoryWrapperProviders;
 
-    private LocalCacheManager localCacheManager;
+    private final LocalCacheManager localCacheManager;
 
-    private Map<String, Map<String, Directory>> dirs;
+    private final Map<String, Map<String, Directory>> dirs;
 
-    private boolean useCompoundFile;
+    private final boolean useCompoundFile;
 
-    private boolean supportsConcurrentOperations;
+    private final boolean supportsConcurrentOperations;
 
-    private boolean supportsConcurrentCommits;
+    private final boolean supportsConcurrentCommits;
 
     private volatile boolean closed = false;
 
-    public void configure(LuceneSearchEngineFactory searchEngineFactory, CompassSettings settings, CompassMapping mapping) {
+    public DefaultLuceneSearchEngineStore(LuceneSearchEngineFactory searchEngineFactory, CompassSettings settings, CompassMapping mapping) {
         this.settings = settings;
         this.mapping = mapping;
         this.connectionString = settings.getSetting(CompassEnvironment.CONNECTION);
@@ -196,6 +196,7 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
         subIndexes = subIndexesSet.toArray(new String[subIndexesSet.size()]);
 
         // set up directory wrapper providers
+        DirectoryWrapperProvider[] directoryWrapperProviders = null;
         Map<String, CompassSettings> dwSettingGroups = settings.getSettingGroups(LuceneEnvironment.DirectoryWrapper.PREFIX);
         if (dwSettingGroups.size() > 0) {
             ArrayList<DirectoryWrapperProvider> dws = new ArrayList<DirectoryWrapperProvider>();
@@ -222,9 +223,9 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
             }
             directoryWrapperProviders = dws.toArray(new DirectoryWrapperProvider[dws.size()]);
         }
+        this.directoryWrapperProviders = directoryWrapperProviders;
 
         this.localCacheManager = new LocalCacheManager(searchEngineFactory);
-        localCacheManager.configure(settings);
     }
 
     public void close() {

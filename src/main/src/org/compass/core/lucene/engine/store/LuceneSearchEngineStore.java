@@ -17,12 +17,9 @@
 package org.compass.core.lucene.engine.store;
 
 import org.apache.lucene.store.Directory;
-import org.compass.core.config.CompassSettings;
 import org.compass.core.engine.SearchEngine;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.event.SearchEngineEventManager;
-import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
-import org.compass.core.mapping.CompassMapping;
 
 /**
  * Manages the mapping between aliases and their repective sub indexes. A Acts
@@ -32,11 +29,6 @@ import org.compass.core.mapping.CompassMapping;
  * @author kimchy
  */
 public interface LuceneSearchEngineStore {
-
-    /**
-     * Configures the store.
-     */
-    void configure(LuceneSearchEngineFactory searchEngineFactory, CompassSettings settings, CompassMapping mapping);
 
     /**
      * Closes the store.
