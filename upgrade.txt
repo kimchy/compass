@@ -4,7 +4,7 @@ COMPASS UPGRADE DOCUMENTATION (Please see Compass JIRA for a complete change-log
 VERSION 2.1.2
 =============
 
-NONE
+1. Upgrade bundled Lucene version from 2.4.0 to 2.4.1.
 
 VERSION 2.1.1 (11 January, 2009)
 ================================
