@@ -1,8 +1,8 @@
 COMPASS UPGRADE DOCUMENTATION (Please see Compass JIRA for a complete change-log)
 ================================================================================
 
-VERSION 2.2.0 RC1
-=================
+VERSION 2.2.0 RC1 (9 March, 2009)
+=================================
 
 1. Renamed the DefaultFirstLevelCache to PlainFirstLevelCache. Also changed the default first level cache to the
    NullFirstLevelCache.
