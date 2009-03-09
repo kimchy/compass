@@ -182,22 +182,22 @@ distribution/website before using any of them in your own applications.
 - required for building compass
 
 * lucene/lucene-analyzers.jar
-- Lucene 2.4 (http://lucene.apache.org)
+- Lucene 2.4.1 (http://lucene.apache.org)
 - required for building compass
 - required at runtime if using extended analyzers
 
 * lucene/lucene-core.jar
-- Lucene 2.4 (http://lucene.apache.org)
+- Lucene 2.4.1 (http://lucene.apache.org)
 - required for building compass
 - required at runtime
 
 * lucene/lucene-highlighter.jar
-- Lucene 2.4 (http://lucene.apache.org)
+- Lucene 2.4.1 (http://lucene.apache.org)
 - required for building compass
 - required at runtime if using highlighter features
 
 * lucene/lucene-snowball.jar
-- Lucene 2.4 (http://lucene.apache.org)
+- Lucene 2.4.1 (http://lucene.apache.org)
 - required for building compass
 - required at runtime if using the snowball analyzer features
 

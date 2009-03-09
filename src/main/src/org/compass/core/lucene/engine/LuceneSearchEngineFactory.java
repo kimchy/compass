@@ -116,8 +116,7 @@ public class LuceneSearchEngineFactory implements InternalSearchEngineFactory {
         resourceFactory = new LuceneResourceFactory(this);
 
         // build the analyzers
-        analyzerManager = new LuceneAnalyzerManager();
-        analyzerManager.configure(settings, mapping, luceneSettings);
+        analyzerManager = new LuceneAnalyzerManager(settings, mapping);
 
         // build the search engine store
         LuceneSearchEngineStore searchEngineStore = new DefaultLuceneSearchEngineStore(this, settings, mapping);
@@ -159,6 +158,7 @@ public class LuceneSearchEngineFactory implements InternalSearchEngineFactory {
 
     public void close() throws SearchEngineException {
         transactionProcessorManager.close();
+        analyzerManager.close();
         if (spellCheckManager != null) {
             spellCheckManager.close();
         }

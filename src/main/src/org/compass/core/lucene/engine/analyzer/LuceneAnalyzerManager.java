@@ -30,7 +30,6 @@ import org.compass.core.config.CompassSettings;
 import org.compass.core.config.ConfigurationException;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.LuceneEnvironment;
-import org.compass.core.lucene.engine.LuceneSettings;
 import org.compass.core.lucene.engine.analyzer.synonym.SynonymAnalyzerTokenFilterProvider;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.ResourceAnalyzerController;
@@ -48,27 +47,44 @@ public class LuceneAnalyzerManager {
 
     private static final Log log = LogFactory.getLog(LuceneAnalyzerManager.class);
 
-    private HashMap<String, Analyzer> analyzers = new HashMap<String, Analyzer>();
+    private final HashMap<String, Analyzer> analyzers = new HashMap<String, Analyzer>();
 
     private Analyzer defaultAnalyzer;
 
     private Analyzer searchAnalyzer;
 
-    private HashMap<String, Analyzer> aliasAnalyzers = new HashMap<String, Analyzer>();
+    private final HashMap<String, Analyzer> aliasAnalyzers = new HashMap<String, Analyzer>();
 
-    private HashMap<String, LuceneAnalyzerTokenFilterProvider> analyzersFilters = new HashMap<String, LuceneAnalyzerTokenFilterProvider>();
+    private final HashMap<String, LuceneAnalyzerTokenFilterProvider> analyzersFilters = new HashMap<String, LuceneAnalyzerTokenFilterProvider>();
 
-    private CompassMapping mapping;
+    private final CompassMapping mapping;
 
-    private LuceneSettings luceneSettings;
-
-    public void configure(CompassSettings settings, CompassMapping mapping, LuceneSettings luceneSettings)
+    public LuceneAnalyzerManager(CompassSettings settings, CompassMapping mapping)
             throws SearchEngineException {
         checkNotUsingOldVersionsAnalyzerSettings(settings);
         this.mapping = mapping;
-        this.luceneSettings = luceneSettings;
         buildAnalyzersFilters(settings);
         buildAnalyzers(settings, mapping);
+    }
+
+    public void close() {
+        for (Analyzer analyzer : analyzers.values()) {
+            try {
+                analyzer.close();
+            } catch (Exception e) {
+                // ignore
+            }
+        }
+        try {
+            defaultAnalyzer.close();
+        } catch (Exception e) {
+            // ignore
+        }
+        try {
+            searchAnalyzer.close();
+        } catch (Exception e) {
+            // ignore
+        }
     }
 
     private void buildAnalyzersFilters(CompassSettings settings) {
