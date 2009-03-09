@@ -615,6 +615,7 @@
                 <include name="lib/asm/**"/>
                 <include name="lib/c3p0/**"/>
                 <include name="lib/cglib/**"/>
+                <include name="lib/commonj/**"/>
                 <include name="lib/dom4j/**"/>
                 <include name="lib/grails/**"/>
                 <include name="lib/groovy/**"/>
