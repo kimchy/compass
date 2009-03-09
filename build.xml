@@ -612,7 +612,6 @@
                 <include name="lib/*.txt"/>
                 <include name="lib/ant/**"/>
                 <include name="lib/antlr/**"/>
-                <include name="lib/asm/**"/>
                 <include name="lib/c3p0/**"/>
                 <include name="lib/cglib/**"/>
                 <include name="lib/commonj/**"/>
@@ -630,7 +629,6 @@
                 <include name="lib/jakarta-commons/**"/>
                 <include name="lib/jakarta-taglibs/**"/>
                 <include name="lib/jaxen/**"/>
-                <include name="lib/jdo/**"/>
                 <include name="lib/jdom/**"/>
                 <include name="lib/jettison/**"/>
                 <include name="lib/jotm/**"/>
