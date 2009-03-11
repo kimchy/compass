@@ -268,9 +268,7 @@
        <property name="compass"><ref bean="compass" /></property>
        <property name="gpsDevices">
          <list>
-             <bean class="org.compass.spring.device.SpringSyncTransactionGpsDeviceWrapper">
-                 <property name="gpsDevice" ref="jdbcGpsDevice" />
-             </bean>
+             <ref bean="jdbcGpsDevice" />
          </list>
        </property>
      </bean>
