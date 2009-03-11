@@ -136,6 +136,19 @@ public abstract class NativeJpaHelper {
         }
         EntityManager nativeEm = em;
         do {
+            while (true) {
+                // even though getDelegate should return the actual underlying implementation (Hibernate Session for example)
+                // some app servers that wrap the EM, actually return the wrapped EM, and not the wrapped EM # getDelegate()
+                Object delegate = nativeEm.getDelegate();
+                if (delegate == nativeEm) {
+                    break;
+                }
+                if (delegate instanceof EntityManager) {
+                    nativeEm = (EntityManager) delegate;
+                } else {
+                    break;
+                }
+            }
             em = nativeEm;
             for (NativeJpaExtractor extractor : extractors) {
                 nativeEm = extractor.extractNative(nativeEm);
