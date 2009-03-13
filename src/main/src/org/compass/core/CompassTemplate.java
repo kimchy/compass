@@ -129,6 +129,7 @@ public class CompassTemplate implements CompassOperations {
         CompassTransaction tx = null;
         try {
             tx = session.beginTransaction();
+            // we wrap with existing session so if #close is called within the callback, it won't be closed
             T result = action.doInCompass(new ExistingCompassSession((InternalCompassSession) session));
             tx.commit();
             return result;
@@ -169,7 +170,8 @@ public class CompassTemplate implements CompassOperations {
         CompassTransaction tx = null;
         try {
             tx = session.beginLocalTransaction();
-            T result = action.doInCompass(session);
+            // we wrap with existing session so if #close is called within the callback, it won't be closed
+            T result = action.doInCompass(new ExistingCompassSession((InternalCompassSession) session));
             tx.commit();
             return result;
         } catch (RuntimeException e) {
