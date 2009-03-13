@@ -135,6 +135,18 @@ public class QueryBuilderTests extends AbstractTestCase {
         session.close();
     }
 
+    public void testQueryString() {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        setUpData(session);
+
+        assertEquals(1, session.queryBuilder().queryString("mvalue1:0001").toQuery().hits().length());
+
+        tr.commit();
+        session.close();
+    }
+
     public void testEq() {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();
