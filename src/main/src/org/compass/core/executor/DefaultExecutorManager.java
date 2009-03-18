@@ -56,6 +56,8 @@ public class DefaultExecutorManager implements ExecutorManager, CompassConfigura
             executorManagerType = ScheduledExecutorService.class.getName();
         } else if (executorManagerType.equals(CompassEnvironment.ExecutorManager.WorkManager.NAME)) {
             executorManagerType = "org.compass.core.executor.workmanager.WorkManagerExecutorManager";
+        } else if (executorManagerType.equals(CompassEnvironment.ExecutorManager.CommonJ.NAME)) {
+            executorManagerType = "org.compass.core.executor.commonj.WorkManagerExecutorManager";
         }
 
         try {
