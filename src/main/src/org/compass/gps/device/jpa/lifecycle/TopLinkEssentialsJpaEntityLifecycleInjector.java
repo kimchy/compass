@@ -22,6 +22,7 @@ import javax.persistence.EntityManagerFactory;
 
 import oracle.toplink.essentials.descriptors.ClassDescriptor;
 import oracle.toplink.essentials.descriptors.DescriptorEvent;
+import oracle.toplink.essentials.descriptors.DescriptorEventAdapter;
 import oracle.toplink.essentials.descriptors.DescriptorEventListener;
 import oracle.toplink.essentials.ejb.cmp3.EntityManager;
 import oracle.toplink.essentials.sessions.Session;
@@ -118,6 +119,8 @@ public class TopLinkEssentialsJpaEntityLifecycleInjector implements JpaEntityLif
 
     private DescriptorEventListener eventListener;
 
+    private DescriptorEventListener dummyEventListener = new DescriptorEventAdapter();
+
     public void setEventListener(DescriptorEventListener eventListener) {
         this.eventListener = eventListener;
     }
@@ -142,6 +145,17 @@ public class TopLinkEssentialsJpaEntityLifecycleInjector implements JpaEntityLif
         for (Object o : descriptors.values()) {
             ClassDescriptor classDescriptor = (ClassDescriptor) o;
             Class mappedClass = classDescriptor.getJavaClass();
+
+            // if we have a parent class that is mapped in JPA and in Compass, then don't add an event listner
+            // since we will add it to the parent descriptor and it will notify this class as well
+            if (classDescriptor.isChildDescriptor()) {
+                Class parentClass = classDescriptor.getInheritancePolicy().getParentDescriptor().getJavaClass();
+                if (gps.hasMappingForEntityForMirror(parentClass, Cascade.ALL)) {
+                    classDescriptor.getEventManager().addListener(dummyEventListener);
+                    continue;
+                }
+            }
+
             if (gps.hasMappingForEntityForMirror(mappedClass, Cascade.ALL)) {
                 classDescriptor.getDescriptorEventManager().addListener(eventListener);
             }
@@ -154,11 +168,22 @@ public class TopLinkEssentialsJpaEntityLifecycleInjector implements JpaEntityLif
         EntityManager entityManager = (EntityManager) entityManagerFactory.createEntityManager();
         Session session = entityManager.getServerSession();
         entityManager.close();
-        
+
         Map descriptors = session.getDescriptors();
         for (Object o : descriptors.values()) {
             ClassDescriptor classDescriptor = (ClassDescriptor) o;
             Class mappedClass = classDescriptor.getJavaClass();
+
+            // if we have a parent class that is mapped in JPA and in Compass, then don't add an event listner
+            // since we will add it to the parent descriptor and it will notify this class as well
+            if (classDescriptor.isChildDescriptor()) {
+                Class parentClass = classDescriptor.getInheritancePolicy().getParentDescriptor().getJavaClass();
+                if (gps.hasMappingForEntityForMirror(parentClass, Cascade.ALL)) {
+                    classDescriptor.getEventManager().removeListener(dummyEventListener);
+                    continue;
+                }
+            }
+
             if (gps.hasMappingForEntityForMirror(mappedClass, Cascade.ALL)) {
                 classDescriptor.getDescriptorEventManager().removeListener(eventListener);
             }

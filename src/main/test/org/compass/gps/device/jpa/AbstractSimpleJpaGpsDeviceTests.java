@@ -112,6 +112,19 @@ public abstract class AbstractSimpleJpaGpsDeviceTests extends AbstractJpaGpsDevi
         simple.setValue("updatedValue1");
         entityManager.persist(simple);
 
+        // insert base and extended
+
+        SimpleBase simpleBase = new SimpleBase();
+        simpleBase.setId(3);
+        simpleBase.setValue("xx1");
+        entityManager.persist(simpleBase);
+
+        SimpleExtend simpleExtend = new SimpleExtend();
+        simpleExtend.setId(4);
+        simpleExtend.setValue("xx2");
+        simpleExtend.setValueExtend("zz1");
+        entityManager.persist(simpleExtend);
+
         entityManager.flush();
 
         entityTransaction.commit();
@@ -122,6 +135,11 @@ public abstract class AbstractSimpleJpaGpsDeviceTests extends AbstractJpaGpsDevi
 
         simple = sess.load(Simple.class, 4);
         assertEquals("value4", simple.getValue());
+
+        assertEquals(1, sess.find("value4").length());
+        assertEquals(1, sess.find("xx1").length());
+        assertEquals(1, sess.find("xx2").length());
+        assertEquals(1, sess.find("zz1").length());
 
         simple = sess.get(Simple.class, 2);
         assertNull(simple);

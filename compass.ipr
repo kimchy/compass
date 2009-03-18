@@ -865,7 +865,9 @@
         <root url="jar://$PROJECT_DIR$/lib/eclipselink/eclipselink.jar!/" />
       </CLASSES>
       <JAVADOC />
-      <SOURCES />
+      <SOURCES>
+        <root url="jar:///Users/kimchy/opt/eclipselink/1.1.0/jlib/eclipselink-src.zip!/" />
+      </SOURCES>
     </library>
     <library name="ehcache">
       <CLASSES>

@@ -222,7 +222,7 @@ distribution/website before using any of them in your own applications.
 - required at runtime when using Compass Gps JPA support with Toplink Essentials
 
 * eclipselink/eclipselink
-- Eclipselink Reference implementation of JPA 1.0
+- Eclipselink 1.1.0.r3634
 - required for building compass
 - required at runtime when using Compass Gps JPA support with EclipseLink
 
