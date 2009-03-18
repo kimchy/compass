@@ -27,6 +27,7 @@ import org.compass.gps.device.jpa.JpaGpsDeviceException;
 import org.compass.gps.spi.CompassGpsInterfaceDevice;
 import org.eclipse.persistence.descriptors.ClassDescriptor;
 import org.eclipse.persistence.descriptors.DescriptorEvent;
+import org.eclipse.persistence.descriptors.DescriptorEventAdapter;
 import org.eclipse.persistence.descriptors.DescriptorEventListener;
 import org.eclipse.persistence.jpa.JpaEntityManager;
 import org.eclipse.persistence.sessions.Session;
@@ -118,6 +119,8 @@ public class EclipseLinkJpaEntityLifecycleInjector implements JpaEntityLifecycle
 
     private DescriptorEventListener eventListener;
 
+    private DescriptorEventListener dummyEventListener = new DescriptorEventAdapter();
+    
     public void setEventListener(DescriptorEventListener eventListener) {
         this.eventListener = eventListener;
     }
@@ -142,6 +145,18 @@ public class EclipseLinkJpaEntityLifecycleInjector implements JpaEntityLifecycle
         for (Object o : descriptors.values()) {
             ClassDescriptor classDescriptor = (ClassDescriptor) o;
             Class mappedClass = classDescriptor.getJavaClass();
+
+            // if we have a parent class that is mapped in JPA and in Compass, then don't add an event listner
+            // since we will add it to the parent descriptor and it will notify this class as well
+            if (classDescriptor.isChildDescriptor()) {
+                Class parentClass = classDescriptor.getInheritancePolicy().getParentDescriptor().getJavaClass();
+                if (gps.hasMappingForEntityForMirror(parentClass, CascadeMapping.Cascade.ALL)) {
+                    // we need to inject a dummy listener, just so it will kick in the listener notifications
+                    classDescriptor.getDescriptorEventManager().addListener(dummyEventListener);
+                    continue;
+                }
+            }
+
             if (gps.hasMappingForEntityForMirror(mappedClass, CascadeMapping.Cascade.ALL)) {
                 classDescriptor.getDescriptorEventManager().addListener(eventListener);
             }
@@ -159,6 +174,17 @@ public class EclipseLinkJpaEntityLifecycleInjector implements JpaEntityLifecycle
         for (Object o : descriptors.values()) {
             ClassDescriptor classDescriptor = (ClassDescriptor) o;
             Class mappedClass = classDescriptor.getJavaClass();
+
+            // if we have a parent class that is mapped in JPA and in Compass, then don't add an event listner
+            // since we will add it to the parent descriptor and it will notify this class as well
+            if (classDescriptor.isChildDescriptor()) {
+                Class parentClass = classDescriptor.getInheritancePolicy().getParentDescriptor().getJavaClass();
+                if (gps.hasMappingForEntityForMirror(parentClass, CascadeMapping.Cascade.ALL)) {
+                    classDescriptor.getDescriptorEventManager().removeListener(dummyEventListener);
+                    continue;
+                }
+            }
+
             if (gps.hasMappingForEntityForMirror(mappedClass, CascadeMapping.Cascade.ALL)) {
                 classDescriptor.getDescriptorEventManager().removeListener(eventListener);
             }
