@@ -81,16 +81,15 @@ public abstract class SystemPropertyUtils {
                         buf.replace(startIndex, endIndex + PLACEHOLDER_SUFFIX.length(), propVal);
                         nextIndex = startIndex + propVal.length();
                     } else {
-                        if (logger.isWarnEnabled()) {
-                            logger.warn("Could not resolve placeholder '" + placeholder + "' in [" + text +
+                        if (logger.isDebugEnabled()) {
+                            logger.debug("Could not resolve placeholder '" + placeholder + "' in [" + text +
                                     "] as system property: neither system property nor environment variable found");
                         }
                     }
                 }
                 catch (Throwable ex) {
-                    if (logger.isWarnEnabled()) {
-                        logger.warn("Could not resolve placeholder '" + placeholder + "' in [" + text +
-                                "] as system property: " + ex);
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("Could not resolve placeholder '" + placeholder + "' in [" + text + "] as system property: " + ex);
                     }
                 }
                 startIndex = buf.toString().indexOf(PLACEHOLDER_PREFIX, nextIndex);
