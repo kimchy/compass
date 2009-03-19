@@ -65,4 +65,30 @@ public class TerracottaTransactionProcessorEnvironment {
      */
     public static final String NON_BLOCKING_BATCH_JOBS_SIZE = "compass.transaction.processor.tc.nonBlockingBatchJobSize";
 
+    /**
+     * Once a transaction is identified as needed to be processed asynchronously, it can try and wait
+     * for more transactions to happen in order to process all of them in one go. This settings controls
+     * how many additional transactions will be accumalated by blocking for them. The blocking time
+     * is controlled using {@link #BATCH_JOBS_TIMEOUT}.
+     *
+     * <p>While there is an additional job within the timeout, transactions will be accumelated until
+     * the configured size. If there is none within the timeout, the processor will break and won't
+     * wait for more in order to process the jobs.
+     *
+     * <p>Defaults to <code>5</code>.
+     */
+    public static final String BATCH_JOBS_SIZE = "compass.transaction.processor.tc.batchJobSize";
+
+    /**
+     * Once a transaction is identified as needed to be processed asynchronously, it can try and wait
+     * for more transactions to happen in order to process all of them in one go. This settings controls
+     * how long to wait for each additional transaction.
+     *
+     * <p>While there is an additional job within the timeout, transactions will be accumelated until
+     * the configured size. If there is none within the timeout, the processor will break and won't
+     * wait for more in order to process the jobs.
+     *
+     * <p>Defaults to 100 milliseconds.
+     */
+    public static final String BATCH_JOBS_TIMEOUT = "compass.transaction.processor.tc.batchJobTimeout";
 }

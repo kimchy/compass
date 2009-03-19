@@ -82,6 +82,10 @@ public class TerracottaTransactionProcessorFactory implements TransactionProcess
 
     private final transient Map<String, TerracottaProcessor> currentProcessors = new ConcurrentHashMap<String, TerracottaProcessor>();
 
+    private int batchJobsSize;
+
+    private long batchJobTimeout;
+
     private int nonBlockingBatchSize;
 
     public void setSearchEngineFactory(SearchEngineFactory searchEngineFactory) {
@@ -90,6 +94,11 @@ public class TerracottaTransactionProcessorFactory implements TransactionProcess
 
     public void configure(CompassSettings settings) throws CompassException {
         this.settings = settings;
+        batchJobsSize = settings.getSettingAsInt(TerracottaTransactionProcessorEnvironment.BATCH_JOBS_SIZE, 5);
+        batchJobTimeout = settings.getSettingAsTimeInMillis(TerracottaTransactionProcessorEnvironment.BATCH_JOBS_SIZE, 100);
+        if (logger.isDebugEnabled()) {
+            logger.debug("Terracotta Transaction Processor blocking batch size is [" + batchJobsSize + "] with timeout of [" + batchJobTimeout + "ms]");
+        }
         nonBlockingBatchSize = settings.getSettingAsInt(TerracottaTransactionProcessorEnvironment.NON_BLOCKING_BATCH_JOBS_SIZE, 5);
         if (logger.isDebugEnabled()) {
             logger.debug("Terracotta Transaction Processor non blocking batch size is [" + nonBlockingBatchSize + "]");
@@ -219,6 +228,23 @@ public class TerracottaTransactionProcessorFactory implements TransactionProcess
                     }
                     final List<TransactionJobs> jobsList = new ArrayList<TransactionJobs>();
                     jobsList.add(jobs);
+
+                    for (int i = 0; i < batchJobsSize; i++) {
+                        try {
+                            jobs = jobsToProcess.poll(batchJobTimeout, TimeUnit.MILLISECONDS);
+                        } catch (InterruptedException e) {
+                            // we geto interupted, bail out in the next run
+                            running = false;
+                        }
+                        if (jobs == null) {
+                            break;
+                        }
+                        if (logger.isTraceEnabled()) {
+                            logger.trace("Batching additional Jobs [" + System.identityHashCode(jobs) + "]");
+                        }
+                        jobsList.add(jobs);
+                    }
+
                     jobsToProcess.drainTo(jobsList, nonBlockingBatchSize);
                     if (logger.isDebugEnabled()) {
                         int totalJobs = 0;
