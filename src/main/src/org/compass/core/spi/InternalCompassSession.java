@@ -54,6 +54,8 @@ public interface InternalCompassSession extends CompassSession {
     CompassMetaData getMetaData();
 
 
+    void startTransactionIfNeeded();
+    
     void addDelegateClose(InternalSessionDelegateClose delegateClose);
 
     void unbindTransaction();

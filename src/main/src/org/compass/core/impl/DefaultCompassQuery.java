@@ -68,7 +68,9 @@ public class DefaultCompassQuery implements InternalCompassQuery, Cloneable {
     }
 
     public CompassQuery attach(CompassSession session) {
-        attachedSession.set((InternalCompassSession) session);
+        InternalCompassSession compassSession = (InternalCompassSession) session;
+        attachedSession.set(compassSession);
+        compassSession.addDelegateClose(this);
         return this;
     }
 
@@ -225,8 +227,20 @@ public class DefaultCompassQuery implements InternalCompassQuery, Cloneable {
     private InternalCompassSession session() throws CompassException {
         InternalCompassSession session = attachedSession.get();
         if (session == null) {
+            // if we don't find a session, try and find if there is a session bounded to a transaction
+            // if there is, use it
+            session = (InternalCompassSession) compass.getTransactionFactory().getTransactionBoundSession();
+            if (session == null) {
+                session = (InternalCompassSession) compass.getLocalTransactionFactory().getTransactionBoundSession();
+            }
+            if (session != null) {
+                attach(session);
+            }
+        }
+        if (session == null) {
             throw new CompassException("Trying to execute a query without an attached session, have you called attach on the query?");
         }
+        session.startTransactionIfNeeded();
         return session;
     }
 }

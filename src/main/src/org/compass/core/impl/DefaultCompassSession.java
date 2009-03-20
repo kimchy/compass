@@ -804,7 +804,7 @@ public class DefaultCompassSession implements InternalCompassSession {
         return compassMetaData;
     }
 
-    private void startTransactionIfNeeded() {
+    public void startTransactionIfNeeded() {
         if (rolledback) {
             throw new CompassException("Transaction already rolled back");
         }

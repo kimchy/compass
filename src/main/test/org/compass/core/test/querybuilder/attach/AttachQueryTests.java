@@ -61,6 +61,31 @@ public class AttachQueryTests extends AbstractTestCase {
         session.close();
     }
 
+    public void testTransactionBoundAttach() {
+        CompassQuery query1 = getCompass().queryBuilder().queryString("test").toQuery();
+        CompassQuery query2 = getCompass().queryBuilder().queryString("notests").toQuery();
+
+        CompassSession session = openSession();
+
+        A a = new A();
+        a.id = 1;
+        a.value = "test";
+        session.save("a", a);
+
+        assertEquals(1, query1.hits().length());
+        assertEquals(0, query2.hits().length());
+
+        session.close();
+
+        session = openSession();
+        session.beginTransaction();
+
+        assertEquals(1, query1.count());
+        assertEquals(0, query2.count());
+
+        session.close();
+    }
+
     public void testNoAttachException() {
         CompassQuery query1 = getCompass().queryBuilder().queryString("test").toQuery();
 

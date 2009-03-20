@@ -113,6 +113,10 @@ public class ExistingCompassSession implements InternalCompassSession {
         session.addDelegateClose(delegateClose);
     }
 
+    public void startTransactionIfNeeded() {
+        session.startTransactionIfNeeded();
+    }
+
     public void unbindTransaction() {
         session.unbindTransaction();
     }
