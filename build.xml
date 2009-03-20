@@ -142,34 +142,28 @@
 
     </target>
 
-    <macrodef name="jar-module">
-        <attribute name="includes"/>
-        <attribute name="name"/>
-        <attribute name="target-dir" default="${dist.dir}/modules"/>
-        <sequential>
-            <jar jarfile="@{target-dir}/@{name}.jar" basedir="${target.classes.dir}" includes="@{includes}">
-                <manifest>
-                    <attribute name="Implementation-Title" value="${compass-title}"/>
-                    <attribute name="Implementation-Version" value="${compass-manifest-version}"/>
-                    <attribute name="Compass-Version" value="${compass-manifest-version}"/>
-                    <attribute name="Compass-Date" value="${timestamp}"/>
-                    <attribute name="Bundle-Category" value="compass"/>
-                    <attribute name="Bundle-Copyright" value="Compass"/>
-                    <attribute name="Bundle-ManifestVersion" value="2"/>
-                    <attribute name="Bundle-Name" value="Compass"/>
-                    <attribute name="Bundle-SymbolicName" value="org.compass-project.compass"/>
-                    <attribute name="Bundle-Version" value="${compass-manifest-version}"/>
-                </manifest>
-            </jar>
-        </sequential>
-    </macrodef>
-
     <target name="fulljar" depends="build,initdist" description="Create full JAR file with all Compass classes">
 
-        <delete file="${dist.dir}/${compass-jarname}.jar"/>
-        <jar-module includes="META-INF/**,org/apache/lucene/**,org/compass/**,org/springframework/**,**/*.xml"
-                    name="${compass-jarname}" target-dir="${dist.dir}"/>
+        <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask" classpath="${basedir}/lib/jarjar/jarjar-1.0.jar"/>
 
+        <delete file="${dist.dir}/${compass-jarname}.jar"/>
+        <jarjar jarfile="${dist.dir}/${compass-jarname}.jar" basedir="${target.classes.dir}" includes="META-INF/**,org/apache/lucene/**,org/compass/**,org/springframework/**,**/*.xml">
+            <zipfileset src="${basedir}/lib//asm/asm-3.1.jar" />
+            <zipfileset src="${basedir}/lib//asm/asm-commons-3.1.jar" />
+            <rule pattern="org.objectweb.asm.**" result="org.compass.core.asm.@1"/>
+            <manifest>
+                <attribute name="Implementation-Title" value="${compass-title}"/>
+                <attribute name="Implementation-Version" value="${compass-manifest-version}"/>
+                <attribute name="Compass-Version" value="${compass-manifest-version}"/>
+                <attribute name="Compass-Date" value="${timestamp}"/>
+                <attribute name="Bundle-Category" value="compass"/>
+                <attribute name="Bundle-Copyright" value="Compass"/>
+                <attribute name="Bundle-ManifestVersion" value="2"/>
+                <attribute name="Bundle-Name" value="Compass"/>
+                <attribute name="Bundle-SymbolicName" value="org.compass-project.compass"/>
+                <attribute name="Bundle-Version" value="${compass-manifest-version}"/>
+            </manifest>
+        </jarjar>
     </target>
 
     <target name="fulljar14" depends="fulljar" description="Creates a full 1.4 JAR file">
@@ -623,6 +617,7 @@
                 <include name="lib/hibernate/**"/>
                 <include name="lib/hsqldb/**"/>
                 <include name="lib/ibatis/**"/>
+                <include name="lib/jarjar/**"/>
                 <include name="lib/jboss/**"/>
                 <include name="lib/j2ee/**"/>
                 <include name="lib/jackson/**"/>

@@ -19,12 +19,12 @@ package org.compass.core.util.reflection.asm;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
-import org.compass.core.util.asm.ClassWriter;
-import org.compass.core.util.asm.MethodVisitor;
-import org.compass.core.util.asm.Opcodes;
-import org.compass.core.util.asm.Type;
 import org.compass.core.util.reflection.ReflectionMethod;
 import org.compass.core.util.reflection.plain.PlainReflectionMethod;
+import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
 
 /**
  * Allows to generate an {@link org.compass.core.util.reflection.ReflectionMethod} implementation based on ASM

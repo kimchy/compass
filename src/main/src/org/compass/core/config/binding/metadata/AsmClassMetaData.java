@@ -25,10 +25,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.compass.core.util.ClassUtils;
-import org.compass.core.util.asm.AnnotationVisitor;
-import org.compass.core.util.asm.Opcodes;
-import org.compass.core.util.asm.Type;
-import org.compass.core.util.asm.commons.EmptyVisitor;
+import org.objectweb.asm.AnnotationVisitor;
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
+import org.objectweb.asm.commons.EmptyVisitor;
 
 /**
  * An ASM based class meta data provider.

@@ -16,7 +16,7 @@
 
 package org.compass.core.util.reflection.asm;
 
-import org.compass.core.util.asm.Type;
+import org.objectweb.asm.Type;
 
 /**
  * @author kimchy

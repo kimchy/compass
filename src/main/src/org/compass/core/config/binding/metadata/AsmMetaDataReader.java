@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.compass.core.mapping.MappingException;
-import org.compass.core.util.asm.ClassReader;
+import org.objectweb.asm.ClassReader;
 
 /**
  * @author kimchy
