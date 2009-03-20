@@ -158,7 +158,7 @@ public class LuceneSearchEngineMoreLikeThisQueryBuilder implements SearchEngineQ
     }
 
     public SearchEngineQueryBuilder.SearchEngineMoreLikeThisQueryBuilder setStopWords(String[] stopWords) {
-        HashSet set = new HashSet();
+        HashSet<String> set = new HashSet<String>();
         set.addAll(Arrays.asList(stopWords));
         moreLikeThis.setStopWords(set);
         return this;
