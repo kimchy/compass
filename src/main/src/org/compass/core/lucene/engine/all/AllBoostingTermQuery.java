@@ -26,14 +26,20 @@ import org.apache.lucene.search.Scorer;
 import org.apache.lucene.search.Searcher;
 import org.apache.lucene.search.Similarity;
 import org.apache.lucene.search.Weight;
+import org.apache.lucene.search.payloads.BoostingTermQuery;
 import org.apache.lucene.search.spans.SpanScorer;
 import org.apache.lucene.search.spans.SpanTermQuery;
 import org.apache.lucene.search.spans.SpanWeight;
 import org.apache.lucene.search.spans.TermSpans;
 
 /**
+ * A term query that takes into account the All boosting support for specific terms when searching on the
+ * all field.
+ *
  * @author kimchy
+ * @see BoostingTermQuery
  */
+// LUCENE MONITOR
 public class AllBoostingTermQuery extends SpanTermQuery {
 
 
