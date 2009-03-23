@@ -1,0 +1,19 @@
+<!DOCTYPE compass-core-mapping PUBLIC
+        "-//Compass/Compass Core Mapping DTD 2.2//EN"
+        "http://www.compass-project.org/dtd/compass-core-mapping-2.2.dtd">
+
+<compass-core-mapping package="org.compass.core.test.reference.query">
+
+    <class name="A" alias="a">
+        <id name="id" accessor="field"/>
+        <reference name="b" accessor="field"/>
+    </class>
+
+    <class name="B" alias="b">
+        <id name="id" accessor="field"/>
+        <property name="value" accessor="field">
+            <meta-data>value</meta-data>
+        </property>
+    </class>
+
+</compass-core-mapping>
