@@ -49,4 +49,9 @@ public class ClassBoostPropertyMapping extends ClassPropertyMapping implements B
     public boolean isOverrideByName() {
         return false;
     }
+
+    @Override
+    public boolean requiresIdProcessing() {
+        return true;
+    }
 }

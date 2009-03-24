@@ -48,4 +48,9 @@ public class ClassIdPropertyMapping extends ClassPropertyMapping implements Reso
         super.copy(copy);
         return copy;
     }
+
+    @Override
+    public boolean requiresIdProcessing() {
+        return true;
+    }
 }

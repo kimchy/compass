@@ -18,12 +18,9 @@ package org.compass.core.mapping.osem;
 
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourceAnalyzerController;
-import org.compass.core.mapping.ResourcePropertyMapping;
 
 /**
- * 
  * @author kimchy
- *
  */
 public class ClassPropertyAnalyzerController extends ClassPropertyMapping implements ResourceAnalyzerController {
 
@@ -35,9 +32,9 @@ public class ClassPropertyAnalyzerController extends ClassPropertyMapping implem
         analyzerController.setNullAnalyzer(getNullAnalyzer());
         return analyzerController;
     }
-    
+
     public String getAnalyzerResourcePropertyName() {
-        return ((ResourcePropertyMapping)mappings.get(getIdPropertyIndex())).getPath().getPath();
+        return mappings.get(getIdPropertyIndex()).getPath().getPath();
     }
 
     public String getNullAnalyzer() {
@@ -47,7 +44,7 @@ public class ClassPropertyAnalyzerController extends ClassPropertyMapping implem
     public void setNullAnalyzer(String nullAnalyzer) {
         this.nullAnalyzer = nullAnalyzer;
     }
-    
+
     public boolean hasNullAnalyzer() {
         return nullAnalyzer != null;
     }
@@ -55,5 +52,10 @@ public class ClassPropertyAnalyzerController extends ClassPropertyMapping implem
     @Override
     public boolean isOverrideByName() {
         return false;
+    }
+
+    @Override
+    public boolean requiresIdProcessing() {
+        return true;
     }
 }
