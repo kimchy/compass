@@ -45,4 +45,9 @@ public class ClassBoostPropertyMapping extends ClassPropertyMapping implements B
     public void setDefaultBoost(float defaultBoost) {
         this.defaultBoost = defaultBoost;
     }
+
+    @Override
+    public boolean requiresIdProcessing() {
+        return true;
+    }
 }

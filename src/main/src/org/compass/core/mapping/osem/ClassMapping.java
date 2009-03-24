@@ -147,6 +147,24 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
         return idMappingList;
     }
 
+    public List<ClassPropertyMapping> findClassPropertiesRequireProcessing() {
+        ArrayList<ClassPropertyMapping> idMappingList = new ArrayList<ClassPropertyMapping>();
+        for (Iterator it = mappingsIt(); it.hasNext();) {
+            Mapping m = (Mapping) it.next();
+            if (m instanceof ClassIdPropertyMapping) {
+                idMappingList.add((ClassIdPropertyMapping) m);
+            } else if (m instanceof IdComponentMapping) {
+                IdComponentMapping idComponentMapping = (IdComponentMapping) m;
+                idMappingList.addAll(idComponentMapping.getRefClassMappings()[0].findClassPropertyIdMappings());
+            } else if (m instanceof ClassPropertyMapping) {
+                if (((ClassPropertyMapping) m).requiresIdProcessing()) {
+                    idMappingList.add((ClassPropertyMapping) m);
+                }
+            }
+        }
+        return idMappingList;
+    }
+    
     /**
      * Dynamically finds all the {@link ClassIdPropertyMapping}s for the class.
      */

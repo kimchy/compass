@@ -278,4 +278,12 @@ public class ClassPropertyMapping extends AbstractAccessorMultipleMapping implem
     public void setDefinedInAlias(String definedInAlias) {
         this.definedInAlias = definedInAlias;
     }
+
+    /**
+     * Returns if the mapping must have id processing performed on it (even, for example, when support
+     * unmarshall is set to false).
+     */
+    public boolean requiresIdProcessing() {
+        return false;
+    }
 }

@@ -51,4 +51,9 @@ public class ClassPropertyAnalyzerController extends ClassPropertyMapping implem
     public boolean hasNullAnalyzer() {
         return nullAnalyzer != null;
     }
+
+    @Override
+    public boolean requiresIdProcessing() {
+        return true;
+    }
 }

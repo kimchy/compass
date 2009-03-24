@@ -68,8 +68,8 @@ public class InternalIdsMappingProcessor implements MappingProcessor {
      * do not support un-marshalling.
      */
     private void buildInternalIdForIdProperties(ClassMapping classMapping) {
-        List<ClassIdPropertyMapping> idMappings = classMapping.findClassPropertyIdMappings();
-        for (ClassIdPropertyMapping idMapping : idMappings) {
+        List<ClassPropertyMapping> idMappings = classMapping.findClassPropertiesRequireProcessing();
+        for (ClassPropertyMapping idMapping : idMappings) {
             MappingProcessorUtils.addInternalId(settings, converterLookup, idMapping, true);
         }
     }
