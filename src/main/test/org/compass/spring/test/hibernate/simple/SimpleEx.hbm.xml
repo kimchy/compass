@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="org.compass.spring.test.hibernate.simple">
+
+    <class name="SimpleBase" table="SIMPLE_HIBERNATE_EX_SPR" discriminator-value="B">
+        <id name="id">
+            <generator class="native"/>
+        </id>
+        <discriminator column="type" type="string"/>
+        <property name="value" />
+        <subclass name="SimpleExtend" discriminator-value="E">
+            <property name="valueExtend" />
+        </subclass>
+    </class>
+
+</hibernate-mapping>

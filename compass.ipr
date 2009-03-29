@@ -191,6 +191,7 @@
               <file url="file://$PROJECT_DIR$/src/main/test/org/compass/spring/test/device/jdbc/datasource-applicationContext.xml" />
               <file url="file://$PROJECT_DIR$/src/main/test/org/compass/spring/test/device/jdbc/resultset-applicationContext.xml" />
               <file url="file://$PROJECT_DIR$/src/main/test/org/compass/spring/test/device/jdbc/table-applicationContext.xml" />
+              <file url="file://$PROJECT_DIR$/src/main/test/org/compass/spring/test/hibernate/simple/context.xml" />
             </files>
           </module>
         </modules>
@@ -1022,7 +1023,9 @@
         <root url="jar://$PROJECT_DIR$/lib/spring/spring-test.jar!/" />
       </CLASSES>
       <JAVADOC />
-      <SOURCES />
+      <SOURCES>
+        <root url="jar://$SPRING_DIR$/dist/spring-sources.jar!/" />
+      </SOURCES>
     </library>
     <library name="sunfsjndi">
       <CLASSES>
@@ -1151,5 +1154,8 @@
       <SOURCES />
     </library>
   </component>
+  <UsedPathMacros>
+    <macro name="SPRING_DIR" description="" />
+  </UsedPathMacros>
 </project>
 

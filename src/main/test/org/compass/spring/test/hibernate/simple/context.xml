@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:compass="http://www.compass-project.org/schema/spring-core-config"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.compass-project.org/schema/spring-core-config http://www.compass-project.org/schema/spring-compass-core-config-2.2.xsd">
+
+
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="org.hsqldb.jdbcDriver"/>
+        <property name="url" value="jdbc:hsqldb:mem:test"/>
+        <property name="username" value="sa"/>
+        <property name="password" value=""/>
+    </bean>
+
+
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+        <property name="mappingResources">
+            <list>
+                <value>org/compass/spring/test/hibernate/simple/Simple.hbm.xml</value>
+                <value>org/compass/spring/test/hibernate/simple/SimpleEx.hbm.xml</value>
+            </list>
+        </property>
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.dialect">org.hibernate.dialect.HSQLDialect</prop>
+                <prop key="hibernate.hbm2ddl.auto">create</prop>
+            </props>
+        </property>
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
+
+    <bean id="compass" class="org.compass.spring.LocalCompassBean">
+        <property name="resourceLocations">
+            <list>
+                <value>classpath:org/compass/spring/test/hibernate/simple/Simple.cpm.xml</value>
+                <value>classpath:org/compass/spring/test/hibernate/simple/SimpleBase.cpm.xml</value>
+                <value>classpath:org/compass/spring/test/hibernate/simple/SimpleExtend.cpm.xml</value>
+            </list>
+        </property>
+        <property name="compassSettings">
+            <props>
+                <prop key="compass.engine.connection">target/testindex</prop>
+            </props>
+        </property>
+        <property name="transactionManager" ref="transactionManager"/>
+    </bean>
+
+    <bean id="hibernateGpsDevice" class="org.compass.gps.device.hibernate.HibernateGpsDevice" autowire="no">
+        <property name="name" value="hibernateDevice"/>
+        <property name="sessionFactory" ref="sessionFactory"/>
+        <property name="nativeExtractor">
+            <bean class="org.compass.spring.device.hibernate.SpringNativeHibernateExtractor"/>
+        </property>
+        <property name="parallelIndexExecutor">
+            <bean class="org.compass.gps.device.support.parallel.ConcurrentParallelIndexExecutor">
+                <constructor-arg value="1"/>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="compassGps" class="org.compass.gps.impl.SingleCompassGps" init-method="start" destroy-method="stop"
+          autowire="no">
+        <property name="compass" ref="compass"/>
+        <property name="gpsDevices">
+            <list>
+                <ref local="hibernateGpsDevice"/>
+                <!--<bean class="org.compass.spring.device.SpringSyncTransactionGpsDeviceWrapper" autowire="no">
+                    <property name="gpsDevice" ref="hibernateGpsDevice" />
+                </bean>
+            -->
+            </list>
+        </property>
+    </bean>
+
+</beans>
