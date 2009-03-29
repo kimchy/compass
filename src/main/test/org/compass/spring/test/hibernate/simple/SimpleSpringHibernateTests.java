@@ -47,7 +47,11 @@ public class SimpleSpringHibernateTests extends AbstractDependencyInjectionSprin
         return new String[]{"org/compass/spring/test/hibernate/simple/context.xml"};
     }
 
-    public void test() {
+    public void testSpringHibernateTransaction() throws Exception {
+        compass.getSearchEngineIndexManager().deleteIndex();
+        compass.getSearchEngineIndexManager().verifyIndex();
+
+
         Session session = sessionFactory.openSession();
         Transaction transaction = session.beginTransaction();
         Simple simple = new Simple();

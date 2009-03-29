@@ -909,7 +909,9 @@
         <root url="jar://$PROJECT_DIR$/lib/hibernate/hibernate-entitymanager.jar!/" />
       </CLASSES>
       <JAVADOC />
-      <SOURCES />
+      <SOURCES>
+        <root url="file:///Users/kimchy/opt/hibernate/3.2.6/src" />
+      </SOURCES>
     </library>
     <library name="hsqldb">
       <CLASSES>
