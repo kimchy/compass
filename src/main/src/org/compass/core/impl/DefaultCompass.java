@@ -288,7 +288,11 @@ public class DefaultCompass implements InternalCompass {
             if (logger.isDebugEnabled()) {
                 logger.debug("Removing shutdown hook");
             }
-            Runtime.getRuntime().removeShutdownHook(shutdownThread);
+            try {
+                Runtime.getRuntime().removeShutdownHook(shutdownThread);
+            } catch (IllegalStateException e) {
+                // ignore, we are shuttng down
+            }
         }
 
         if (settings.getSettingAsBoolean(CompassEnvironment.Jndi.ENABLE, false) && !duplicate) {
