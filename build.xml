@@ -626,6 +626,7 @@
                 <include name="lib/jaxen/**"/>
                 <include name="lib/jdom/**"/>
                 <include name="lib/jettison/**"/>
+                <include name="lib/joda/**"/>
                 <include name="lib/jotm/**"/>
                 <include name="lib/jpa/**"/>
                 <include name="lib/junit/**"/>

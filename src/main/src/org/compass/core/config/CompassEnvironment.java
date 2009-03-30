@@ -312,6 +312,8 @@ public class CompassEnvironment {
                 public static final String INPUT_STREAM = "binary";
 
                 public static final String LOCALE = "locale";
+
+                public static final String JODA_DATETIME = "jodadatetime";
             }
 
             public abstract class Mapping {

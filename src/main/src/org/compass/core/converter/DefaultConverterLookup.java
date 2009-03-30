@@ -50,6 +50,7 @@ import org.compass.core.converter.dynamic.JexlDynamicConverter;
 import org.compass.core.converter.dynamic.MVELDynamicConverter;
 import org.compass.core.converter.dynamic.OgnlDynamicConverter;
 import org.compass.core.converter.dynamic.VelocityDynamicConverter;
+import org.compass.core.converter.extended.DataTimeConverter;
 import org.compass.core.converter.extended.FileConverter;
 import org.compass.core.converter.extended.InputStreamConverter;
 import org.compass.core.converter.extended.LocaleConverter;
@@ -228,47 +229,55 @@ public class DefaultConverterLookup implements ConverterLookup {
                 java.sql.Time.class, new SqlTimeConverter());
         addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Extendend.SQL_TIMESTAMP,
                 java.sql.Timestamp.class, new SqlTimestampConverter());
+        try {
+            addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Extendend.JODA_DATETIME,
+                    ClassUtils.forName("org.joda.time.DateTime", settings.getClassLoader()), new DataTimeConverter());
+            log.debug("JODA found in the class path, registering DataTime converter");
+        } catch (Throwable t) {
+            // do nothing
+        }
+        
         // dynamic converters
         try {
             addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Dynamic.MVEL,
                     DynamicMetaDataMapping.class, new MVELDynamicConverter());
             log.debug("Dynamic converter - MVEL found in the class path, registering it");
-        } catch (Error e) {
+        } catch (Throwable e) {
             // do nothing
         }
         try {
             addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Dynamic.JEXL,
                     DynamicMetaDataMapping.class, new JexlDynamicConverter());
             log.debug("Dynamic converter - JEXL found in the class path, registering it");
-        } catch (Error e) {
+        } catch (Throwable e) {
             // do nothing
         }
         try {
             addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Dynamic.VELOCITY,
                     DynamicMetaDataMapping.class, new VelocityDynamicConverter());
             log.debug("Dynamic converter - Velocity found in the class path, registering it");
-        } catch (Error e) {
+        } catch (Throwable e) {
             // do nothing
         }
         try {
             addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Dynamic.JAKARTA_EL,
                     DynamicMetaDataMapping.class, new JakartaElDynamicConverter());
             log.debug("Dynamic converter - Jakarta EL found in the class path, registering it");
-        } catch (Error e) {
+        } catch (Throwable e) {
             // do nothing
         }
         try {
             addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Dynamic.OGNL,
                     DynamicMetaDataMapping.class, new OgnlDynamicConverter());
             log.debug("Dynamic converter - OGNL found in the class path, registering it");
-        } catch (Error e) {
+        } catch (Throwable e) {
             // do nothing
         }
         try {
             addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Dynamic.GROOVY,
                     DynamicMetaDataMapping.class, new GroovyDynamicConverter());
             log.debug("Dynamic converter - GROOVY found in the class path, registering it");
-        } catch (Error e) {
+        } catch (Throwable e) {
             // do nothing
         }
 
@@ -327,7 +336,7 @@ public class DefaultConverterLookup implements ConverterLookup {
             Converter converter;
             Object obj = converterSettings.getSettingAsObject(CompassEnvironment.Converter.TYPE);
             if (obj == null) {
-                throw new ConfigurationException("Must define a class type / objecy instance for converter [" + converterName + "]");
+                throw new ConfigurationException("Must define a class type / object instance for converter [" + converterName + "]");
             }
             if (obj instanceof String) {
                 String converterClassType = (String) obj;
@@ -385,8 +394,7 @@ public class DefaultConverterLookup implements ConverterLookup {
         if (converterType != null) {
             try {
                 if (log.isDebugEnabled()) {
-                    log.debug("Converter [" + name + "] (default) configured with a non default type [" +
-                            converterType + "]");
+                    log.debug("Converter [" + name + "] (default) configured with a non default type [" + converterType + "]");
                 }
                 converter = (Converter) ClassUtils.forName(converterType, settings.getClassLoader()).newInstance();
             } catch (Exception e) {

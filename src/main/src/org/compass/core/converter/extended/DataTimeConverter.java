@@ -1,12 +1,12 @@
 /*
  * Copyright 2004-2009 the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,34 +14,35 @@
  * limitations under the License.
  */
 
-package org.compass.core.converter.basic;
+package org.compass.core.converter.extended;
 
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.TimeZone;
 
 import org.compass.core.converter.ConversionException;
+import org.compass.core.converter.basic.AbstractFormatConverter;
+import org.compass.core.converter.basic.DateMathParser;
 import org.compass.core.converter.basic.format.Formatter;
 import org.compass.core.converter.basic.format.FormatterFactory;
-import org.compass.core.converter.basic.format.TextFormatFormatter;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.marshall.MarshallingContext;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.ISODateTimeFormat;
 
 /**
- * Converts dates to String and vice versa. Supports the notion of "now" using
- * {@link org.compass.core.converter.basic.DateMathParser}.
+ * A converter for Joda {@link DateTime}. The default format is the ISO format.
  *
  * @author kimchy
  */
-public class DateConverter extends AbstractFormatConverter {
+public class DataTimeConverter extends AbstractFormatConverter {
 
     public static final String DEFAULT_NOW_PREFIX = "now";
 
-    public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd-HH-mm-ss-S-a";
+    public static final String ISO = "iso";
 
-    private static class DateFormatter implements FormatterFactory {
+    private class DataTimeFormatterFactory implements FormatterFactory {
 
         private String format;
 
@@ -53,29 +54,45 @@ public class DateConverter extends AbstractFormatConverter {
         }
 
         public Formatter create() {
-            DateFormat dateFormat;
-            if (locale != null) {
-                dateFormat = new SimpleDateFormat(format, locale);
-            } else {
-                dateFormat = new SimpleDateFormat(format);
+            if (ISO.equalsIgnoreCase(format)) {
+                return new DateTimeFormatter(ISODateTimeFormat.dateTime());
             }
-            dateFormat.setLenient(false);
-            return new TextFormatFormatter(dateFormat);
+            org.joda.time.format.DateTimeFormatter formatter = DateTimeFormat.forPattern(format);
+            formatter = formatter.withLocale(locale);
+            return new DateTimeFormatter(formatter);
         }
+    }
+
+    private class DateTimeFormatter implements Formatter {
+
+        private final org.joda.time.format.DateTimeFormatter formatter;
+
+        private DateTimeFormatter(org.joda.time.format.DateTimeFormatter formatter) {
+            this.formatter = formatter;
+        }
+
+        public String format(Object obj) {
+            return formatter.print((DateTime) obj);
+        }
+
+        public Object parse(String str) throws ParseException {
+            return formatter.parseDateTime(str);
+        }
+
+        public boolean isThreadSafe() {
+            return true;
+        }
+    }
+
+    protected FormatterFactory doCreateFormatterFactory() {
+        return new DataTimeFormatterFactory();
     }
 
     @Override
     protected String doGetDefaultFormat() {
-        return DEFAULT_DATE_FORMAT;
+        return ISO;
     }
 
-    protected FormatterFactory doCreateFormatterFactory() {
-        return new DateConverter.DateFormatter();
-    }
-
-    /**
-     * Try all the configured formatters to format the str into an Object.
-     */
     protected Object doFromString(String str, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) throws ConversionException {
         try {
             if (str.toLowerCase().startsWith(DEFAULT_NOW_PREFIX)) {
@@ -86,19 +103,17 @@ public class DateConverter extends AbstractFormatConverter {
             for (int i = 0; i < formatters.length; i++) {
                 try {
                     return formatters[i].parse(str);
-                } catch (ParseException e) {
+                } catch (Exception e) {
                     // do nothing, continue to the next one
                 }
             }
             throw new ConversionException("Failed to parse date [" + str + "]");
-        } catch (ParseException e) {
+        } catch (Exception e) {
             throw new ConversionException("Failed to parse date [" + str + "]", e);
         }
     }
 
-    /**
-     * Uses the first configured formatter (also known as the default one) to convert it to String.
-     */
+    @Override
     protected String doToString(Object o, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) {
         return formatters[0].format(o);
     }

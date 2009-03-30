@@ -1155,6 +1155,13 @@
       <JAVADOC />
       <SOURCES />
     </library>
+    <library name="joda">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/joda/joda-time-1.6.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
   </component>
   <UsedPathMacros>
     <macro name="SPRING_DIR" description="" />

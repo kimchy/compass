@@ -1,0 +1,25 @@
+<!DOCTYPE compass-core-mapping PUBLIC
+        "-//Compass/Compass Core Mapping DTD 2.2//EN"
+        "http://www.compass-project.org/dtd/compass-core-mapping-2.2.dtd">
+
+<compass-core-mapping package="org.compass.core.test.formatter.joda">
+
+    <class name="A" alias="a">
+
+        <id name="id" accessor="field"/>
+
+        <property name="isoDate" accessor="field">
+            <meta-data>isoDate</meta-data>
+        </property>
+
+        <property name="formatDate" accessor="field">
+            <meta-data format="yyyy-MM-dd">formatDate</meta-data>
+        </property>
+
+        <property name="multiDate" accessor="field">
+            <meta-data format="yyyy-MM-dd||dd-MM-yyyy">multiDate</meta-data>
+        </property>
+    </class>
+
+</compass-core-mapping>
+    
