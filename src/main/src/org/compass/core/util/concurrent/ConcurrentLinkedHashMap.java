@@ -30,7 +30,7 @@
  * limitations under the License.
  */
 
-package org.compass.core.util;
+package org.compass.core.util.concurrent;
 
 import java.io.Serializable;
 import java.util.AbstractMap;
@@ -45,7 +45,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 
-import org.compass.core.util.ConcurrentLinkedHashMap.Node.State;
+import org.compass.core.util.concurrent.ConcurrentLinkedHashMap.Node.State;
 
 /**
  * A {@link ConcurrentMap} with a doubly-linked list running through its entries.

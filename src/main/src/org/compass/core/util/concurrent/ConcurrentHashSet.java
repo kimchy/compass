@@ -30,7 +30,7 @@
  * limitations under the License.
  */
 
-package org.compass.core.util;
+package org.compass.core.util.concurrent;
 
 import java.util.Collection;
 import java.util.Iterator;

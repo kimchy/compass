@@ -50,9 +50,9 @@ import org.apache.lucene.store.LockFactory;
 import org.compass.core.CompassException;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.transaction.context.TransactionContextCallback;
-import org.compass.core.util.ConcurrentHashSet;
-import org.compass.core.util.ConcurrentLinkedHashMap;
 import org.compass.core.util.StringUtils;
+import org.compass.core.util.concurrent.ConcurrentHashSet;
+import org.compass.core.util.concurrent.ConcurrentLinkedHashMap;
 
 /**
  * Evictable Memory based directory cache wrapping the actual Lucene Directory the index uses. Accepts
