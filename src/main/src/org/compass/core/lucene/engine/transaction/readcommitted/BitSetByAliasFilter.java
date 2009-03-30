@@ -103,7 +103,7 @@ public class BitSetByAliasFilter extends Filter {
         }
         bitSet = allBitSets.get(reader);
         if (bitSet == null) {
-            bitSet = new AllSetBitSet(reader.numDocs());
+            bitSet = new AllSetBitSet(reader.maxDoc());
             allBitSets.put(reader, bitSet);
         }
         return bitSet;
