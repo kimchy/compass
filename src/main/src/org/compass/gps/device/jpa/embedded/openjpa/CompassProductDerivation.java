@@ -98,6 +98,8 @@ import org.compass.gps.device.jpa.lifecycle.OpenJPAJpaEntityLifecycleInjector;
  */
 public class CompassProductDerivation extends AbstractProductDerivation {
 
+    private static final Log log = LogFactory.getLog(CompassProductDerivation.class);
+
     public static final String COMPASS_USER_OBJECT_KEY = CompassProductDerivation.class.getName() + ".compass";
 
     public static final String COMPASS_SESSION_USER_OBJECT_KEY = CompassProductDerivation.class.getName() + ".compassSession";
@@ -198,9 +200,18 @@ public class CompassProductDerivation extends AbstractProductDerivation {
 
     private void installIntoFactory(BrokerFactory factory) {
         if (compassProperties.isEmpty()) {
+            if (log.isDebugEnabled()) {
+                log.debug("No Compass properties found in configuraiton, disabling Compass");
+            }
             return;
         }
-        
+        if (compassProperties.getProperty(CompassEnvironment.CONNECTION) == null) {
+            if (log.isDebugEnabled()) {
+                log.debug("No Compass [" + CompassEnvironment.CONNECTION + "] property defined, disabling Compass");
+            }
+            return;
+        }
+
         OpenJPAConfiguration openJpaConfig = factory.getConfiguration();
 
         CompassConfiguration compassConfiguration = CompassConfigurationFactory.newConfiguration();

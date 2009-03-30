@@ -378,6 +378,12 @@ public class CompassEventListener implements PostDeleteEventListener, PostInsert
             }
             return null;
         }
+        if (compassProperties.getProperty(CompassEnvironment.CONNECTION) == null) {
+            if (log.isDebugEnabled()) {
+                log.debug("No Compass [" + CompassEnvironment.CONNECTION + "] property defined, disabling Compass");
+            }
+            return null;
+        }
 
         processCollections = compassProperties.getProperty(COMPASS_PROCESS_COLLECTIONS, "true").equalsIgnoreCase("true");
 

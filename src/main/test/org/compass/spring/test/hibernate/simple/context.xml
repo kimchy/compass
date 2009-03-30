@@ -14,7 +14,7 @@
     </bean>
 
 
-    <bean id="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
         <property name="mappingResources">
             <list>
                 <value>org/compass/spring/test/hibernate/simple/Simple.hbm.xml</value>
@@ -51,12 +51,9 @@
         <property name="transactionManager" ref="transactionManager"/>
     </bean>
 
-    <bean id="hibernateGpsDevice" class="org.compass.gps.device.hibernate.HibernateGpsDevice" autowire="no">
+    <bean id="hibernateGpsDevice" class="org.compass.gps.device.hibernate.HibernateGpsDevice">
         <property name="name" value="hibernateDevice"/>
         <property name="sessionFactory" ref="sessionFactory"/>
-        <property name="nativeExtractor">
-            <bean class="org.compass.spring.device.hibernate.SpringNativeHibernateExtractor"/>
-        </property>
         <property name="parallelIndexExecutor">
             <bean class="org.compass.gps.device.support.parallel.ConcurrentParallelIndexExecutor">
                 <constructor-arg value="1"/>
@@ -64,16 +61,11 @@
         </property>
     </bean>
 
-    <bean id="compassGps" class="org.compass.gps.impl.SingleCompassGps" init-method="start" destroy-method="stop"
-          autowire="no">
+    <bean id="compassGps" class="org.compass.gps.impl.SingleCompassGps" init-method="start" destroy-method="stop">
         <property name="compass" ref="compass"/>
         <property name="gpsDevices">
             <list>
                 <ref local="hibernateGpsDevice"/>
-                <!--<bean class="org.compass.spring.device.SpringSyncTransactionGpsDeviceWrapper" autowire="no">
-                    <property name="gpsDevice" ref="hibernateGpsDevice" />
-                </bean>
-            -->
             </list>
         </property>
     </bean>

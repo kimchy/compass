@@ -141,6 +141,12 @@ public class CompassSessionCustomizer implements SessionCustomizer {
             }
             return;
         }
+        if (compassProperties.getProperty(CompassEnvironment.CONNECTION) == null) {
+            if (log.isDebugEnabled()) {
+                log.debug("No Compass [" + CompassEnvironment.CONNECTION + "] property defined, disabling Compass");
+            }
+            return;
+        }
 
         CompassConfiguration compassConfiguration = CompassConfigurationFactory.newConfiguration();
         // use the same class loader of the persistence info to load Compass classes
