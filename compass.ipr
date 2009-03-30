@@ -842,7 +842,7 @@
     </library>
     <library name="cglib">
       <CLASSES>
-        <root url="jar://$PROJECT_DIR$/lib/cglib/cglib-nodep-2.1_3.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/cglib/cglib-nodep-2.2.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />

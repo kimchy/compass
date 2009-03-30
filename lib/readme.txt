@@ -16,8 +16,8 @@ distribution/website before using any of them in your own applications.
 - required for building compass
 - required at runtime when using Jdbc Index location with C3P0 pool
 
-* cglib/cglib-nodep-2.1_3.jar
-- CGLIB 2.1_3 with ObjectWeb ASM 1.5.3 (http://cglib.sourceforge.net)
+* cglib/cglib-nodep-2.2.jar
+- CGLIB 2.2 (http://cglib.sourceforge.net)
 - required for building compass
 - required for running PetClinic (by Hibernate)
 
