@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.compass.core.test.transactionisolation.lucene;
+package org.compass.core.test.transaction.processor.lucene.cyclic;
 
 import org.compass.core.CompassHits;
 import org.compass.core.CompassSession;
@@ -26,14 +26,12 @@ import org.compass.core.spi.InternalResource;
 import org.compass.core.test.AbstractTestCase;
 
 /**
- * 
  * @author kimchy
- * 
  */
-public class LuceneTransactionIsolationTests extends AbstractTestCase {
+public class LuceneTransactionProcessorCyclicTests extends AbstractTestCase {
 
     protected String[] getMappings() {
-        return new String[] { "transactionisolation/lucene/mapping.cpm.xml" };
+        return new String[]{"transaction/processor/lucene/cyclic//mapping.cpm.xml"};
     }
 
     protected void addSettings(CompassSettings settings) {

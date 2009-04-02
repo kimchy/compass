@@ -1,0 +1,30 @@
+<!DOCTYPE compass-core-mapping PUBLIC
+        "-//Compass/Compass Core Mapping DTD 2.2//EN"
+        "http://www.compass-project.org/dtd/compass-core-mapping-2.2.dtd">
+
+<compass-core-mapping package="org.compass.core.test.transaction.processor.lucene.cyclic">
+
+    <class name="Cyclic1" alias="cyclic1">
+
+        <id name="id"/>
+
+        <property name="value">
+            <meta-data>value</meta-data>
+        </property>
+
+        <reference name="cyclic2" ref-alias="cyclic2"/>
+
+    </class>
+
+    <class name="Cyclic2" alias="cyclic2">
+
+        <id name="id"/>
+
+        <property name="value">
+            <meta-data>value</meta-data>
+        </property>
+
+        <reference name="cyclic1" ref-alias="cyclic1"/>
+
+    </class>
+</compass-core-mapping>
