@@ -20,7 +20,10 @@ import javax.transaction.UserTransaction;
 
 import junit.framework.TestCase;
 import org.compass.core.Compass;
+import org.compass.core.CompassCallbackWithoutResult;
+import org.compass.core.CompassException;
 import org.compass.core.CompassSession;
+import org.compass.core.CompassTemplate;
 import org.compass.core.CompassTransaction;
 import org.compass.core.config.CompassConfiguration;
 import org.compass.core.config.CompassEnvironment;
@@ -224,6 +227,92 @@ public class SpringSyncTransactionTests extends TestCase {
                         assertNull(a);
                         tr.commit();
                         innerSession.close();
+                    }
+                });
+            }
+        });
+    }
+
+    public void testWithDoubleCompassTemplate() throws Exception {
+        final CompassTemplate template1 = new CompassTemplate(compass);
+        final CompassTemplate template2 = new CompassTemplate(compass);
+
+        template1.execute(new CompassCallbackWithoutResult() {
+            @Override
+            protected void doInCompassWithoutResult(CompassSession session) throws CompassException {
+                A a  = new A();
+                a.setId(1l);
+                session.save(a);
+                assertNotNull(session.get(A.class, 1));
+            }
+        });
+
+        template1.execute(new CompassCallbackWithoutResult() {
+            @Override
+            protected void doInCompassWithoutResult(CompassSession session) throws CompassException {
+                assertEquals(1, session.queryBuilder().matchAll().hits().length());
+                assertNotNull(session.load(A.class, 1));
+            }
+        });
+
+        template1.execute(new CompassCallbackWithoutResult() {
+            @Override
+            protected void doInCompassWithoutResult(CompassSession session) throws CompassException {
+
+                template2.execute(new CompassCallbackWithoutResult() {
+                    @Override
+                    protected void doInCompassWithoutResult(CompassSession session) throws CompassException {
+                        assertEquals(1, session.queryBuilder().matchAll().hits().length());
+                        assertNotNull(session.load(A.class, 1));
+                    }
+                });
+
+            }
+        });
+    }
+
+    public void testDoubleCompassTempleWithWrappedSpringTransaction() {
+        final CompassTemplate template1 = new CompassTemplate(compass);
+        final CompassTemplate template2 = new CompassTemplate(compass);
+
+        template1.execute(new CompassCallbackWithoutResult() {
+            @Override
+            protected void doInCompassWithoutResult(CompassSession session) throws CompassException {
+                A a  = new A();
+                a.setId(1l);
+                session.save(a);
+                assertNotNull(session.get(A.class, 1));
+            }
+        });
+
+        TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+            protected void doInTransactionWithoutResult(TransactionStatus status) {
+                template1.execute(new CompassCallbackWithoutResult() {
+                    @Override
+                    protected void doInCompassWithoutResult(CompassSession session) throws CompassException {
+                        assertEquals(1, session.queryBuilder().matchAll().hits().length());
+                        assertNotNull(session.load(A.class, 1));
+                    }
+                });
+            }
+        });
+
+        transactionTemplate = new TransactionTemplate(transactionManager);
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+            protected void doInTransactionWithoutResult(TransactionStatus status) {
+                template1.execute(new CompassCallbackWithoutResult() {
+                    @Override
+                    protected void doInCompassWithoutResult(CompassSession session) throws CompassException {
+
+                        template2.execute(new CompassCallbackWithoutResult() {
+                            @Override
+                            protected void doInCompassWithoutResult(CompassSession session) throws CompassException {
+                                assertEquals(1, session.queryBuilder().matchAll().hits().length());
+                                assertNotNull(session.load(A.class, 1));
+                            }
+                        });
+
                     }
                 });
             }
