@@ -209,7 +209,7 @@ public class LuceneSearchEngine implements SearchEngine {
     public void close() throws SearchEngineException {
         eventManager.close();
         if (transactionState == STARTED) {
-            log.warn("Transaction not committed/rolled backed, rolling back");
+            log.warn("Transaction not committed/rolledback, rolling back");
             try {
                 rollback();
             } catch (Exception e) {
