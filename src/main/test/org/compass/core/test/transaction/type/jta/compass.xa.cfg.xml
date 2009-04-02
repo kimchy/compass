@@ -1,0 +1,22 @@
+<compass-core-config xmlns="http://www.compass-project.org/schema/core-config"
+                     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                     xsi:schemaLocation="http://www.compass-project.org/schema/core-config http://www.compass-project.org/schema/compass-core-config-2.2.xsd">
+
+    <compass name="default">
+
+        <connection>
+            <file path="target/test-index"/>
+        </connection>
+
+        <transaction factory="org.compass.core.transaction.XATransactionFactory"/>
+
+        <mappings>
+            <class name="org.compass.core.test.transaction.type.jta.A"/>
+        </mappings>
+
+        <settings>
+            <setting name="compass.engine.optimizer.schedule" value="false"/>
+        </settings>
+    </compass>
+
+</compass-core-config>

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.compass.core.test.transaction;
+package org.compass.core.test.transaction.type.jta;
 
 /**
  * XA tests with just session#close (and no explicit call to commit)
@@ -24,6 +24,6 @@ package org.compass.core.test.transaction;
 public class XAJustCloseTransactionTests extends AbstractJustCloseJTATests {
 
     protected String getCompassConfig() {
-        return "/org/compass/core/test/transaction/compass.xa.cfg.xml";
+        return "/org/compass/core/test/transaction/type/jta/compass.xa.cfg.xml";
     }
 }

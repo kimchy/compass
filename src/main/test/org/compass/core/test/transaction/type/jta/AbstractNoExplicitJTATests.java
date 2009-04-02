@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.compass.core.test.transaction;
+package org.compass.core.test.transaction.type.jta;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;

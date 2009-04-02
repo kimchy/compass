@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.compass.core.test.transaction;
+package org.compass.core.test.transaction.type.jta;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -25,6 +25,7 @@ import javax.transaction.UserTransaction;
 import junit.framework.TestCase;
 import org.compass.core.Compass;
 import org.compass.core.CompassSession;
+import org.compass.core.CompassTransaction;
 import org.compass.core.config.CompassConfiguration;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.impl.ExistingCompassSession;
@@ -32,11 +33,9 @@ import org.objectweb.jotm.Current;
 import org.objectweb.jotm.Jotm;
 
 /**
- * Base JTA tests with session#close instead of session#commit.
- *
  * @author kimchy
  */
-public abstract class AbstractJustCloseJTATests extends TestCase {
+public abstract class AbstractJTATests extends TestCase {
 
     private Compass compass;
 
@@ -51,7 +50,7 @@ public abstract class AbstractJustCloseJTATests extends TestCase {
         try {
             java.rmi.registry.LocateRegistry.createRegistry(1099);
         } catch (Exception e) {
-            // do nothing
+
         }
 
         jotm = new Jotm(true, true);
@@ -73,32 +72,37 @@ public abstract class AbstractJustCloseJTATests extends TestCase {
     }
 
     public void testJtaWithLocalTransaction() throws Exception {
-        CompassSession session = compass.openSession().useLocalTransaction();
+        CompassSession session = compass.openSession();
+        CompassTransaction tr = session.beginLocalTransaction();
 
         A a = new A();
         a.setId(1l);
         session.save(a);
 
+        tr.commit();
         session.close();
 
-        session = compass.openSession().useLocalTransaction();
+        session = compass.openSession();
+        tr = session.beginLocalTransaction();
 
         a = session.load(A.class, 1);
         assertNotNull(a);
 
+        tr.commit();
         session.close();
     }
 
     public void testInnerUTManagement() throws Exception {
         CompassSession session = compass.openSession();
+        CompassTransaction tr = session.beginTransaction();
 
         // save a new instance of A
-        long id = 1;
+        Long id = new Long(1);
         A a = new A();
         a.setId(id);
         session.save(a);
 
-        a = session.get(A.class, id);
+        a = (A) session.get(A.class, id);
         assertNotNull(a);
 
         // check that if we open a new transaction within the current one it
@@ -106,19 +110,22 @@ public abstract class AbstractJustCloseJTATests extends TestCase {
         CompassSession newSession = compass.openSession();
         assertTrue(newSession instanceof ExistingCompassSession);
         assertTrue(session == ((ExistingCompassSession) newSession).getActualSession());
-        a = session.get(A.class, id);
+        CompassTransaction newTr = session.beginTransaction();
+        a = (A) session.get(A.class, id);
         assertNotNull(a);
         // this one should not commit the jta transaction since the out
         // controlls it
+        newTr.commit();
         newSession.close();
 
-        session.close();
+        tr.commit();
 
         // verify that the instance was saved
-        session = compass.openSession();
-        a = session.get(A.class, id);
+        tr = session.beginTransaction();
+        a = (A) session.get(A.class, id);
         assertNotNull(a);
 
+        tr.commit();
         session.close();
     }
 
@@ -128,27 +135,33 @@ public abstract class AbstractJustCloseJTATests extends TestCase {
         ut.begin();
 
         CompassSession session = compass.openSession();
-        long id = 1;
+        CompassTransaction tr = session.beginTransaction();
+        Long id = new Long(1);
         A a = new A();
         a.setId(id);
         session.save(a);
-        a = session.get(A.class, id);
+        a = (A) session.get(A.class, id);
         assertNotNull(a);
+        tr.commit();
         session.close();
 
         CompassSession oldSession = session;
         session = compass.openSession();
         assertTrue(session instanceof ExistingCompassSession);
         assertTrue(oldSession == ((ExistingCompassSession) session).getActualSession());
-        a = session.get(A.class, id);
+        tr = session.beginTransaction();
+        a = (A) session.get(A.class, id);
         assertNotNull(a);
+        tr.commit();
         session.close();
 
         ut.commit();
 
         session = compass.openSession();
-        a = session.get(A.class, id);
+        tr = session.beginTransaction();
+        a = (A) session.get(A.class, id);
         assertNotNull(a);
+        tr.commit();
         session.close();
     }
 
@@ -158,18 +171,18 @@ public abstract class AbstractJustCloseJTATests extends TestCase {
         ut.begin();
 
         CompassSession session = compass.openSession();
-        long id = 1;
+        Long id = new Long(1);
         A a = new A();
         a.setId(id);
         session.save(a);
-        a = session.get(A.class, id);
+        a = (A) session.get(A.class, id);
         assertNotNull(a);
 
         CompassSession oldSession = session;
         session = compass.openSession();
         assertTrue(session instanceof ExistingCompassSession);
         assertTrue(oldSession == ((ExistingCompassSession) session).getActualSession());
-        a = session.get(A.class, id);
+        a = (A) session.get(A.class, id);
         assertNotNull(a);
 
         ut.commit();
@@ -178,8 +191,10 @@ public abstract class AbstractJustCloseJTATests extends TestCase {
         // here we do need explicit session/transaciton mangement
         // just cause we are lazy and want to let Comapss to manage JTA
         session = compass.openSession();
-        a = session.get(A.class, id);
+        CompassTransaction tr = session.beginTransaction();
+        a = (A) session.get(A.class, id);
         assertNotNull(a);
+        tr.commit();
         session.close();
     }
 
@@ -189,24 +204,27 @@ public abstract class AbstractJustCloseJTATests extends TestCase {
         ut.begin();
 
         CompassSession session = compass.openSession();
-        long id = 1;
+        CompassTransaction tr = session.beginTransaction();
+        Long id = new Long(1);
         A a = new A();
         a.setId(id);
         session.save(a);
-        a = session.get(A.class, id);
+        a = (A) session.get(A.class, id);
         assertNotNull(a);
-        session.close();
-
+        tr.commit();
         session = compass.openSession();
-        a = session.get(A.class, id);
+        tr = session.beginTransaction();
+        a = (A) session.get(A.class, id);
         assertNotNull(a);
-        session.close();
+        tr.commit();
 
         ut.rollback();
 
         session = compass.openSession();
-        a = session.get(A.class, id);
+        tr = session.beginTransaction();
+        a = (A) session.get(A.class, id);
         assertNull(a);
+        tr.commit();
         session.close();
     }
 
@@ -216,11 +234,12 @@ public abstract class AbstractJustCloseJTATests extends TestCase {
         ut.begin();
 
         CompassSession session = compass.openSession();
-        long id = 1;
+        CompassTransaction tr = session.beginTransaction();
+        Long id = new Long(1);
         A a = new A();
         a.setId(id);
         session.save(a);
-        a = session.get(A.class, id);
+        a = (A) session.get(A.class, id);
         assertNotNull(a);
 
         TransactionManager transactionManager = Current.getTransactionManager();
@@ -231,19 +250,23 @@ public abstract class AbstractJustCloseJTATests extends TestCase {
         CompassSession newSession = compass.openSession();
         assertTrue(session != newSession);
         assertFalse(newSession instanceof ExistingCompassSession);
-        a = newSession.get(A.class, id);
+        CompassTransaction newTr = newSession.beginTransaction();
+        a = (A) newSession.get(A.class, id);
         assertNull(a);
+        newTr.commit();
         newSession.close();
         newUt.commit();
 
         transactionManager.resume(jtaTrans);
 
-        session.close();
+        tr.commit();
         ut.commit();
 
         session = compass.openSession();
-        a = session.get(A.class, id);
+        tr = session.beginTransaction();
+        a = (A) session.get(A.class, id);
         assertNotNull(a);
+        tr.commit();
         session.close();
     }
 
@@ -253,11 +276,11 @@ public abstract class AbstractJustCloseJTATests extends TestCase {
         ut.begin();
 
         CompassSession session = compass.openSession();
-        long id = 1;
+        Long id = new Long(1);
         A a = new A();
         a.setId(id);
         session.save(a);
-        a = session.get(A.class, id);
+        a = (A) session.get(A.class, id);
         assertNotNull(a);
 
         TransactionManager transactionManager = Current.getTransactionManager();
@@ -268,7 +291,7 @@ public abstract class AbstractJustCloseJTATests extends TestCase {
         CompassSession newSession = compass.openSession();
         assertFalse(newSession instanceof ExistingCompassSession);
         assertTrue(session != newSession);
-        a = newSession.get(A.class, id);
+        a = (A) newSession.get(A.class, id);
         assertNull(a);
         newUt.commit();
 
@@ -278,8 +301,10 @@ public abstract class AbstractJustCloseJTATests extends TestCase {
 
         // here we are lazy and let Compass manage a verifying JTa transaction
         session = compass.openSession();
+        CompassTransaction tr = session.beginTransaction();
         a = session.get(A.class, id);
         assertNotNull(a);
+        tr.commit();
         session.close();
     }
 

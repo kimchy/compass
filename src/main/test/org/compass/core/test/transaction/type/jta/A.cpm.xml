@@ -1,0 +1,17 @@
+<!DOCTYPE compass-core-mapping PUBLIC
+        "-//Compass/Compass Core Mapping DTD 2.2//EN"
+        "http://www.compass-project.org/dtd/compass-core-mapping-2.2.dtd">
+
+<compass-core-mapping package="org.compass.core.test.transaction.type.jta">
+
+    <class name="A" alias="a" root="true">
+        <id name="id"/>
+        <property name="value1">
+            <meta-data>mvalue1</meta-data>
+        </property>
+        <property name="value2">
+            <meta-data>mvalue2</meta-data>
+        </property>
+    </class>
+
+</compass-core-mapping>

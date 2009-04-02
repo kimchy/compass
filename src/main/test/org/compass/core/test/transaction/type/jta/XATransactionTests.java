@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package org.compass.core.test.transaction;
+package org.compass.core.test.transaction.type.jta;
 
 /**
  * @author kimchy
  */
-public class XANoExplicitTransactionTests extends AbstractNoExplicitJTATests {
+public class XATransactionTests extends AbstractJTATests {
 
     protected String getCompassConfig() {
-        return "/org/compass/core/test/transaction/compass.xa.cfg.xml";
+        return "/org/compass/core/test/transaction/type/jta/compass.xa.cfg.xml";
     }
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.compass.core.test.transaction;
+package org.compass.core.test.transaction.type.jta;
 
 /**
  * @author kimchy
@@ -23,6 +23,6 @@ public class JTASyncNoExplicitTransactionTests extends AbstractNoExplicitJTATest
 
 
     protected String getCompassConfig() {
-        return "/org/compass/core/test/transaction/compass.jtasync.cfg.xml";
+        return "/org/compass/core/test/transaction/type/jta/compass.jtasync.cfg.xml";
     }
 }

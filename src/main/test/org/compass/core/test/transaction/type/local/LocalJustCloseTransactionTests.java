@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.compass.core.test.transaction;
+package org.compass.core.test.transaction.type.local;
 
 import org.compass.core.CompassSession;
 import org.compass.core.impl.ExistingCompassSession;
@@ -28,7 +28,7 @@ import org.compass.core.test.AbstractTestCase;
 public class LocalJustCloseTransactionTests extends AbstractTestCase {
 
     protected String[] getMappings() {
-        return new String[]{"transaction/A.cpm.xml"};
+        return new String[]{"transaction/type/local/A.cpm.xml"};
     }
 
     public void testNestedLocalTransactionsWithCommits() throws Exception {
