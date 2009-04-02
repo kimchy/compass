@@ -66,7 +66,7 @@ public interface CompassGps {
     /**
      * Retuns <code>true</code> if the devide performs the index operaiton.
      */
-    public boolean isPerformingIndexOperation();
+    boolean isPerformingIndexOperation();
 
     /**
      * Indexes all the different devices (by calling their respective
