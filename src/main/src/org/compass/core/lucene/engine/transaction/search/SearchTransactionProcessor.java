@@ -87,14 +87,14 @@ public class SearchTransactionProcessor extends AbstractSearchTransactionProcess
     }
 
     public void update(InternalResource resource) throws SearchEngineException {
-        throw new SearchEngineException("create can not be perfoemd on a search only session");
+        throw new SearchEngineException("update can not be perfoemd on a search only session");
     }
 
     public void delete(ResourceKey resourceKey) throws SearchEngineException {
-        throw new SearchEngineException("create can not be perfoemd on a search only session");
+        throw new SearchEngineException("delete (resource) can not be perfoemd on a search only session");
     }
 
     public void delete(LuceneSearchEngineQuery query) throws SearchEngineException {
-        throw new SearchEngineException("create can not be perfoemd on a search only session");
+        throw new SearchEngineException("delete (query) can not be perfoemd on a search only session");
     }
 }
