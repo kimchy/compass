@@ -1,5 +1,5 @@
-COMPASS, Release 2.2.0
-----------------------
+COMPASS, Release 3.0.0 M1
+-------------------------
 http://www.compass-project.org
 
 
