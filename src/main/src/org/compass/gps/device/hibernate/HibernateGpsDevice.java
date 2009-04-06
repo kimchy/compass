@@ -120,9 +120,7 @@ public class HibernateGpsDevice extends AbstractParallelGpsDevice implements Pas
                 throw new HibernateGpsDeviceException(buildMessage("Native SessionFactory extractor returned null"));
             }
             if (log.isDebugEnabled()) {
-                log.debug(buildMessage("Using native EntityManagerFactory ["
-                        + nativeSessionFactory.getClass().getName() + "] extracted by ["
-                        + nativeExtractor.getClass().getName() + "]"));
+                log.debug(buildMessage("Using native SessionFactory [" + nativeSessionFactory.getClass().getName() + "] extracted by [" + nativeExtractor.getClass().getName() + "]"));
             }
         }
 
