@@ -103,7 +103,7 @@ public class DefaultLuceneSearchEngineSpellCheckSuggestBuilder implements Search
                 if (morePopular && restrictToProperty == null) {
                     restrictToProperty = spellCheckerManager.getDefaultProperty();
                 }
-                if (spellChecker == null) {
+                if (spellChecker == null || word == null || word.length() == 0) {
                     return new DefaultLuceneSearchEngineSpellSuggestions(false, new String[0]);
                 }
                 spellChecker.setAccuracy(accuracy);
