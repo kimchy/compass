@@ -1,4 +1,4 @@
-COMPASS, Release 2.1.4
+COMPASS, Release 2.1.5
 ----------------------
 http://www.compass-project.org
 
