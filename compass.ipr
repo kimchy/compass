@@ -1025,9 +1025,7 @@
         <root url="jar://$PROJECT_DIR$/lib/spring/spring-test.jar!/" />
       </CLASSES>
       <JAVADOC />
-      <SOURCES>
-        <root url="jar://$SPRING_DIR$/dist/spring-sources.jar!/" />
-      </SOURCES>
+      <SOURCES />
     </library>
     <library name="sunfsjndi">
       <CLASSES>
@@ -1163,8 +1161,5 @@
       <SOURCES />
     </library>
   </component>
-  <UsedPathMacros>
-    <macro name="SPRING_DIR" description="" />
-  </UsedPathMacros>
 </project>
 
