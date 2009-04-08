@@ -79,18 +79,25 @@ public class LuceneSearchEngineOptimizerManager implements CompassConfigurable, 
         started = true;
 
         CompassSettings settings = searchEngineFactory.getSettings();
-        if (searchEngineOptimizer.canBeScheduled()) {
-            boolean scheduledOptimizer = searchEngineFactory.getSettings().getSettingAsBoolean(LuceneEnvironment.Optimizer.SCHEDULE, true);
-            if (scheduledOptimizer) {
-                long period = (long) (settings.getSettingAsFloat(LuceneEnvironment.Optimizer.SCHEDULE_PERIOD, 10) * 1000);
-                if (logger.isInfoEnabled()) {
-                    logger.info("Starting scheduled optimizer [" + searchEngineOptimizer.getClass() + "] with period [" + period + "ms]");
-                }
+        if (!searchEngineFactory.getExecutorManager().isDisabled()) {
+            if (searchEngineOptimizer.canBeScheduled()) {
+                boolean scheduledOptimizer = searchEngineFactory.getSettings().getSettingAsBoolean(LuceneEnvironment.Optimizer.SCHEDULE, true);
+                if (scheduledOptimizer) {
+                    long period = (long) (settings.getSettingAsFloat(LuceneEnvironment.Optimizer.SCHEDULE_PERIOD, 10) * 1000);
+                    if (logger.isInfoEnabled()) {
+                        logger.info("Starting scheduled optimizer [" + searchEngineOptimizer.getClass() + "] with period [" + period + "ms]");
+                    }
 
-                ScheduledOptimizeRunnable scheduledOptimizeRunnable = new ScheduledOptimizeRunnable(searchEngineOptimizer);
-                scheduledFuture = searchEngineFactory.getExecutorManager().scheduleWithFixedDelay(
-                        scheduledOptimizeRunnable, period, period, TimeUnit.MILLISECONDS);
+                    ScheduledOptimizeRunnable scheduledOptimizeRunnable = new ScheduledOptimizeRunnable(searchEngineOptimizer);
+                    scheduledFuture = searchEngineFactory.getExecutorManager().scheduleWithFixedDelay(scheduledOptimizeRunnable, period, period, TimeUnit.MILLISECONDS);
+                }
+            } else {
+                if (logger.isInfoEnabled()) {
+                    logger.info("Scehduled optimizer is disabled since optimizer does not supports scheduling");
+                }
             }
+        } else {
+            logger.info("Schduled optimizer is disabled since executor manager is disabled");
         }
     }
 

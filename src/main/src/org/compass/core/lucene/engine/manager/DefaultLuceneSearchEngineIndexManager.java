@@ -77,19 +77,22 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         if (isRunning) {
             return;
         }
-        long indexManagerScheduleInterval = luceneSettings.getSettings().getSettingAsTimeInMillis(LuceneEnvironment.SearchEngineIndex.INDEX_MANAGER_SCHEDULE_INTERVAL, 60 * 1000);
-        if (indexManagerScheduleInterval > 0) {
-            if (log.isInfoEnabled()) {
-                log.info("Starting scheduled index manager with period [" + indexManagerScheduleInterval + "ms]");
-            }
-            ScheduledIndexManagerRunnable scheduledIndexManagerRunnable = new ScheduledIndexManagerRunnable(this);
-            scheduledIndexManagerFuture = searchEngineFactory.getExecutorManager().scheduleWithFixedDelay(scheduledIndexManagerRunnable, indexManagerScheduleInterval, indexManagerScheduleInterval, TimeUnit.MILLISECONDS);
+        if (!getExecutorManager().isDisabled()) {
+            long indexManagerScheduleInterval = luceneSettings.getSettings().getSettingAsTimeInMillis(LuceneEnvironment.SearchEngineIndex.INDEX_MANAGER_SCHEDULE_INTERVAL, 60 * 1000);
+            if (indexManagerScheduleInterval > 0) {
+                if (log.isInfoEnabled()) {
+                    log.info("Starting scheduled index manager with period [" + indexManagerScheduleInterval + "ms]");
+                }
+                ScheduledIndexManagerRunnable scheduledIndexManagerRunnable = new ScheduledIndexManagerRunnable(this);
+                scheduledIndexManagerFuture = searchEngineFactory.getExecutorManager().scheduleWithFixedDelay(scheduledIndexManagerRunnable, indexManagerScheduleInterval, indexManagerScheduleInterval, TimeUnit.MILLISECONDS);
 
-            // set the time to wait for clearing cache to 110% of the schedule time
-            setWaitForCacheInvalidationBeforeSecondStep((long) (indexManagerScheduleInterval * 1.1));
+                // set the time to wait for clearing cache to 110% of the schedule time
+                setWaitForCacheInvalidationBeforeSecondStep((long) (indexManagerScheduleInterval * 1.1));
+            } else {
+                log.info("Scheduled index manager is disabled");
+            }
         } else {
-            log.info("Not starting scheduled index manager");
-            return;
+            log.info("Scheduled index manager is disabled since executor manager is disabled");
         }
 
         indexHoldersCache.start();
@@ -250,7 +253,7 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
             searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Object>() {
                 public Object doInTransaction() throws CompassException {
                     LuceneUtils.clearLocks(writerLocks);
-                    return null; 
+                    return null;
                 }
             });
         }
@@ -487,11 +490,11 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
     }
 
     public boolean supportsConcurrentOperations() {
-        return searchEngineStore.supportsConcurrentOperations();
+        return !searchEngineFactory.getExecutorManager().isDisabled() && searchEngineStore.supportsConcurrentOperations();
     }
 
     public boolean supportsConcurrentCommits() {
-        return searchEngineStore.supportsConcurrentCommits();
+        return !searchEngineFactory.getExecutorManager().isDisabled() && searchEngineStore.supportsConcurrentCommits();
     }
 
     public void setWaitForCacheInvalidationBeforeSecondStep(long timeToWaitInMillis) {

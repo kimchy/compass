@@ -889,6 +889,14 @@ public class CompassEnvironment {
         public static final String EXECUTOR_MANAGER_TYPE = EXECUTOR_MANAGER_PREFIX + "type";
 
         /**
+         * Disabled executor manager, meaning that Compass will not spawn any new thread.
+         */
+        public abstract class Disabled {
+
+            public static final String NAME = "disabled";
+        }
+
+        /**
          * A set of settings for the scheduled executor manager (based on java.util.concurrent).
          */
         public abstract class Scheduled {

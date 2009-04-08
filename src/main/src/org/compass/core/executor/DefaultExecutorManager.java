@@ -26,12 +26,15 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.compass.core.CompassException;
 import org.compass.core.config.CompassConfigurable;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.config.ConfigurationException;
 import org.compass.core.executor.concurrent.ConcurrentExecutorManager;
+import org.compass.core.executor.disabled.DisabledExecutorManager;
 import org.compass.core.executor.spi.InternalExecutorManager;
 import org.compass.core.util.ClassUtils;
 
@@ -44,7 +47,11 @@ import org.compass.core.util.ClassUtils;
  */
 public class DefaultExecutorManager implements ExecutorManager, CompassConfigurable {
 
+    private static final Log logger = LogFactory.getLog(DefaultExecutorManager.class);
+
     private InternalExecutorManager executorManager;
+
+    private boolean disabled = false;
 
     public void configure(CompassSettings settings) throws CompassException {
 
@@ -54,6 +61,8 @@ public class DefaultExecutorManager implements ExecutorManager, CompassConfigura
             executorManagerType = ConcurrentExecutorManager.class.getName();
         } else if (executorManagerType.equals(CompassEnvironment.ExecutorManager.Scheduled.NAME)) {
             executorManagerType = ScheduledExecutorService.class.getName();
+        } else if (executorManagerType.equals(CompassEnvironment.ExecutorManager.Disabled.NAME)) {
+            executorManagerType = DisabledExecutorManager.class.getName();
         } else if (executorManagerType.equals(CompassEnvironment.ExecutorManager.WorkManager.NAME)) {
             executorManagerType = "org.compass.core.executor.workmanager.WorkManagerExecutorManager";
         } else if (executorManagerType.equals(CompassEnvironment.ExecutorManager.CommonJ.NAME)) {
@@ -69,9 +78,23 @@ public class DefaultExecutorManager implements ExecutorManager, CompassConfigura
         if (executorManager instanceof CompassConfigurable) {
             ((CompassConfigurable) executorManager).configure(settings);
         }
+
+        if (executorManager instanceof DisabledExecutorManager) {
+            disabled = true;
+            if (logger.isInfoEnabled()) {
+                logger.info("Executor Manager is disabled, no concurrent operations will be perfomed by Compass");
+            }
+        }
+    }
+
+    public boolean isDisabled() {
+        return disabled;
     }
 
     public <T> List<Future<T>> invokeAllWithLimitBailOnException(Collection<Callable<T>> tasks, int concurrencyThreshold) {
+        if (disabled) {
+            throw new UnsupportedOperationException("Executor Manager is disabled");
+        }
         List<Future<T>> futures = invokeAllWithLimit(tasks, concurrencyThreshold);
         for (Future<T> future : futures) {
             try {
@@ -89,6 +112,9 @@ public class DefaultExecutorManager implements ExecutorManager, CompassConfigura
     }
 
     public <T> List<Future<T>> invokeAllWithLimit(Collection<Callable<T>> tasks, int concurrencyThreshold) {
+        if (disabled) {
+            throw new UnsupportedOperationException("Executor Manager is disabled");
+        }
         if (tasks.size() == 0) {
             return new ArrayList<Future<T>>(0);
         }

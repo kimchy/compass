@@ -236,20 +236,26 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
             });
         }
 
-        // schedule a refresh task
-        long cacheRefreshInterval = spellCheckSettings.getSettingAsLong(LuceneEnvironment.SearchEngineIndex.CACHE_INTERVAL_INVALIDATION, 5000);
-        refreshCacheFuture = searchEngineFactory.getExecutorManager().scheduleWithFixedDelay(new TransactionalRunnable(searchEngineFactory.getTransactionContext(), new Runnable() {
-            public void run() {
-                refresh();
-            }
-        }), cacheRefreshInterval, cacheRefreshInterval, TimeUnit.MILLISECONDS);
-
-        if (spellCheckSettings.getSettingAsBoolean(LuceneEnvironment.SpellCheck.SCHEDULE, true)) {
-            rebuildFuture = searchEngineFactory.getExecutorManager().scheduleWithFixedDelay(new Runnable() {
+        if (!searchEngineFactory.getExecutorManager().isDisabled()) {
+            // schedule a refresh task
+            long cacheRefreshInterval = spellCheckSettings.getSettingAsLong(LuceneEnvironment.SearchEngineIndex.CACHE_INTERVAL_INVALIDATION, 5000);
+            refreshCacheFuture = searchEngineFactory.getExecutorManager().scheduleWithFixedDelay(new TransactionalRunnable(searchEngineFactory.getTransactionContext(), new Runnable() {
                 public void run() {
-                    rebuild();
+                    refresh();
                 }
-            }, spellCheckSettings.getSettingAsLong(LuceneEnvironment.SpellCheck.SCHEDULE_INITIAL_DELAY, 10), spellCheckSettings.getSettingAsLong(LuceneEnvironment.SpellCheck.SCHEDULE_INTERVAL, 10) * 60, TimeUnit.SECONDS);
+            }), cacheRefreshInterval, cacheRefreshInterval, TimeUnit.MILLISECONDS);
+
+            if (spellCheckSettings.getSettingAsBoolean(LuceneEnvironment.SpellCheck.SCHEDULE, true)) {
+                rebuildFuture = searchEngineFactory.getExecutorManager().scheduleWithFixedDelay(new Runnable() {
+                    public void run() {
+                        rebuild();
+                    }
+                }, spellCheckSettings.getSettingAsLong(LuceneEnvironment.SpellCheck.SCHEDULE_INITIAL_DELAY, 10), spellCheckSettings.getSettingAsLong(LuceneEnvironment.SpellCheck.SCHEDULE_INTERVAL, 10) * 60, TimeUnit.SECONDS);
+            }
+        } else {
+            if (log.isInfoEnabled()) {
+                log.info("Scheduled spell check index refresh and rebuild are disabled due to a disabled executor manager");
+            }
         }
     }
 
@@ -315,6 +321,9 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
 
     public void concurrentRefresh() throws SearchEngineException {
         checkIfStarted();
+        if (searchEngineFactory.getExecutorManager().isDisabled()) {
+            refresh();
+        }
         ArrayList<Callable<Object>> rebuildTasks = new ArrayList<Callable<Object>>();
         for (String subIndex : indexStore.getSubIndexes()) {
             rebuildTasks.add(new RefreshTask(subIndex));
@@ -378,6 +387,9 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
 
     public boolean concurrentRebuild() throws SearchEngineException {
         checkIfStarted();
+        if (searchEngineFactory.getExecutorManager().isDisabled()) {
+            return rebuild();
+        }
         ArrayList<Callable<Boolean>> rebuildTasks = new ArrayList<Callable<Boolean>>();
         for (String subIndex : indexStore.getSubIndexes()) {
             rebuildTasks.add(new RebuildTask(subIndex));

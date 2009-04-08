@@ -32,6 +32,11 @@ import org.compass.core.executor.spi.InternalExecutorManager;
 public interface ExecutorManager extends InternalExecutorManager {
 
     /**
+     * Returns <code>true</code> if the executor manager is disabled or not.
+     */
+    boolean isDisabled();
+
+    /**
      * Similar to {@link #invokeAll(java.util.Collection)}, but only uses it if the number of tasks passes
      * the concurrent limit.
      */

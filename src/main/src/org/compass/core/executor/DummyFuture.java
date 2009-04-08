@@ -27,7 +27,7 @@ import java.util.concurrent.TimeoutException;
  *
  * @author kimchy
  */
-class DummyFuture<T> implements Future<T> {
+public class DummyFuture<T> implements Future<T> {
 
     private Exception e;
 

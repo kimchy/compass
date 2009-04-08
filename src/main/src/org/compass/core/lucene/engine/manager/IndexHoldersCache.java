@@ -66,7 +66,7 @@ public class IndexHoldersCache {
     private final ConcurrentMap<String, AtomicInteger> debugOpenHoldersCount;
 
     private final boolean debug;
-    
+
     public IndexHoldersCache(LuceneSearchEngineIndexManager indexManager) {
         this.indexManager = indexManager;
         for (String subIndex : indexManager.getSubIndexes()) {
@@ -83,16 +83,20 @@ public class IndexHoldersCache {
     }
 
     public void start() {
-        cacheAsyncInvalidation = indexManager.getSettings().getSettings().getSettingAsBoolean(LuceneEnvironment.SearchEngineIndex.CACHE_ASYNC_INVALIDATION, true);
-        long cacheInvalidationInterval = indexManager.getSettings().getCacheInvalidationInterval();
-        if (cacheInvalidationInterval > 0 && cacheAsyncInvalidation) {
-            if (logger.isInfoEnabled()) {
-                logger.info("Starting scheduled refresh cache with period [" + cacheInvalidationInterval + "ms]");
+        if (!indexManager.getExecutorManager().isDisabled()) {
+            cacheAsyncInvalidation = indexManager.getSettings().getSettings().getSettingAsBoolean(LuceneEnvironment.SearchEngineIndex.CACHE_ASYNC_INVALIDATION, true);
+            long cacheInvalidationInterval = indexManager.getSettings().getCacheInvalidationInterval();
+            if (cacheInvalidationInterval > 0 && cacheAsyncInvalidation) {
+                if (logger.isInfoEnabled()) {
+                    logger.info("Starting scheduled refresh cache with period [" + cacheInvalidationInterval + "ms]");
+                }
+                ScheduledRefreshCacheRunnable scheduledRefreshCacheRunnable = new ScheduledRefreshCacheRunnable();
+                scheduledRefreshCacheFuture = indexManager.getExecutorManager().scheduleWithFixedDelay(scheduledRefreshCacheRunnable, cacheInvalidationInterval, cacheInvalidationInterval, TimeUnit.MILLISECONDS);
+            } else {
+                logger.info("Scheduled refresh cache is disabled");
             }
-            ScheduledRefreshCacheRunnable scheduledRefreshCacheRunnable = new ScheduledRefreshCacheRunnable();
-            scheduledRefreshCacheFuture = indexManager.getExecutorManager().scheduleWithFixedDelay(scheduledRefreshCacheRunnable, cacheInvalidationInterval, cacheInvalidationInterval, TimeUnit.MILLISECONDS);
         } else {
-            logger.info("Not starting scheduled refresh cache");
+            logger.info("Scheduled refresh cache is disabled since executor manager is disabled");
         }
     }
 
@@ -107,7 +111,7 @@ public class IndexHoldersCache {
         if (indexManager.getSearchEngineFactory().isDebug()) {
             for (Map.Entry<String, AtomicInteger> entry : debugOpenHoldersCount.entrySet()) {
                 if (entry.getValue().get() > 0) {
-                    logger.error("[CACHE HOLDER] Sub Index [" + entry.getKey() +  "] has [" + entry.getValue() + "] holder(s) open");
+                    logger.error("[CACHE HOLDER] Sub Index [" + entry.getKey() + "] has [" + entry.getValue() + "] holder(s) open");
                 }
             }
         }
