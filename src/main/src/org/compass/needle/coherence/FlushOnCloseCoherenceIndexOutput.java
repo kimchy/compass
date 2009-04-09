@@ -121,6 +121,8 @@ public class FlushOnCloseCoherenceIndexOutput extends IndexOutput {
             dir.getCache().putAll(bucketsMap);
         } catch (Exception e) {
             throw new CoherenceDirectoryException(dir.getIndexName(), fileName, "Failed to flush buckets", e);
+        } finally {
+            dir.getOnGoingIndexOutputs().remove(fileName);
         }
 
         currentBuffer = null;
