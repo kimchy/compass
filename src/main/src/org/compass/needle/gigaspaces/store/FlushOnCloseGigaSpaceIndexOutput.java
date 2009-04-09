@@ -121,6 +121,8 @@ public class FlushOnCloseGigaSpaceIndexOutput extends IndexOutput {
             dir.getSpace().writeMultiple(entries, null, Lease.FOREVER);
         } catch (TransactionException e) {
             throw new GigaSpaceDirectoryException(dir.getIndexName(), fileName, "Failed to write to space", e);
+        } finally {
+            dir.getOnGoingIndexOutputs().remove(fileName);
         }
 
         currentBuffer = null;
