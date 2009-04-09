@@ -17,6 +17,7 @@
 package org.compass.core.impl;
 
 import java.lang.ref.WeakReference;
+import java.security.AccessControlException;
 import javax.naming.NamingException;
 import javax.naming.Reference;
 import javax.naming.StringRefAddr;
@@ -169,11 +170,16 @@ public class DefaultCompass implements InternalCompass {
         }
 
         if (settings.getSettingAsBoolean(CompassEnvironment.REGISTER_SHUTDOWN_HOOK, true)) {
-            shutdownThread = new ShutdownThread(this);
-            if (logger.isDebugEnabled()) {
-                logger.debug("Registering shutdown hook [" + System.identityHashCode(shutdownThread) + "]");
+            try {
+                shutdownThread = new ShutdownThread(this);
+
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Registering shutdown hook [" + System.identityHashCode(shutdownThread) + "]");
+                }
+                Runtime.getRuntime().addShutdownHook(shutdownThread);
+            } catch (AccessControlException e) {
+                // we are not allowed to register a shutdown thread, ignore
             }
-            Runtime.getRuntime().addShutdownHook(shutdownThread);
         }
 
         this.debug = settings.getSettingAsBoolean(CompassEnvironment.DEBUG, false);
