@@ -17,7 +17,6 @@
 package org.compass.gps.device.jdo;
 
 import javax.jdo.PersistenceManagerFactory;
-import javax.jdo.listener.CreateLifecycleListener;
 import javax.jdo.listener.DeleteLifecycleListener;
 import javax.jdo.listener.InstanceLifecycleEvent;
 import javax.jdo.listener.StoreLifecycleListener;
@@ -93,7 +92,8 @@ public class Jdo2GpsDevice extends JdoGpsDevice implements PassiveMirrorGpsDevic
         }
     }
 
-    private class JdoGpsInstanceLifecycleListener implements DeleteLifecycleListener, StoreLifecycleListener, CreateLifecycleListener {
+    // we don't implement CreateLifecycleListener since no id is set in this case , and store is called anyhow
+    private class JdoGpsInstanceLifecycleListener implements DeleteLifecycleListener, StoreLifecycleListener/*, CreateLifecycleListener*/ {
 
         public JdoGpsInstanceLifecycleListener() {
         }

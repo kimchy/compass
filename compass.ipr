@@ -1167,6 +1167,15 @@
       <JAVADOC />
       <SOURCES />
     </library>
+    <library name="gae">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/gae/appengine-local-runtime.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/gae/appengine-api-stubs.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/gae/appengine-api.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
   </component>
 </project>
 
