@@ -62,6 +62,10 @@ public abstract class JpaEntitiesLocatorDetector {
                         return "org.compass.gps.device.jpa.entities.OpenJPAJpaEntitiesLocator";
                     }
 
+                    public String onDatanucleus() {
+                        return "org.compass.gps.device.jpa.entities.DatanucleusJpaEntitiesLocator";
+                    }
+
                     public String onUnknown() {
                         return DefaultJpaEntitiesLocator.class.getName();
                     }

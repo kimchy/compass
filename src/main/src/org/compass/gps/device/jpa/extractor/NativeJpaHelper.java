@@ -87,6 +87,8 @@ public abstract class NativeJpaHelper {
 
         T onEclipseLink();
 
+        T onDatanucleus();
+
         T onUnknown();
     }
 
@@ -98,7 +100,12 @@ public abstract class NativeJpaHelper {
         for (Object anInterface : interfaces) {
             interfacesAsStrings.add(((Class) anInterface).getName());
         }
-        interfacesAsStrings.add(nativeEmf.getClass().getName());
+
+        Class clazz = nativeEmf.getClass();
+        while (clazz != Object.class) {
+            interfacesAsStrings.add(clazz.getName());
+            clazz = clazz.getSuperclass();
+        }
 
         T retVal;
         if (interfacesAsStrings.contains("org.hibernate.ejb.HibernateEntityManagerFactory")) {
@@ -109,6 +116,8 @@ public abstract class NativeJpaHelper {
             retVal = callback.onEclipseLink();
         } else if (interfacesAsStrings.contains("org.apache.openjpa.persistence.OpenJPAEntityManagerFactory")) {
             retVal = callback.onOpenJPA();
+        } else if (interfacesAsStrings.contains("org.datanucleus.jpa.EntityManagerFactoryImpl")) {
+            retVal = callback.onDatanucleus();
         } else {
             retVal = callback.onUnknown();
         }

@@ -64,6 +64,10 @@ public abstract class JpaEntityLifecycleInjectorDetector {
                         return "org.compass.gps.device.jpa.lifecycle.OpenJPAJpaEntityLifecycleInjector";
                     }
 
+                    public String onDatanucleus() {
+                        return "org.compass.gps.device.jpa.lifecycle.DatanucleusEntityLifecycleInjector";
+                    }
+
                     public String onUnknown() {
                         return null;
                     }
