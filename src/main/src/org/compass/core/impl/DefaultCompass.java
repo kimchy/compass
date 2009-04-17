@@ -76,8 +76,6 @@ public class DefaultCompass implements InternalCompass {
 
     private static final long serialVersionUID = 3256446884762891059L;
 
-    private static final IdentifierGenerator UUID_GENERATOR = new UUIDGenerator();
-
     private final String name;
 
     private String uuid;
@@ -369,6 +367,7 @@ public class DefaultCompass implements InternalCompass {
         }
         // JNDI
         try {
+            IdentifierGenerator UUID_GENERATOR = new UUIDGenerator();
             uuid = (String) UUID_GENERATOR.generate();
         } catch (Exception e) {
             throw new CompassException("Could not generate UUID for JNDI binding");
