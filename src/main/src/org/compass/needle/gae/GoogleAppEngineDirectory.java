@@ -101,6 +101,9 @@ public class GoogleAppEngineDirectory extends Directory {
     }
 
     public boolean fileExists(String name) throws IOException {
+        if (onGoingIndexOutputs.containsKey(name)) {
+            return true;
+        }
         try {
             fetchMetaData(name);
             return true;
