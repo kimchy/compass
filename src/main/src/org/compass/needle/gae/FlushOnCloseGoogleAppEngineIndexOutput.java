@@ -111,9 +111,8 @@ public class FlushOnCloseGoogleAppEngineIndexOutput extends IndexOutput {
         metaDataEntity.setProperty("modified", System.currentTimeMillis());
         entities.add(metaDataEntity);
 
-
         for (int i = 0; i < (buckets.size()); i++) {
-            Entity contentEntity = new Entity(GoogleAppEngineDirectory.CONTENT_KEY_KIND, fileName + i, dir.getIndexKey());
+            Entity contentEntity = new Entity(GoogleAppEngineDirectory.CONTENT_KEY_KIND, fileName + i, metaDataEntity.getKey());
             if (i == (buckets.size() - 1)) {
                 // the last buffer is (probably) smaller than the bucket size, make sure we use only the part that has data
                 byte[] buff = new byte[(int) (length - (bucketSize * i))];
