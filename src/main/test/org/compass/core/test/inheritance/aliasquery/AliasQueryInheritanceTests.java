@@ -90,8 +90,22 @@ public class AliasQueryInheritanceTests extends AbstractTestCase {
 
         a = session.load(A.class, 1);
         assertEquals(A.class, a.getClass());
+
+        // poly get/load
+        a = session.load(A.class, 2);
+        assertEquals(B.class, a.getClass());
+
+        // poly get/load
+        a = session.load(A.class, 3);
+        assertEquals(C.class, a.getClass());
+
         a = session.load(B.class, 2);
         assertEquals(B.class, a.getClass());
+
+        // poly get/load
+        a = session.load(B.class, 3);
+        assertEquals(C.class, a.getClass());
+
         a = session.load(C.class, 3);
         assertEquals(C.class, a.getClass());
 
