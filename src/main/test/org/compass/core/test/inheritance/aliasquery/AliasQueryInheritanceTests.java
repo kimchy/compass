@@ -45,7 +45,7 @@ public class AliasQueryInheritanceTests extends AbstractTestCase {
         }
     }
 
-    public void testPolyAliasQueryString() {
+    public void testPolyAlias() {
         CompassSession session = openSession();
         A a  = new A();
         a.id = 1;
@@ -87,6 +87,13 @@ public class AliasQueryInheritanceTests extends AbstractTestCase {
 
         assertEquals(1, session.queryBuilder().polyAlias("c").hits().length());
         assertEquals(1, session.queryBuilder().alias("c").hits().length());
+
+        a = session.load(A.class, 1);
+        assertEquals(A.class, a.getClass());
+        a = session.load(B.class, 2);
+        assertEquals(B.class, a.getClass());
+        a = session.load(C.class, 3);
+        assertEquals(C.class, a.getClass());
 
         session.close();
     }
