@@ -49,20 +49,44 @@ public class AliasQueryInheritanceTests extends AbstractTestCase {
         CompassSession session = openSession();
         A a  = new A();
         a.id = 1;
+        a.valueA = "valueA";
         session.save(a);
         session.flush();
 
         B b = new B();
         b.id = 2;
+        b.valueA = "valueA";
+        b.valueB = "valueB";
         session.save(b);
         session.flush();
 
         C c  = new C();
         c.id = 3;
+        c.valueA = "valueA";
+        c.valueB = "valueB";
+        c.valueC = "valueC";
         session.save(c);
         session.flush();
 
         assertEquals(3, session.find("alias:a").length());
+
+        assertEquals(3, session.find("a.valueA:valueA").length());
+        assertEquals(2, session.find("b.valueA:valueA").length());
+        assertEquals(1, session.find("c.valueA:valueA").length());
+
+        assertEquals(2, session.find("b.valueB:valueB").length());
+        assertEquals(1, session.find("c.valueB:valueB").length());
+
+        assertEquals(1, session.find("c.valueC:valueC").length());
+
+        assertEquals(3, session.queryBuilder().polyAlias("a").hits().length());
+        assertEquals(1, session.queryBuilder().alias("a").hits().length());
+
+        assertEquals(2, session.queryBuilder().polyAlias("b").hits().length());
+        assertEquals(1, session.queryBuilder().alias("b").hits().length());
+
+        assertEquals(1, session.queryBuilder().polyAlias("c").hits().length());
+        assertEquals(1, session.queryBuilder().alias("c").hits().length());
 
         session.close();
     }
