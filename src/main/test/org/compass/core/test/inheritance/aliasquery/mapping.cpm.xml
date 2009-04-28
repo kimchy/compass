@@ -1,0 +1,30 @@
+<!DOCTYPE compass-core-mapping PUBLIC
+    "-//Compass/Compass Core Mapping DTD 2.2//EN"
+    "http://www.compass-project.org/dtd/compass-core-mapping-2.2.dtd">
+
+<compass-core-mapping package="org.compass.core.test.inheritance.aliasquery">
+
+    <class name="A" alias="a" poly="false">
+
+        <id name="id" accessor="field" />
+
+        <property name="valueA"  accessor="field">
+            <meta-data>valueA</meta-data>
+        </property>
+    </class>
+
+    <class name="B" alias="b" extends="a" poly="false">
+
+        <property name="valueB" accessor="field">
+            <meta-data>valueB</meta-data>
+        </property>
+    </class>
+
+    <class name="C" alias="c" extends="b" poly="false">
+
+        <property name="valueC" accessor="field">
+            <meta-data>valueC</meta-data>
+        </property>
+    </class>
+
+</compass-core-mapping>

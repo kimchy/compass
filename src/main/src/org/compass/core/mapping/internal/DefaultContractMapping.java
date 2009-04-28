@@ -28,6 +28,8 @@ public class DefaultContractMapping extends AbstractMultipleMapping implements I
 
     private String[] extendedAliases = new String[0];
 
+    private String[] recursiveExtendedAliases = new String[0];
+
     private String[] extendingAliases = new String[0];
 
     private String analyzer;
@@ -60,6 +62,14 @@ public class DefaultContractMapping extends AbstractMultipleMapping implements I
 
     public void setExtendedAliases(String[] extendedMappings) {
         this.extendedAliases = extendedMappings;
+    }
+
+    public String[] getRecursiveExtendedAliases() {
+        return recursiveExtendedAliases;
+    }
+
+    public void setRecursiveExtendedAliases(String[] recursiveExtendedAliases) {
+        this.recursiveExtendedAliases = recursiveExtendedAliases;
     }
 
     public String[] getExtendingAliases() {

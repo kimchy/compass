@@ -35,9 +35,15 @@ public interface AliasMapping extends MultipleMapping {
     String getAlias();
 
     /**
-     * Returns a list of aliases that this alias extends.
+     * Returns a list of aliases that this alias extends directly.
      */
     String[] getExtendedAliases();
+
+    /**
+     * Returns all the aliases this alias extends, in a recursive manner, including
+     * gradparents and so on.
+     */
+    String[] getRecursiveExtendedAliases();
 
     /**
      * Returns a list of all the aliases that extend this mapping. Note,

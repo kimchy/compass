@@ -28,6 +28,7 @@ public abstract class QueryParserUtils {
         BooleanQuery query = new BooleanQuery();
         query.add(new TermQuery(new Term(searchEngineFactory.getAliasProperty(), value)), BooleanClause.Occur.SHOULD);
         query.add(new TermQuery(new Term(searchEngineFactory.getExtendedAliasProperty(), value)), BooleanClause.Occur.SHOULD);
+        query.setMinimumNumberShouldMatch(1);
         return query;
     }
 

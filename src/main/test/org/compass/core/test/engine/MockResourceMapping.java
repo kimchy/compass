@@ -163,6 +163,13 @@ public class MockResourceMapping extends AbstractMultipleMapping implements Inte
         this.extendedAliases = extendedMappings;
     }
 
+    public String[] getRecursiveExtendedAliases() {
+        return new String[0];
+    }
+
+    public void setRecursiveExtendedAliases(String[] recursiveExtendedAliases) {
+    }
+
     public void setSubIndexHash(SubIndexHash subIndexHash) {
         this.subIndexHash = subIndexHash;
     }

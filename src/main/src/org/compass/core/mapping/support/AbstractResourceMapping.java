@@ -50,6 +50,8 @@ public abstract class AbstractResourceMapping extends AbstractMultipleMapping im
 
     private String[] extendedAliases = new String[0];
 
+    private String[] recursiveExtendedAliases = new String[0];
+
     private String[] extendingAliases = new String[0];
 
     private String analyzer;
@@ -125,6 +127,7 @@ public abstract class AbstractResourceMapping extends AbstractMultipleMapping im
         resourceMapping.setAlias(getAlias());
         resourceMapping.setSubIndexHash(getSubIndexHash());
         resourceMapping.setExtendedAliases(getExtendedAliases());
+        resourceMapping.setRecursiveExtendedAliases(getRecursiveExtendedAliases());
         resourceMapping.setExtendingAliases(getExtendingAliases());
         resourceMapping.setRoot(isRoot());
         resourceMapping.setBoost(getBoost());
@@ -278,6 +281,14 @@ public abstract class AbstractResourceMapping extends AbstractMultipleMapping im
 
     public void setExtendedAliases(String[] extendedMappings) {
         this.extendedAliases = extendedMappings;
+    }
+
+    public String[] getRecursiveExtendedAliases() {
+        return recursiveExtendedAliases;
+    }
+
+    public void setRecursiveExtendedAliases(String[] recursiveExtendedAliases) {
+        this.recursiveExtendedAliases = recursiveExtendedAliases;
     }
 
     public void setUIDPath(String uid) {

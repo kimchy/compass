@@ -101,9 +101,9 @@ public class ResourceEnhancer {
         String extendedAliasProperty = searchEngineFactory.getExtendedAliasProperty();
         resource.removeProperties(extendedAliasProperty);
         ResourceMapping resourceMapping = resource.getResourceMapping();
-        for (int i = 0; i < resourceMapping.getExtendedAliases().length; i++) {
+        for (int i = 0; i < resourceMapping.getRecursiveExtendedAliases().length; i++) {
             LuceneProperty extendedAliasProp = (LuceneProperty) searchEngineFactory.getResourceFactory().createProperty(extendedAliasProperty,
-                    resourceMapping.getExtendedAliases()[i], Property.Store.NO, Property.Index.NOT_ANALYZED);
+                    resourceMapping.getRecursiveExtendedAliases()[i], Property.Store.NO, Property.Index.NOT_ANALYZED);
             extendedAliasProp.getField().setOmitNorms(true);
             extendedAliasProp.getField().setOmitTf(true);
             resource.addProperty(extendedAliasProp);

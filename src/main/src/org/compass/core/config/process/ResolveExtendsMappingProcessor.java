@@ -17,8 +17,10 @@
 package org.compass.core.config.process;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import org.compass.core.config.CompassSettings;
 import org.compass.core.converter.ConverterLookup;
@@ -45,7 +47,11 @@ public class ResolveExtendsMappingProcessor implements MappingProcessor {
         ArrayList<AliasMapping> innerMappingsCopy = new ArrayList<AliasMapping>();
         for (AliasMapping origAliasMapping : compassMapping.getMappings()) {
             InternalAliasMapping aliasMapping = (InternalAliasMapping) origAliasMapping.shallowCopy();
-            resolveExtends(compassMapping, aliasMapping, origAliasMapping);
+
+            Set<String> recursiveExtendedAliases = new HashSet<String>();
+            resolveExtends(compassMapping, aliasMapping, origAliasMapping, recursiveExtendedAliases);
+            aliasMapping.setRecursiveExtendedAliases(recursiveExtendedAliases.toArray(new String[recursiveExtendedAliases.size()]));
+
             innerMappingsCopy.add(aliasMapping);
         }
         ((InternalCompassMapping) compassMapping).clearMappings();
@@ -86,12 +92,15 @@ public class ResolveExtendsMappingProcessor implements MappingProcessor {
     /**
      * Resolves (recursivly) all the extended aliases and addes their mappings (copy) into the alias mapping.
      */
-    private void resolveExtends(CompassMapping compassMapping, InternalAliasMapping aliasMapping, AliasMapping copyFromAliasMapping)
+    private void resolveExtends(CompassMapping compassMapping, InternalAliasMapping aliasMapping, AliasMapping copyFromAliasMapping, Set<String> recuresiveExtendedAliases)
             throws MappingException {
 
+        Collections.addAll(recuresiveExtendedAliases, copyFromAliasMapping.getExtendedAliases());
+        
         if (copyFromAliasMapping.getExtendedAliases() != null) {
             for (int i = 0; i < copyFromAliasMapping.getExtendedAliases().length; i++) {
                 String extendedAlias = copyFromAliasMapping.getExtendedAliases()[i];
+
                 AliasMapping extendedAliasMapping = compassMapping.getAliasMapping(extendedAlias);
                 if (extendedAliasMapping == null) {
                     throw new MappingException("Failed to find alias [" + extendedAlias + "] in alias ["
@@ -100,7 +109,7 @@ public class ResolveExtendsMappingProcessor implements MappingProcessor {
 
                 // recursivly call in order to resolve extends. Note, we copy the extended alias mapping
                 // since we do not share mappings
-                resolveExtends(compassMapping, aliasMapping, (AliasMapping) extendedAliasMapping.copy());
+                resolveExtends(compassMapping, aliasMapping, (AliasMapping) extendedAliasMapping.copy(), recuresiveExtendedAliases);
             }
         }
 

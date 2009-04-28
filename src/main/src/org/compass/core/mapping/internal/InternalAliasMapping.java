@@ -35,6 +35,8 @@ public interface InternalAliasMapping extends AliasMapping, InternalMultipleMapp
      */
     void setExtendedAliases(String[] extendedMappings);
 
+    void setRecursiveExtendedAliases(String[] recursiveExtendedAliases);
+
     /**
      * Sets a list of all the aliases that extend this mapping. Note,
      * this is a list of all the aliases down the food chain, not just the
