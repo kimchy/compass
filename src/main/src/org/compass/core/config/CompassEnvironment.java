@@ -217,6 +217,8 @@ public class CompassEnvironment {
 
                 public static final String ENUM = "enum";
 
+                public static final String UUID = "uuid";
+
                 public static final String STRINGBUILDER = "stringbuilder";
             }
 
@@ -283,6 +285,8 @@ public class CompassEnvironment {
                 public static final String STRINGBUILDER = "stringbuilder";
 
                 public static final String ENUM = "enum";
+
+                public static final String UUID = "uuid";
 
                 public static final String URL = "url";
 

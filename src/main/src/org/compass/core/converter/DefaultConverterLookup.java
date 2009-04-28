@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -148,6 +149,7 @@ public class DefaultConverterLookup implements ConverterLookup {
         defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Simple.STRINGBUFFER, StringBufferConverter.class);
         defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Simple.STRINGBUILDER, StringBuilderConverter.class);
         defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Simple.ENUM, EnumConverter.class);
+        defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Simple.UUID, UUIDConverter.class);
         defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Simple.URL, URLConverter.class);
         defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Extendend.FILE, FileConverter.class);
         defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Extendend.INPUT_STREAM, InputStreamConverter.class);
@@ -206,6 +208,8 @@ public class DefaultConverterLookup implements ConverterLookup {
                 StringBuilder.class, new StringBuilderConverter());
         addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Simple.ENUM,
                 Enum.class, new EnumConverter());
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Simple.UUID,
+                UUID.class, new UUIDConverter());
         addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Simple.URL,
                 URL.class, new URLConverter());
         addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Simple.URI,
