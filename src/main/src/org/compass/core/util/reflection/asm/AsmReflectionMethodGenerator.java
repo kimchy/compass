@@ -70,7 +70,7 @@ public class AsmReflectionMethodGenerator {
 
                 ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
 
-                cw.visit(Opcodes.V1_4, Opcodes.ACC_PUBLIC,
+                cw.visit(Opcodes.V1_5, Opcodes.ACC_PUBLIC,
                         classInternalName, null, PLAIN_PROCEDURE_INTERNAL_NAME,
                         new String[]{Type.getInternalName(interfaceClass)});
 

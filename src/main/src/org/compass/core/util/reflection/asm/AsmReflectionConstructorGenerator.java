@@ -65,7 +65,7 @@ public class AsmReflectionConstructorGenerator {
                 String classInternalName = className.replace('.', '/'); // build internal name for ASM
 
                 ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
-                cw.visit(Opcodes.V1_4, Opcodes.ACC_PUBLIC + Opcodes.ACC_SUPER,
+                cw.visit(Opcodes.V1_5, Opcodes.ACC_PUBLIC + Opcodes.ACC_SUPER,
                         classInternalName, null, OBJECT_INTERNAL_NAME,
                         REFLECTIONCONSTRUCTOR_INTERNAL_NAME);
 
