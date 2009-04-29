@@ -330,26 +330,6 @@ public class LocalCompassBean implements FactoryBean, InitializingBean, Disposab
             }
         }
 
-        if (dataSource != null) {
-            ExternalDataSourceProvider.setDataSource(dataSource);
-            if (config.getSettings().getSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.CLASS) == null) {
-                config.getSettings().setSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.CLASS,
-                        ExternalDataSourceProvider.class.getName());
-            }
-        }
-
-        String compassTransactionFactory = config.getSettings().getSetting(CompassEnvironment.Transaction.FACTORY);
-        if (compassTransactionFactory == null && transactionManager != null) {
-            // if the transaciton manager is set and a transcation factory is not set, default to the SpringSync one.
-            config.getSettings().setSetting(CompassEnvironment.Transaction.FACTORY, SpringSyncTransactionFactory.class.getName());
-        }
-        if (compassTransactionFactory != null && compassTransactionFactory.equals(SpringSyncTransactionFactory.class.getName())) {
-            if (transactionManager == null) {
-                throw new IllegalArgumentException("When using SpringSyncTransactionFactory the transactionManager property must be set");
-            }
-        }
-        SpringSyncTransactionFactory.setTransactionManager(transactionManager);
-
         if (convertersByName != null) {
             for (Map.Entry<String, Converter> entry : convertersByName.entrySet()) {
                 config.registerConverter(entry.getKey(), entry.getValue());
@@ -395,6 +375,28 @@ public class LocalCompassBean implements FactoryBean, InitializingBean, Disposab
                 }
             }
         }
+
+        // we do this after the proeprties placeholder hack, so if other Compass beans are created beacuse
+        // of it, we still maintain the correct thread local setting of the data source and transaction manager
+        if (dataSource != null) {
+            ExternalDataSourceProvider.setDataSource(dataSource);
+            if (config.getSettings().getSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.CLASS) == null) {
+                config.getSettings().setSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.CLASS,
+                        ExternalDataSourceProvider.class.getName());
+            }
+        }
+
+        String compassTransactionFactory = config.getSettings().getSetting(CompassEnvironment.Transaction.FACTORY);
+        if (compassTransactionFactory == null && transactionManager != null) {
+            // if the transaciton manager is set and a transcation factory is not set, default to the SpringSync one.
+            config.getSettings().setSetting(CompassEnvironment.Transaction.FACTORY, SpringSyncTransactionFactory.class.getName());
+        }
+        if (compassTransactionFactory != null && compassTransactionFactory.equals(SpringSyncTransactionFactory.class.getName())) {
+            if (transactionManager == null) {
+                throw new IllegalArgumentException("When using SpringSyncTransactionFactory the transactionManager property must be set");
+            }
+        }
+        SpringSyncTransactionFactory.setTransactionManager(transactionManager);
 
         if (postProcessor != null) {
             postProcessor.process(config);
