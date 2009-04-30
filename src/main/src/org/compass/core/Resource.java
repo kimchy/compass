@@ -154,10 +154,8 @@ public interface Resource extends AliasedObject, Serializable {
     Resource addProperty(Property property);
 
     /**
-     * Sets a property to the resource (removes then adds) based on resource mapping definitions. If
-     * the property already exists in the resource (the name exists), it will be
-     * added on top of it (won't replace it). ONLY use this method with resource
-     * mapping.
+     * Sets a property to the resource (removes then adds) based on resource mapping definitions.
+     * ONLY use this method with resource mapping.
      *
      * @param name  the name of the property
      * @param value the value to be set (will be converted to a string).
@@ -166,9 +164,8 @@ public interface Resource extends AliasedObject, Serializable {
     Resource setProperty(String name, Object value) throws SearchEngineException;
 
     /**
-     * Sets a property to the resource (removes then adds) based on resource mapping definitions. If
-     * the property already exists in the resource (the name exists), it will be
-     * added on top of it (won't replace it). ONLY use this method with resource
+     * Sets a property to the resource (removes then adds) based on resource mapping definitions..
+     * ONLY use this method with resource
      * mapping.
      *
      * @param name  the name of the property
@@ -178,11 +175,7 @@ public interface Resource extends AliasedObject, Serializable {
     Resource setProperty(String name, Reader value) throws SearchEngineException;
 
     /**
-     * Sest a property to the resource (removes then adds). If the property already exists in the
-     * resource (the name exists), it will be added on top of it (won't replace
-     * it). Note: Compass adds all properties specified in mapping file, adding
-     * extra properties to a Resource will make the index out of sync with
-     * mapping.
+     * Sest a property to the resource (removes then adds).
      *
      * @param property The properyt to add
      */
