@@ -49,7 +49,7 @@ public class GoogleAppEngineLockFactory extends LockFactory {
     }
 
     private String makeLockName(String lockName, String indexName) {
-        // TODO remove the index name in the next release
+        // TODO remove the index name in the next release of GAE, bug in the local datastore
         return indexName + "-" + lockName;
     }
 
