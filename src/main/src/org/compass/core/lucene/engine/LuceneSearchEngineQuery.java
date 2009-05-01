@@ -289,7 +289,7 @@ public class LuceneSearchEngineQuery implements SearchEngineQuery, Cloneable {
             return "<null>";
         }
         // remove the "zzz-all:" prefix
-        return query.toString().replace(defaultSearchProperty + ":", "");
+        return query.toString(defaultSearchProperty);
     }
 
     public Object clone() throws CloneNotSupportedException {
