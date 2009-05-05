@@ -27,7 +27,6 @@ import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.store.AbstractDirectoryStore;
 import org.compass.core.lucene.engine.store.CopyFromHolder;
-import org.compass.needle.gigaspaces.store.GigaSpaceDirectory;
 
 /**
  * A plugin lucene store for Compass. Uses {@link GoogleAppEngineDirectory}
@@ -43,20 +42,29 @@ public class GoogleAppEngineDirectoryStore extends AbstractDirectoryStore implem
 
     public static final String FLUSH_RATE_PROP = "compass.engine.store.gae.flushRate";
 
+    /**
+     * Should the directory cache file meta data instead of fetching it from GAE each time. Defatuls to
+     * <code>true</code>.
+     */
+    public static final String CACHE_META_DATA_PROP = "compass.engine.store.gae.cacheMetaData";
+
     private String indexName;
 
     private int bucketSize;
 
     private int flushRate;
 
+    private boolean cacheMetaData;
+
     public void configure(CompassSettings settings) throws CompassException {
         this.indexName = settings.getSetting(CompassEnvironment.CONNECTION).substring(PROTOCOL.length());
-        bucketSize = (int) settings.getSettingAsBytes(BUCKET_SIZE_PROP, GigaSpaceDirectory.DEFAULT_BUCKET_SIZE);
-        flushRate = settings.getSettingAsInt(FLUSH_RATE_PROP, GigaSpaceDirectory.DEFAULT_FLUSH_RATE);
+        bucketSize = (int) settings.getSettingAsBytes(BUCKET_SIZE_PROP, GoogleAppEngineDirectory.DEFAULT_BUCKET_SIZE);
+        flushRate = settings.getSettingAsInt(FLUSH_RATE_PROP, GoogleAppEngineDirectory.DEFAULT_FLUSH_RATE);
+        cacheMetaData = settings.getSettingAsBoolean(CACHE_META_DATA_PROP, GoogleAppEngineDirectory.DEFAULT_CACHE_META_DATA);
     }
 
     public Directory open(String subContext, String subIndex) throws SearchEngineException {
-        return new GoogleAppEngineDirectory(buildFullIndexName(subContext, subIndex), bucketSize, flushRate);
+        return new GoogleAppEngineDirectory(buildFullIndexName(subContext, subIndex), bucketSize, flushRate, cacheMetaData);
     }
 
     @Override

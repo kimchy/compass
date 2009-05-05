@@ -123,6 +123,7 @@ class GoogleAppEngineMemIndexOutput extends IndexOutput {
             metaDataEntity.setProperty("modified", System.currentTimeMillis());
 
             forceFlushBuckets(firstBucketEntity, metaDataEntity);
+            dir.addMetaData(metaDataEntity);
             buffer = null;
             firstBucketEntity = null;
         } finally {

@@ -37,6 +37,11 @@ import org.apache.lucene.store.IndexInput;
 import org.apache.lucene.store.IndexOutput;
 
 /**
+ * If caching of meta data is enabled, we maintain a cache of all the meta data information of files (as Entity).
+ * The cache is refreshed (cleared and updated) each time {@link #list()} is called (which is called by Lucene when finding segment files
+ * and opening a deleter. Meaning that we update the cache quite frequently). "Locally" each time a file is created
+ * or meta data is fetched on cache miss, it is added to the meta data cache.
+ *
  * @author kimchy
  */
 public class GoogleAppEngineDirectory extends Directory {
@@ -44,6 +49,8 @@ public class GoogleAppEngineDirectory extends Directory {
     public static final int DEFAULT_BUCKET_SIZE = 20 * 1024;
 
     public static final int DEFAULT_FLUSH_RATE = 50;
+
+    public static final boolean DEFAULT_CACHE_META_DATA = true;
 
 
     static final String META_KEY_KIND = "meta";
@@ -58,9 +65,13 @@ public class GoogleAppEngineDirectory extends Directory {
 
     private final int flushRate;
 
+    private final boolean cacheMetaData;
+
     private final Key indexKey;
 
     private final PreparedQuery listQuery;
+
+    private final Map<String, Entity> cachedMetaData = new ConcurrentHashMap<String, Entity>();
 
     // we store an on going list of created index outputs since Lucene needs them
     // *before* it closes the index output. It calls fileExists in the middle.
@@ -71,9 +82,14 @@ public class GoogleAppEngineDirectory extends Directory {
     }
 
     public GoogleAppEngineDirectory(String indexName, int bucketSize, int flushRate) {
+        this(indexName, bucketSize, flushRate, DEFAULT_CACHE_META_DATA);
+    }
+
+    public GoogleAppEngineDirectory(String indexName, int bucketSize, int flushRate, boolean cacheMetaData) {
         this.indexName = indexName;
         this.bucketSize = bucketSize;
         this.flushRate = flushRate;
+        this.cacheMetaData = cacheMetaData;
         this.datastoreService = DatastoreServiceFactory.getDatastoreService();
 
         this.indexKey = KeyFactory.createKey("index", indexName);
@@ -97,6 +113,12 @@ public class GoogleAppEngineDirectory extends Directory {
         for (Entity entity : entities) {
             result[i++] = entity.getKey().getName();
         }
+        if (cacheMetaData) {
+            cachedMetaData.clear();
+            for (Entity entity : entities) {
+                cachedMetaData.put(entity.getKey().getName(), entity);
+            }
+        }
         return result;
     }
 
@@ -105,8 +127,8 @@ public class GoogleAppEngineDirectory extends Directory {
             return true;
         }
         try {
-            fetchMetaData(name);
-            return true;
+            Entity entity = fetchMetaData(name);
+            return entity != null;
         } catch (Exception e) {
             return false;
         }
@@ -128,6 +150,9 @@ public class GoogleAppEngineDirectory extends Directory {
         try {
             Entity entity = datastoreService.get(buildMetaDataKey(name));
             if (entity != null) {
+                if (cacheMetaData) {
+                    cachedMetaData.remove(name);
+                }
                 List<Key> keysToDelete = new ArrayList<Key>();
                 keysToDelete.add(entity.getKey());
                 long size = (Long) entity.getProperty("size");
@@ -170,8 +195,18 @@ public class GoogleAppEngineDirectory extends Directory {
     }
 
     private Entity fetchMetaData(String name) throws GoogleAppEngineDirectoryException {
+        if (cacheMetaData && !LuceneFileNames.isStaticFile(name)) {
+            Entity entity = cachedMetaData.get(name);
+            if (entity != null) {
+                return entity;
+            }
+        }
         try {
-            return datastoreService.get(buildMetaDataKey(name));
+            Entity entity = datastoreService.get(buildMetaDataKey(name));
+            if (entity != null) {
+                addMetaData(entity);
+            }
+            return entity;
         } catch (EntityNotFoundException e) {
             throw new GoogleAppEngineDirectoryException(indexName, name, "Not found");
         }
@@ -203,5 +238,12 @@ public class GoogleAppEngineDirectory extends Directory {
 
     Map<String, IndexOutput> getOnGoingIndexOutputs() {
         return onGoingIndexOutputs;
+    }
+
+    void addMetaData(Entity metaDataEntity) {
+        if (!cacheMetaData || LuceneFileNames.isStaticFile(metaDataEntity.getKey().getName())) {
+            return;
+        }
+        cachedMetaData.put(metaDataEntity.getKey().getName(), metaDataEntity);
     }
 }

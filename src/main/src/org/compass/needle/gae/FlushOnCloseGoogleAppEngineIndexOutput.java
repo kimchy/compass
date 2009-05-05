@@ -125,6 +125,7 @@ public class FlushOnCloseGoogleAppEngineIndexOutput extends IndexOutput {
         }
         try {
             dir.getDatastoreService().put(entities);
+            dir.addMetaData(metaDataEntity);
         } finally {
             dir.getOnGoingIndexOutputs().remove(fileName);
         }
