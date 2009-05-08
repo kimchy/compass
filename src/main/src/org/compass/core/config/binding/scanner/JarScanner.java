@@ -18,17 +18,18 @@ package org.compass.core.config.binding.scanner;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 /**
  * @author kimchy
  */
 public class JarScanner implements Scanner {
 
-    private JarInputStream jar;
+    private ZipInputStream jar;
 
-    private JarEntry next;
+    private ZipEntry next;
 
     private Filter filter;
 
@@ -47,7 +48,7 @@ public class JarScanner implements Scanner {
             if (next != null) jar.closeEntry();
             next = null;
             do {
-                next = jar.getNextJarEntry();
+                next = jar.getNextEntry();
             } while (next != null && (next.isDirectory() || (filter == null || !filter.accepts(next.getName()))));
             if (next == null) {
                 close();
