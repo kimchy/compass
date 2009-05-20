@@ -20,21 +20,23 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.HitCollector;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.similar.MoreLikeThis;
 import org.compass.core.Resource;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineQuery;
 import org.compass.core.engine.SearchEngineQueryBuilder;
-import org.compass.core.lucene.LuceneResource;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.lucene.engine.LuceneSearchEngineInternalSearch;
 import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
 import org.compass.core.lucene.support.ResourceHelper;
+import org.compass.core.spi.InternalResource;
 
 /**
  * @author kimchy
@@ -49,8 +51,7 @@ public class LuceneSearchEngineMoreLikeThisQueryBuilder implements SearchEngineQ
 
     private Resource idResource;
 
-
-    private LuceneResource resource;
+    private LuceneSearchEngineInternalSearch internalSearch;
 
     private MoreLikeThis moreLikeThis;
 
@@ -62,7 +63,6 @@ public class LuceneSearchEngineMoreLikeThisQueryBuilder implements SearchEngineQ
 
     public LuceneSearchEngineMoreLikeThisQueryBuilder(LuceneSearchEngine searchEngine, LuceneSearchEngineFactory searchEngineFactory, Resource idResource) {
         this.idResource = idResource;
-        this.resource = (LuceneResource) searchEngine.load(idResource);
         init(searchEngine, searchEngineFactory);
     }
 
@@ -74,7 +74,7 @@ public class LuceneSearchEngineMoreLikeThisQueryBuilder implements SearchEngineQ
     private void init(LuceneSearchEngine searchEngine, LuceneSearchEngineFactory searchEngineFactory) {
         this.searchEngine = searchEngine;
         this.searchEngineFactory = searchEngineFactory;
-        LuceneSearchEngineInternalSearch internalSearch = (LuceneSearchEngineInternalSearch) searchEngine.internalSearch(subIndexes, aliases);
+        this.internalSearch = (LuceneSearchEngineInternalSearch) searchEngine.internalSearch(subIndexes, aliases);
         this.moreLikeThis = new MoreLikeThis(internalSearch.getReader());
         this.moreLikeThis.setFieldNames(null);
         this.moreLikeThis.setAnalyzer(searchEngine.getSearchEngineFactory().getAnalyzerManager().getSearchAnalyzer());
@@ -82,7 +82,7 @@ public class LuceneSearchEngineMoreLikeThisQueryBuilder implements SearchEngineQ
 
     public SearchEngineQueryBuilder.SearchEngineMoreLikeThisQueryBuilder setSubIndexes(String[] subIndexes) {
         this.subIndexes = subIndexes;
-        LuceneSearchEngineInternalSearch internalSearch = (LuceneSearchEngineInternalSearch) searchEngine.internalSearch(subIndexes, aliases);
+        this.internalSearch = (LuceneSearchEngineInternalSearch) searchEngine.internalSearch(subIndexes, aliases);
         MoreLikeThis moreLikeThis = new MoreLikeThis(internalSearch.getReader());
         copy(moreLikeThis);
         this.moreLikeThis = moreLikeThis;
@@ -91,7 +91,7 @@ public class LuceneSearchEngineMoreLikeThisQueryBuilder implements SearchEngineQ
 
     public SearchEngineQueryBuilder.SearchEngineMoreLikeThisQueryBuilder setAliases(String[] aliases) {
         this.aliases = aliases;
-        LuceneSearchEngineInternalSearch internalSearch = (LuceneSearchEngineInternalSearch) searchEngine.internalSearch(subIndexes, aliases);
+        this.internalSearch = (LuceneSearchEngineInternalSearch) searchEngine.internalSearch(subIndexes, aliases);
         MoreLikeThis moreLikeThis = new MoreLikeThis(internalSearch.getReader());
         copy(moreLikeThis);
         this.moreLikeThis = moreLikeThis;
@@ -173,9 +173,22 @@ public class LuceneSearchEngineMoreLikeThisQueryBuilder implements SearchEngineQ
             if (reader != null) {
                 query = moreLikeThis.like(reader);
             } else {
+                // we find the doc id based on the actual internal search that was perfomed, since we need the doc id
+                // to be sync'ed with the index reader and searcher we use with the MoreLikeThis class
+                Query resourceLoadQuery = ResourceHelper.buildResourceLoadQuery(((InternalResource) idResource).getResourceKey());
+                final AtomicInteger docId = new AtomicInteger(-1);
+                internalSearch.getSearcher().search(resourceLoadQuery, new HitCollector() {
+                    @Override
+                    public void collect(int doc, float score) {
+                        if (score > 0) {
+                            docId.set(doc);
+                        }
+                    }
+                });
+
                 BooleanQuery boolQuery = new BooleanQuery();
-                boolQuery.add(moreLikeThis.like(resource.getDocNum()), BooleanClause.Occur.MUST);
-                boolQuery.add(ResourceHelper.buildResourceLoadQuery(resource.getResourceKey()), BooleanClause.Occur.MUST_NOT);
+                boolQuery.add(moreLikeThis.like(docId.intValue()), BooleanClause.Occur.MUST);
+                boolQuery.add(resourceLoadQuery, BooleanClause.Occur.MUST_NOT);
                 query = boolQuery;
             }
             return new LuceneSearchEngineQuery(searchEngineFactory, query);
