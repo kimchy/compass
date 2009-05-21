@@ -138,7 +138,7 @@ public class LuceneSearchEngine implements SearchEngine {
             } else if (transactionState == ROLLBACK) {
                 throw new SearchEngineException("Search engine transactionProcessor already rolled back while trying to perform an operation");
             } else if (transactionState == NOT_STARTED) {
-                throw new SearchEngineException("Search engine transactionProcessor not stated, please call begin transactionProcessor in order to perform operations");
+                throw new SearchEngineException("Search engine transactionProcessor not started, please call begin transactionProcessor in order to perform operations");
             }
         }
     }
