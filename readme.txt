@@ -1,5 +1,5 @@
-COMPASS, Release 2.3.0 M1
--------------------------
+COMPASS, Release 2.3.0 beta 1
+-----------------------------
 http://www.compass-project.org
 
 
