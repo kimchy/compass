@@ -44,6 +44,9 @@ public class ScannerFactoy {
             } else {
                 return new JarScanner(basePackage, url.openStream(), filter);
             }
+        } else if (url.getProtocol().equals("vfszip")) {
+            url = new URL(urlString);
+            return new JarScanner(basePackage, url.openStream(), filter);
         } else {
             throw new IOException("Protocol [" + url.getProtocol() + "] is not supported by scanner");
         }
