@@ -27,8 +27,8 @@
 
 <programlisting><![CDATA[<?xml version="1.0"?>
 <!DOCTYPE compass-core-meta-data PUBLIC
-    "-//Compass/Compass Core Meta Data DTD 2.2//EN"
-    "http://www.compass-project.org/dtd/compass-core-meta-data-2.2.dtd">
+    "-//Compass/Compass Core Meta Data DTD 2.3//EN"
+    "http://www.compass-project.org/dtd/compass-core-meta-data-2.3.dtd">
 
 <compass-core-meta-data>
 
@@ -128,8 +128,8 @@
       To use common meta data within a OSEM file, you use the familiar ${...} label (similar to Ant). An example of using the common meta data definitions in the mapping file is:
 <programlisting><![CDATA[<?xml version="1.0"?>
 <!DOCTYPE compass-core-mapping PUBLIC
-    "-//Compass/Compass Core Mapping DTD 2.2//EN"
-    "http://www.compass-project.org/dtd/compass-core-mapping-2.2.dtd">
+    "-//Compass/Compass Core Mapping DTD 2.3//EN"
+    "http://www.compass-project.org/dtd/compass-core-mapping-2.3.dtd">
 
 <compass-core-mapping package="org.compass.sample.library">
 

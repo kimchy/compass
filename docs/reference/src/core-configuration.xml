@@ -177,7 +177,7 @@ org.compass.converter.test.param2=value2
 <programlisting><![CDATA[<compass-core-config xmlns="http://www.compass-project.org/schema/core-config"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.compass-project.org/schema/core-config
-           http://www.compass-project.org/schema/compass-core-config-2.2.xsd">
+           http://www.compass-project.org/schema/compass-core-config-2.3.xsd">
 
    <compass name="default">
       <connection>
@@ -199,7 +199,7 @@ org.compass.converter.test.param2=value2
 <programlisting><![CDATA[<compass-core-config xmlns="http://www.compass-project.org/schema/core-config"
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
  xsi:schemaLocation="http://www.compass-project.org/schema/core-config
-          http://www.compass-project.org/schema/compass-core-config-2.2.xsd">
+          http://www.compass-project.org/schema/compass-core-config-2.3.xsd">
 
    <compass name="default">
 
@@ -228,7 +228,7 @@ org.compass.converter.test.param2=value2
 <programlisting><![CDATA[<compass-core-config xmlns="http://www.compass-project.org/schema/core-config"
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
  xsi:schemaLocation="http://www.compass-project.org/schema/core-config
-          http://www.compass-project.org/schema/compass-core-config-2.2.xsd">
+          http://www.compass-project.org/schema/compass-core-config-2.3.xsd">
 
    <compass name="default">
 
@@ -253,7 +253,7 @@ org.compass.converter.test.param2=value2
 <programlisting><![CDATA[<compass-core-config xmlns="http://www.compass-project.org/schema/core-config"
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
  xsi:schemaLocation="http://www.compass-project.org/schema/core-config
-          http://www.compass-project.org/schema/compass-core-config-2.2.xsd">
+          http://www.compass-project.org/schema/compass-core-config-2.3.xsd">
 
    <compass name="default">
 
@@ -286,7 +286,7 @@ org.compass.converter.test.param2=value2
 <programlisting><![CDATA[<compass-core-config xmlns="http://www.compass-project.org/schema/core-config"
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:schemaLocation="http://www.compass-project.org/schema/core-config
-         http://www.compass-project.org/schema/compass-core-config-2.2.xsd">
+         http://www.compass-project.org/schema/compass-core-config-2.3.xsd">
 
   <compass name="default">
 
@@ -344,8 +344,8 @@ xsi:schemaLocation="http://www.compass-project.org/schema/core-config
       <para>
         And here is an example of the xml configuration file:
 <programlisting><![CDATA[<!DOCTYPE compass-core-configuration PUBLIC
-"-//Compass/Compass Core Configuration DTD 2.2//EN"
-"http://www.compass-project.org/dtd/compass-core-configuration-2.2.dtd">
+"-//Compass/Compass Core Configuration DTD 2.3//EN"
+"http://www.compass-project.org/dtd/compass-core-configuration-2.3.dtd">
 
 <compass-core-configuration>
   

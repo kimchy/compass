@@ -2,7 +2,7 @@
 <!--
 <compass-core-config xmlns="http://www.compass-project.org/schema/core-config"
                      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                     xsi:schemaLocation="http://www.compass-project.org/schema/core-config http://www.compass-project.org/schema/compass-core-config-2.2.xsd">
+                     xsi:schemaLocation="http://www.compass-project.org/schema/core-config http://www.compass-project.org/schema/compass-core-config-2.3.xsd">
 -->
 <xsd:schema xmlns="http://www.compass-project.org/schema/core-config" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
             targetNamespace="http://www.compass-project.org/schema/core-config" elementFormDefault="qualified"

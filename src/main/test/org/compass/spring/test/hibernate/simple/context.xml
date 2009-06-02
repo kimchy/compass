@@ -3,7 +3,7 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:compass="http://www.compass-project.org/schema/spring-core-config"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://www.compass-project.org/schema/spring-core-config http://www.compass-project.org/schema/spring-compass-core-config-2.2.xsd">
+       http://www.compass-project.org/schema/spring-core-config http://www.compass-project.org/schema/spring-compass-core-config-2.3.xsd">
 
 
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">

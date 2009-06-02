@@ -1,8 +1,8 @@
 <!-- Compass file-based configuration document.
 
 <!DOCTYPE compass-core-configuration PUBLIC
-    "-//Compass/Compass Core Configuration DTD 2.2//EN"
-    "http://www.compass-project.org/dtd/compass-core-configuration-2.2.dtd">
+    "-//Compass/Compass Core Configuration DTD 2.3//EN"
+    "http://www.compass-project.org/dtd/compass-core-configuration-2.3.dtd">
 -->
 
 <!ELEMENT compass-core-configuration (compass)>
