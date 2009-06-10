@@ -51,13 +51,13 @@ public class DTDEntityResolver implements EntityResolver, Serializable {
 
     public InputSource resolveEntity(String publicId, String systemId) {
         if (systemId != null && systemId.startsWith("http://compass.sourceforge.net")) {
-            throw new IllegalArgumentException("Using old format for DTD, please use the url [" + URL + "]");
+            throw new IllegalArgumentException("Using old format for DTD [" + systemId + "], please use the url [" + URL + "]");
         }
         if (systemId != null && systemId.startsWith("http://static.compassframework")) {
-            throw new IllegalArgumentException("Using old format for DTD, please use the url [" + URL + "]");
+            throw new IllegalArgumentException("Using old format for DTD [" + systemId + "], please use the url [" + URL + "]");
         }
         if (systemId != null && systemId.startsWith("http://www.opensymphony.com/compass/dtd/")) {
-            throw new IllegalArgumentException("Using old format for DTD, please use the url [" + URL + "]");
+            throw new IllegalArgumentException("Using old format for DTD [" + systemId + "], please use the url [" + URL + "]");
         }
         if (systemId != null && systemId.startsWith(URL)) {
             // Search for DTD
