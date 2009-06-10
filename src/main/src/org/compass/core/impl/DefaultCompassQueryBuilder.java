@@ -214,6 +214,11 @@ public class DefaultCompassQueryBuilder implements CompassQueryBuilder {
             return this;
         }
 
+        public CompassMultiPropertyQueryStringBuilder add(String name, float boost) {
+            queryBuilder.add(compass.getMapping().getResourcePropertyLookup(name).getPath(), boost);
+            return this;
+        }
+
         public CompassMultiPropertyQueryStringBuilder useAndDefaultOperator() {
             queryBuilder.useAndDefaultOperator();
             return this;

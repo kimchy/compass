@@ -16,6 +16,8 @@
 
 package org.compass.core.lucene.engine.queryparser;
 
+import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.analysis.Analyzer;
@@ -104,8 +106,8 @@ public class DefaultLuceneQueryParser implements LuceneQueryParser, CompassMappi
         }
     }
 
-    public QueryHolder parse(String[] properties, QueryParser.Operator operator, Analyzer analyzer, boolean forceAnalyzer, String queryString) throws SearchEngineQueryParseException {
-        CompassMultiFieldQueryParser queryParser = createMultiQueryParser(properties, analyzer, forceAnalyzer);
+    public QueryHolder parse(String[] properties, Map<String, Float> boosts, QueryParser.Operator operator, Analyzer analyzer, boolean forceAnalyzer, String queryString) throws SearchEngineQueryParseException {
+        CompassMultiFieldQueryParser queryParser = createMultiQueryParser(properties, boosts, analyzer, forceAnalyzer);
         queryParser.setDefaultOperator(getOperator(operator));
         queryParser.setAllowLeadingWildcard(allowLeadingWildcard);
         queryParser.setAllowConstantScorePrefixQuery(allowConstantScorePrefixQuery);
@@ -142,8 +144,8 @@ public class DefaultLuceneQueryParser implements LuceneQueryParser, CompassMappi
         return new CompassQueryParser(property, analyzer, mapping, searchEngineFactory, forceAnalyzer);
     }
 
-    protected CompassMultiFieldQueryParser createMultiQueryParser(String[] properties, Analyzer analyzer, boolean forceAnalyzer) {
-        return new CompassMultiFieldQueryParser(properties, analyzer, mapping, searchEngineFactory, forceAnalyzer);
+    protected CompassMultiFieldQueryParser createMultiQueryParser(String[] properties, Map<String, Float> boosts, Analyzer analyzer, boolean forceAnalyzer) {
+        return new CompassMultiFieldQueryParser(properties, boosts, analyzer, mapping, searchEngineFactory, forceAnalyzer);
     }
 
 }

@@ -16,6 +16,8 @@
 
 package org.compass.core.lucene.engine.queryparser;
 
+import java.util.Map;
+
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.queryParser.QueryParser;
 import org.compass.core.engine.SearchEngineQueryParseException;
@@ -30,5 +32,5 @@ public interface LuceneQueryParser {
 
     QueryHolder parse(String property, QueryParser.Operator operator, Analyzer analyzer, boolean forceAnalyzer, String queryString) throws SearchEngineQueryParseException;
 
-    QueryHolder parse(String[] properties, QueryParser.Operator operator, Analyzer analyzer, boolean forceAnalyzer, String queryString) throws SearchEngineQueryParseException;
+    QueryHolder parse(String[] properties, Map<String, Float> boosts, QueryParser.Operator operator, Analyzer analyzer, boolean forceAnalyzer, String queryString) throws SearchEngineQueryParseException;
 }

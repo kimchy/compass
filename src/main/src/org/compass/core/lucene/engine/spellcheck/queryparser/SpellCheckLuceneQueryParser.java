@@ -16,6 +16,8 @@
 
 package org.compass.core.lucene.engine.spellcheck.queryparser;
 
+import java.util.Map;
+
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.queryParser.CompassMultiFieldQueryParser;
 import org.apache.lucene.queryParser.CompassQueryParser;
@@ -33,10 +35,10 @@ public class SpellCheckLuceneQueryParser extends DefaultLuceneQueryParser {
         return super.createQueryParser(property, analyzer, forceAnalyzer);
     }
 
-    protected CompassMultiFieldQueryParser createMultiQueryParser(String[] properties, Analyzer analyzer, boolean forceAnalyzer) {
+    protected CompassMultiFieldQueryParser createMultiQueryParser(String[] properties, Map<String, Float> boosts, Analyzer analyzer, boolean forceAnalyzer) {
         if (getSearchEngineFactory().getSpellCheckManager() != null) {
-            return new SpellCheckMultiFieldQueryParser(properties, analyzer, getMapping(), getSearchEngineFactory(), forceAnalyzer);
+            return new SpellCheckMultiFieldQueryParser(properties, boosts, analyzer, getMapping(), getSearchEngineFactory(), forceAnalyzer);
         }
-        return super.createMultiQueryParser(properties, analyzer, forceAnalyzer);
+        return super.createMultiQueryParser(properties, boosts, analyzer, forceAnalyzer);
     }
 }

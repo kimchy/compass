@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.KeywordAnalyzer;
@@ -63,8 +64,8 @@ public class CompassMultiFieldQueryParser extends MultiFieldQueryParser {
 
     protected boolean suggestedQuery = false;
 
-    public CompassMultiFieldQueryParser(String[] fields, Analyzer analyzer, CompassMapping mapping, SearchEngineFactory searchEngineFactory, boolean forceAnalyzer) {
-        super(fields, analyzer);
+    public CompassMultiFieldQueryParser(String[] fields, Map<String, Float> boosts, Analyzer analyzer, CompassMapping mapping, SearchEngineFactory searchEngineFactory, boolean forceAnalyzer) {
+        super(fields, analyzer, boosts);
         this.mapping = mapping;
         this.searchEngineFactory = (LuceneSearchEngineFactory) searchEngineFactory;
         this.forceAnalyzer = forceAnalyzer;

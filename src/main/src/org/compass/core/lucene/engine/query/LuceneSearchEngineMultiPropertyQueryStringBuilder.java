@@ -17,6 +17,8 @@
 package org.compass.core.lucene.engine.query;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.queryParser.QueryParser;
@@ -45,6 +47,8 @@ public class LuceneSearchEngineMultiPropertyQueryStringBuilder implements Search
 
     private ArrayList<String> propertyNames = new ArrayList<String>();
 
+    private Map<String, Float> boosts = new HashMap<String, Float>();
+
     private LuceneQueryParser queryParser;
 
     public LuceneSearchEngineMultiPropertyQueryStringBuilder(LuceneSearchEngineFactory searchEngineFactory , String queryString) {
@@ -66,6 +70,12 @@ public class LuceneSearchEngineMultiPropertyQueryStringBuilder implements Search
 
     public SearchEngineQueryBuilder.SearchEngineMultiPropertyQueryStringBuilder add(String resourcePropertyName) {
         propertyNames.add(resourcePropertyName);
+        return this;
+    }
+
+    public SearchEngineQueryBuilder.SearchEngineMultiPropertyQueryStringBuilder add(String resourcePropertyName, float boost) {
+        propertyNames.add(resourcePropertyName);
+        boosts.put(resourcePropertyName, new Float(boost));
         return this;
     }
 
@@ -95,7 +105,7 @@ public class LuceneSearchEngineMultiPropertyQueryStringBuilder implements Search
 
 
     public SearchEngineQuery toQuery() {
-        QueryHolder qQuery = queryParser.parse(propertyNames.toArray(new String[propertyNames.size()]),
+        QueryHolder qQuery = queryParser.parse(propertyNames.toArray(new String[propertyNames.size()]), boosts,
                 operator, analyzer, forceAnalyzer, queryString);
         return new LuceneSearchEngineQuery(searchEngineFactory, qQuery);
     }

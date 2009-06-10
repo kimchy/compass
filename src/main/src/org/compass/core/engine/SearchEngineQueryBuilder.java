@@ -82,6 +82,8 @@ public interface SearchEngineQueryBuilder {
 
         SearchEngineMultiPropertyQueryStringBuilder add(String resourcePropertyName);
 
+        SearchEngineMultiPropertyQueryStringBuilder add(String resourcePropertyName, float boost);
+
         SearchEngineMultiPropertyQueryStringBuilder useAndDefaultOperator();
 
         SearchEngineMultiPropertyQueryStringBuilder useOrDefaultOperator();

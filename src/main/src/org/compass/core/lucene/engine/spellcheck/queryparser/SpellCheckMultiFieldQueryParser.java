@@ -17,6 +17,7 @@
 package org.compass.core.lucene.engine.spellcheck.queryparser;
 
 import java.io.IOException;
+import java.util.Map;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.Term;
@@ -34,8 +35,8 @@ public class SpellCheckMultiFieldQueryParser extends CompassMultiFieldQueryParse
 
     private CompassSpellChecker spellChecker;
 
-    public SpellCheckMultiFieldQueryParser(String[] fields, Analyzer analyzer, CompassMapping mapping, SearchEngineFactory searchEngineFactory, boolean forceAnalyzer) {
-        super(fields, analyzer, mapping, searchEngineFactory, forceAnalyzer);
+    public SpellCheckMultiFieldQueryParser(String[] fields, Map<String, Float> boosts, Analyzer analyzer, CompassMapping mapping, SearchEngineFactory searchEngineFactory, boolean forceAnalyzer) {
+        super(fields, boosts, analyzer, mapping, searchEngineFactory, forceAnalyzer);
         InternalLuceneSearchEngineSpellCheckManager spellCheckManager = (InternalLuceneSearchEngineSpellCheckManager) searchEngineFactory.getSpellCheckManager();
         this.spellChecker = spellCheckManager.createSpellChecker(null, null);
     }

@@ -257,6 +257,19 @@ public interface CompassQueryBuilder {
         CompassMultiPropertyQueryStringBuilder add(String name);
 
         /**
+         * Adds another resource property name / meta-data that the query string will be executed against.
+         * <p/>
+         * The name can either be the actual resource property or meta-data value,
+         * or the path to the given resource property (alias.rProperty), or the
+         * class property (alias.cProperty) or the path to the meta-data
+         * (alias.cProperty.metaData)
+         *
+         * @param name The name of the resource property / meta-data.
+         * @param boost The boosting factor of this resource property / meta-data.
+         */
+        CompassMultiPropertyQueryStringBuilder add(String name, float boost);
+
+        /**
          * If called, the query will be expanded to: <code>+(title:term1 body:term1) +(title:term2 body:term2)</code>
          * (Instead of <code>(title:term1 body:term1) (title:term2 body:term2)</code>).
          */
