@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Pattern;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -31,16 +32,21 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.memcache.MemcacheService;
+import com.google.appengine.api.memcache.MemcacheServiceFactory;
 import org.apache.lucene.index.LuceneFileNames;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.IndexInput;
 import org.apache.lucene.store.IndexOutput;
 
 /**
- * If caching of meta data is enabled, we maintain a cache of all the meta data information of files (as Entity).
+ * <p>If caching of meta data is enabled, we maintain a cache of all the meta data information of files (as Entity).
  * The cache is refreshed (cleared and updated) each time {@link #list()} is called (which is called by Lucene when finding segment files
  * and opening a deleter. Meaning that we update the cache quite frequently). "Locally" each time a file is created
  * or meta data is fetched on cache miss, it is added to the meta data cache.
+ *
+ * <p>Allows to provide a set of regex patterns that will be used to match on (Lucene) file names to choose
+ * if certain file names will also be cached in memcache as well.
  *
  * @author kimchy
  */
@@ -59,6 +65,8 @@ public class GoogleAppEngineDirectory extends Directory {
 
     private final DatastoreService datastoreService;
 
+    private final MemcacheService memcacheService;
+
     private final String indexName;
 
     private final int bucketSize;
@@ -73,28 +81,44 @@ public class GoogleAppEngineDirectory extends Directory {
 
     private final Map<String, Entity> cachedMetaData = new ConcurrentHashMap<String, Entity>();
 
+    private final Pattern[] memcacheRegexPatterns;
+
     // we store an on going list of created index outputs since Lucene needs them
     // *before* it closes the index output. It calls fileExists in the middle.
     private Map<String, IndexOutput> onGoingIndexOutputs = new ConcurrentHashMap<String, IndexOutput>();
 
     public GoogleAppEngineDirectory(String indexName, int bucketSize) {
-        this(indexName, bucketSize, DEFAULT_FLUSH_RATE);
+        this(indexName, bucketSize, DEFAULT_FLUSH_RATE, new String[0]);
     }
 
-    public GoogleAppEngineDirectory(String indexName, int bucketSize, int flushRate) {
-        this(indexName, bucketSize, flushRate, DEFAULT_CACHE_META_DATA);
+    public GoogleAppEngineDirectory(String indexName, int bucketSize, String[] memcacheRegexPatterns) {
+        this(indexName, bucketSize, DEFAULT_FLUSH_RATE, memcacheRegexPatterns);
     }
 
-    public GoogleAppEngineDirectory(String indexName, int bucketSize, int flushRate, boolean cacheMetaData) {
+    public GoogleAppEngineDirectory(String indexName, int bucketSize, int flushRate, String[] memcacheRegexPatterns) {
+        this(indexName, bucketSize, flushRate, DEFAULT_CACHE_META_DATA, memcacheRegexPatterns);
+    }
+
+    public GoogleAppEngineDirectory(String indexName, int bucketSize, int flushRate, boolean cacheMetaData, String[] memcacheRegexPatterns) {
         this.indexName = indexName;
         this.bucketSize = bucketSize;
         this.flushRate = flushRate;
         this.cacheMetaData = cacheMetaData;
         this.datastoreService = DatastoreServiceFactory.getDatastoreService();
+        this.memcacheService = MemcacheServiceFactory.getMemcacheService();
+        memcacheService.setNamespace("index/" + indexName);
 
         this.indexKey = KeyFactory.createKey("index", indexName);
 
         listQuery = datastoreService.prepare(new Query(META_KEY_KIND, indexKey));
+
+        if (memcacheRegexPatterns == null) {
+            memcacheRegexPatterns = new String[0];
+        }
+        this.memcacheRegexPatterns = new Pattern[memcacheRegexPatterns.length];
+        for (int i = 0; i < memcacheRegexPatterns.length; i++) {
+            this.memcacheRegexPatterns[i] = Pattern.compile(memcacheRegexPatterns[i]);
+        }
 
         setLockFactory(new GoogleAppEngineLockFactory(this));
     }
@@ -187,7 +211,14 @@ public class GoogleAppEngineDirectory extends Directory {
     }
 
     public IndexInput openInput(String name) throws IOException {
-        return new GoogleAppEngineIndexInput(this, fetchMetaData(name));
+        boolean useMemcache = false;
+        for (Pattern pattern : memcacheRegexPatterns) {
+            if (pattern.matcher(name).matches()) {
+                useMemcache = true;
+                break;
+            }
+        }
+        return new GoogleAppEngineIndexInput(this, fetchMetaData(name), useMemcache);
     }
 
     public void close() throws IOException {
@@ -222,6 +253,10 @@ public class GoogleAppEngineDirectory extends Directory {
 
     DatastoreService getDatastoreService() {
         return datastoreService;
+    }
+
+    MemcacheService getMemcacheService() {
+        return this.memcacheService;
     }
 
     String getIndexName() {

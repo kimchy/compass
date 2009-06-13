@@ -24,6 +24,7 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Filter;
+import org.apache.lucene.search.HitCollector;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
@@ -193,20 +194,29 @@ public class LuceneSearchEngineQuery implements SearchEngineQuery, Cloneable {
     }
 
     public long count(SearchEngine searchEngine, float minimumScore) {
-        LuceneSearchEngineInternalSearch internalSearch = (LuceneSearchEngineInternalSearch) searchEngine.internalSearch(getSubIndexes(), getAliases());
         CountHitCollector countHitCollector = new CountHitCollector(minimumScore);
         try {
-            if (internalSearch.getSearcher() == null) {
-                // no index, return 0
-                return 0;
-            }
-            internalSearch.getSearcher().search(getQuery(), getLuceneFilter(), countHitCollector);
-        } catch (IOException e) {
+            collect(searchEngine, countHitCollector);
+            return countHitCollector.getTotalHits();
+        } catch (SearchEngineException e) {
             throw new SearchEngineException("Failed to count query [" + query + "]", e);
         }
-        return countHitCollector.getTotalHits();
+
     }
 
+    public void collect(SearchEngine searchEngine, HitCollector hitCollector) {
+        LuceneSearchEngineInternalSearch internalSearch = (LuceneSearchEngineInternalSearch) searchEngine.internalSearch(getSubIndexes(), getAliases());
+        try {
+            if (internalSearch.getSearcher() == null) {
+                // no index
+                return;
+            }
+            internalSearch.getSearcher().search(getQuery(), getLuceneFilter(), hitCollector);
+        } catch (IOException e) {
+            throw new SearchEngineException("Failed to collect hits for query [" + query + "]", e);
+        }
+    }
+    
     public SearchEngineQuery setBoost(float boost) {
         query.setBoost(boost);
         return this;

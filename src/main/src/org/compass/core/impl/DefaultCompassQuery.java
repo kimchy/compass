@@ -18,6 +18,7 @@ package org.compass.core.impl;
 
 import java.util.Locale;
 
+import org.apache.lucene.search.HitCollector;
 import org.compass.core.CompassException;
 import org.compass.core.CompassHits;
 import org.compass.core.CompassQuery;
@@ -192,6 +193,10 @@ public class DefaultCompassQuery implements InternalCompassQuery, Cloneable {
 
     public long count(float minimumScore) {
         return searchEngineQuery.count(session().getSearchEngine(), minimumScore);
+    }
+
+    public void collect(HitCollector hitCollector) {
+        searchEngineQuery.collect(session().getSearchEngine(), hitCollector);
     }
 
     public CompassHits hits() throws CompassException {

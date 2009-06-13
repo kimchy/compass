@@ -18,6 +18,8 @@ package org.compass.core;
 
 import java.util.Locale;
 
+import org.apache.lucene.search.HitCollector;
+
 /**
  * An object representing a Compass query. The query is created using the
  * {@link org.compass.core.CompassQueryBuilder}, and used to get the
@@ -355,6 +357,11 @@ public interface CompassQuery {
      */
     long count(float minimumScore);
 
+    /**
+     * Collect hits using a Lucene {@link HitCollector}. 
+     */
+    void collect(HitCollector hitCollector);
+    
     /**
      * Clones the given query.
      */

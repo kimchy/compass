@@ -28,6 +28,36 @@ import org.apache.lucene.store.LockObtainFailedException;
  */
 public class GoogleAppEngineDirectoryTests extends LocalServiceTestCase {
 
+    public void test1BufferMemcache() throws Exception {
+        GoogleAppEngineDirectory dir = new GoogleAppEngineDirectory("test", 1, new String[] {".*"});
+        insertData(dir, "value1");
+        verifyData(dir, "value1");
+    }
+
+    public void test3BufferMemcache() throws Exception {
+        GoogleAppEngineDirectory dir = new GoogleAppEngineDirectory("test", 3, new String[] {".*"});
+        insertData(dir, "value1");
+        verifyData(dir, "value1");
+    }
+
+    public void test10BufferMemcache() throws Exception {
+        GoogleAppEngineDirectory dir = new GoogleAppEngineDirectory("test", 10, new String[] {".*"});
+        insertData(dir, "value1");
+        verifyData(dir, "value1");
+    }
+
+    public void test15BufferMemcache() throws Exception {
+        GoogleAppEngineDirectory dir = new GoogleAppEngineDirectory("test", 15, new String[] {".*"});
+        insertData(dir, "value1");
+        verifyData(dir, "value1");
+    }
+
+    public void test40BufferMemcache() throws Exception {
+        GoogleAppEngineDirectory dir = new GoogleAppEngineDirectory("test", 40, new String[] {".*"});
+        insertData(dir, "value1");
+        verifyData(dir, "value1");
+    }
+
     public void test1Buffer() throws Exception {
         GoogleAppEngineDirectory dir = new GoogleAppEngineDirectory("test", 1);
         insertData(dir, "value1");
