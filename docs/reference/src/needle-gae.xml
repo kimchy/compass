@@ -1,0 +1,96 @@
+<chapter id="needle-gae">
+	<title>Google App Engine</title>
+	
+	<sect1 id="needle-gae-introduction">
+        <title>Overview</title>
+    
+        <para>
+            The Compass Needle <ulink url="http://code.google.com/appengine/">Google App Engine</ulink> integration allows to store a Lucene index within Google App Engine data store and utilize memcache for fast caching of parts of the index. It also provides integration with Google App Engine JDO/JPA (partial) for simple indexing and real time mirroring of changes done through the ORM API.
+        </para>
+	</sect1>
+	
+	<sect1 id="needle-gae-directory">
+	    <title>Lucene Directory</title>
+	    <para>
+	        Compass provides a <classname>GoogleAppEngineDirectory</classname> which is an implementation of Lucene <classname>Directory</classname> allowing to store the index within GAE data store.
+	    </para>
+	    
+	    <para>
+	        Here is a simple example of how it can be used:
+<programlisting><![CDATA[GoogleAppEngineDirectory dir = new GoogleAppEngineDirectory("test");
+// ... (use the dir with IndexWriter and IndexSearcher)
+]]></programlisting>	        
+	    </para>
+	    
+	    <para>
+	        In the above example we created a directory with an index named "test". The directory can now be used to create Lucene <classname>IndexWriter</classname> and <classname>IndexSearcher</classname>.
+	    </para>
+	    
+	    <para>
+	        The Lucene directory interface represents a virtual file system. Implementing it on top of the GAE data store is done by breaking files into a file header and one or more file buckers. The meta data entry holds the meta data of the file, for example, its size and timestamp, while the bucket entry holds a bucket size of the actual file content. The bucket size can be controlled when constructing the <classname>GoogleAppEngineDirectory</classname>, but note that it must not be changed if connecting to an existing index.
+	    </para>
+	    
+	    <para>
+	        Note, it is preferable to configure the directory not to use the compound index format as it yields better performance (note, by default, when using Compass, the non compound format will be used). Also, the merge factor for the directory (also applies to Compass optimizers) should be set to a higher value (than the default 10) since it mainly applies to file based optimizations.
+	    </para>
+
+	    <para>
+	        There is also an option to provide a list of regular expression patterns in the directory constructor allowing to match which type of files will be cached using memcache. For example, Lucene segments files and term information might be good candidates to caching.
+	    </para>
+	</sect1>
+	
+	<sect1 id="needle-gae-store">
+	    <title>Compass Store</title>
+	    
+	    <para>
+	        Compass allows for simple integration with <classname>GoogleAppEngineDirectory</classname> as the index storage mechanism. The following example shows how Compass can be configured to work against a GAE data store based index with an index named test:
+	    </para>
+	    
+	    <para>
+	        The following shows how to configure it using properties based configuration:
+<programlisting><![CDATA[compass.engine.connection=gae://test
+]]></programlisting>
+	    </para>
+	    
+	    <para>
+	      By default, when using GigaSpaces as the Compass store, the index will be in an uncompound file format. It will also automatically be configured with an expiration time based index deletion policy so multiple clients will work correctly.
+	    </para>
+	    
+	    <para>
+	        Other aspects of the directory can also be configured, some examples:
+<programlisting><![CDATA[# Set the bucket size of files to 20k (the default)
+compass.engine.store.gae.bucketSize=20k
+# Set the flush rate of buckets in large files to 50
+compass.engine.store.gae.flushRate=50
+# Should meta data be cached in memory (true by default)
+compass.engine.store.gae.cacheMetaData=true
+# A comma delimited list of regular expression patterns to cache in memcache (by default, none)
+compass.engine.store.gae.memcacheRegexPatterns=segment.*,
+]]></programlisting>
+	    </para>
+	</sect1>
+	
+	<sect1 id="needle-gae-orm">
+	    <title>ORM Integration</title>
+	    
+	    <para>
+	        Compass comes with a really nice integration with both JDO and JPA, allowing for automatically complete reindexing of data from the data store based on mapping defined in Compass and the ORM, as well as mirroring of changes done through the ORM tool and be reflected in the index.
+	    </para>
+	    
+	    <para>
+	        So, what is the problem? Well, there are several of them. The first, the use of Datanucleus. It has been reported the there are extensive events being raised for changes done that are not proportional to the changes actually made through the API. For this reason, it is recommended to implement mirroring yourself, and index the changes done using Compass API (hopefully, sharing the same transactional context of the web request and the datastore).
+	    </para>
+	    
+	    <para>
+	        The second problem is the fact the indexing might take longer than the allowed time for a web request to execute in Google App Engine. There is no simple solution for this, except maybe to start a scheduled service the index parts of the data each time.
+	    </para>
+	    
+	    <para>
+	        Last, Datanucleus has very poor support for JPA, and I haven't currently managed to find a way to programmatically hook event listeners to its JPA implementation. But, even if I did, the first reason will probably result in doing the mirroring yourself anyhow.
+	    </para>
+	    
+	    <para>
+	        Of course, if there is simpler way to do this, it would be great to get it into Compass. There are probably much better GAE experts out there with more experience with it. Sorry...
+	    </para>
+	</sect1>
+</chapter>

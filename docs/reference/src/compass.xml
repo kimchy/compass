@@ -46,6 +46,7 @@
 <!ENTITY needle-gigaspaces  SYSTEM "needle-gigaspaces.xml">
 <!ENTITY needle-coherence  SYSTEM "needle-coherence.xml">
 <!ENTITY needle-terracotta  SYSTEM "needle-terracotta.xml">
+<!ENTITY needle-gae  SYSTEM "needle-gae.xml">
 
 <!ENTITY samples-intro  SYSTEM "samples-intro.xml">
 <!ENTITY samples-library  SYSTEM "samples-library.xml">
@@ -147,6 +148,7 @@
     &needle-gigaspaces;
     &needle-coherence;
     &needle-terracotta;
+    &needle-gae;
   </part>
 
   <part>
