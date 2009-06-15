@@ -39,4 +39,13 @@ public class MarshallingEnvironment {
     public static final String ATTRIBUTE_UNMARSHALLED = "unmarshalled";
 
     public static final String ATTRIBUTE_ROOT_CLASS_MAPPING = ClassMappingConverter.ROOT_CLASS_MAPPING_KEY;
+
+    /**
+     * Returns a <code>List of strings</code> of all the current prefixes that have been accumalted during the
+     * marshalling process. Returns <code>null</code> if there are none.
+     *
+     * <p>Note, the use of list is done for perfomrance considerations, it should probably not be changed by
+     * custom converters.
+     */
+    public static final String ATTRIBUTE_PREFIXES = "prefixes";
 }

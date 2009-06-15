@@ -16,24 +16,57 @@
 
 package org.compass.core.converter.mapping.osem;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.compass.core.Resource;
 import org.compass.core.converter.ConversionException;
 import org.compass.core.mapping.osem.ClassMapping;
+import org.compass.core.mapping.osem.ComponentMapping;
 import org.compass.core.mapping.osem.RefAliasObjectMapping;
 import org.compass.core.marshall.MarshallingContext;
+import org.compass.core.marshall.MarshallingEnvironment;
 
 /**
  * @author kimchy
  */
 public class ComponentMappingConverter extends AbstractRefAliasMappingConverter {
 
-    protected boolean doMarshall(Resource resource, Object root, RefAliasObjectMapping hasRefAliasMapping,
+    protected boolean doMarshall(Resource resource, Object root, RefAliasObjectMapping refAliasMapping,
                                  ClassMapping refMapping, MarshallingContext context) throws ConversionException {
-        return refMapping.getConverter().marshall(resource, root, refMapping, context);
+        ComponentMapping componentMapping = (ComponentMapping) refAliasMapping;
+        List<String> prefixes = null;
+        if (componentMapping.getPrefix() != null) {
+            prefixes = (List<String>) context.getAttribute(MarshallingEnvironment.ATTRIBUTE_PREFIXES);
+            if (prefixes == null) {
+                prefixes = new ArrayList<String>();
+                context.setAttribute(MarshallingEnvironment.ATTRIBUTE_PREFIXES, prefixes);
+            }
+            prefixes.add(componentMapping.getPrefix());
+        }
+        boolean retVal = refMapping.getConverter().marshall(resource, root, refMapping, context);
+        if (componentMapping.getPrefix() != null) {
+            prefixes.remove(prefixes.size() - 1);
+        }
+        return retVal;
     }
 
-    protected Object doUnmarshall(Resource resource, RefAliasObjectMapping hasRefAliasMapping,
+    protected Object doUnmarshall(Resource resource, RefAliasObjectMapping refAliasMapping,
                                   ClassMapping refMapping, MarshallingContext context) throws ConversionException {
-        return refMapping.getConverter().unmarshall(resource, refMapping, context);
+        ComponentMapping componentMapping = (ComponentMapping) refAliasMapping;
+        List<String> prefixes = null;
+        if (componentMapping.getPrefix() != null) {
+            prefixes = (List<String>) context.getAttribute(MarshallingEnvironment.ATTRIBUTE_PREFIXES);
+            if (prefixes == null) {
+                prefixes = new ArrayList<String>();
+                context.setAttribute(MarshallingEnvironment.ATTRIBUTE_PREFIXES, prefixes);
+            }
+            prefixes.add(componentMapping.getPrefix());
+        }
+        Object retVal = refMapping.getConverter().unmarshall(resource, refMapping, context);
+        if (componentMapping.getPrefix() != null) {
+            prefixes.remove(prefixes.size() - 1);
+        }
+        return retVal;
     }
 }
