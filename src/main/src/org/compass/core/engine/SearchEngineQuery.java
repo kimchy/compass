@@ -18,7 +18,6 @@ package org.compass.core.engine;
 
 import java.util.Locale;
 
-import org.apache.lucene.search.HitCollector;
 import org.compass.core.CompassQuery.SortDirection;
 import org.compass.core.CompassQuery.SortImplicitType;
 import org.compass.core.CompassQuery.SortPropertyType;
@@ -66,7 +65,5 @@ public interface SearchEngineQuery {
 
     long count(SearchEngine searchEngine, float minimumScore);
 
-    void collect(SearchEngine searchEngine, HitCollector hitCollector);
-    
     Object clone() throws CloneNotSupportedException;
 }
