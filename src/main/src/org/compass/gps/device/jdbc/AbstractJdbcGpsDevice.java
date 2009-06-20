@@ -112,11 +112,13 @@ public abstract class AbstractJdbcGpsDevice extends AbstractGpsDevice implements
             throw new IllegalArgumentException("dataSource property must be set");
         }
 
-        try {
-            this.dialect = new DialectResolver(true).getDialect(dataSource);
-        } catch (Exception e) {
-            log.warn("Failed to detect database dialect", e);
-            throw new JdbcGpsDeviceException("Failed to detect database dialect", e);
+        if (dialect == null) {
+            try {
+                this.dialect = new DialectResolver(true).getDialect(dataSource);
+            } catch (Exception e) {
+                log.warn("Failed to detect database dialect", e);
+                throw new JdbcGpsDeviceException("Failed to detect database dialect", e);
+            }
         }
     }
 
