@@ -24,4 +24,6 @@ import org.compass.core.CompassQuery;
  * @author kimchy
  */
 public interface InternalCompassQuery extends CompassQuery, InternalSessionDelegateClose {
+
+    InternalCompassSession getSession();
 }

@@ -224,6 +224,10 @@ public class DefaultCompassQuery implements InternalCompassQuery, Cloneable {
         return clone;
     }
 
+    public InternalCompassSession getSession() {
+        return session();
+    }
+
     private InternalCompassSession session() throws CompassException {
         InternalCompassSession session = attachedSession.get();
         if (session == null) {
