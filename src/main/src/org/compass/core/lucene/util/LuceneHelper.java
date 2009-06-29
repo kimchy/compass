@@ -24,6 +24,7 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.index.TermEnum;
 import org.apache.lucene.index.TermFreqVector;
 import org.apache.lucene.search.Filter;
+import org.apache.lucene.search.HitCollector;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.store.Directory;
 import org.compass.core.Compass;
@@ -265,4 +266,36 @@ public abstract class LuceneHelper {
         }
         return list.toArray(new String[list.size()]);
     }
+
+    /**
+     * Collect results using a {@link HitCollector}.
+     *
+     * While using HitCollectors make sure that
+     * <ul>
+     * <li>You aren't loading documents in each collect operation</li>
+     * <li>You are using the field cache</li>
+     * </ul>
+     *
+     * @param query        The query to use
+     * @param hitCollector The hit collector to use
+     * @return the LuceneSearchEngineInternalSearch that was used or null if no index was available
+     */
+    public static LuceneSearchEngineInternalSearch collect(CompassQuery query, HitCollector hitCollector) {
+        InternalCompassQuery intenralQuery = ((InternalCompassQuery) query);
+        LuceneSearchEngineQuery luceneQuery = getLuceneSearchEngineQuery(query);
+        LuceneSearchEngineInternalSearch internalSearch = getLuceneInternalSearch(intenralQuery.getSession(), luceneQuery.getSubIndexes(), luceneQuery.getAliases());
+
+        try {
+            if (internalSearch.getSearcher() == null) {
+                // no index
+                return null;
+            }
+            internalSearch.getSearcher().search(luceneQuery.getQuery(), luceneQuery.getFilter().getFilter(), hitCollector);
+            return internalSearch;
+        } catch (IOException e) {
+            throw new SearchEngineException("Failed to collect hits for query [" + query + "]", e);
+        }
+    }
+
+
 }
