@@ -20,6 +20,7 @@ import org.apache.lucene.search.spell.CompassSpellChecker;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.engine.spellcheck.spi.InternalSearchEngineSpellCheckManager;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
+import org.compass.core.lucene.engine.store.LuceneSearchEngineStore;
 import org.compass.core.mapping.CompassMapping;
 
 /**
@@ -28,6 +29,10 @@ import org.compass.core.mapping.CompassMapping;
 public interface InternalLuceneSearchEngineSpellCheckManager extends InternalSearchEngineSpellCheckManager {
 
     void configure(LuceneSearchEngineFactory searchEngineFactory, CompassSettings settings, CompassMapping mapping);
+
+    LuceneSearchEngineStore getStore();
+
+    String getStoreSubContext();
 
     String getDefaultProperty();
 

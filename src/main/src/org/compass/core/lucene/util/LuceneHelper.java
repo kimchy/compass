@@ -28,6 +28,7 @@ import org.apache.lucene.search.HitCollector;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.store.Directory;
 import org.compass.core.Compass;
+import org.compass.core.CompassException;
 import org.compass.core.CompassHits;
 import org.compass.core.CompassQuery;
 import org.compass.core.CompassQueryFilter;
@@ -47,6 +48,7 @@ import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
 import org.compass.core.lucene.engine.LuceneSearchEngineQueryFilter;
 import org.compass.core.lucene.engine.analyzer.LuceneAnalyzerManager;
 import org.compass.core.lucene.engine.manager.LuceneSearchEngineIndexManager;
+import org.compass.core.lucene.engine.spellcheck.InternalLuceneSearchEngineSpellCheckManager;
 import org.compass.core.spi.InternalCompass;
 import org.compass.core.spi.InternalCompassQuery;
 import org.compass.core.spi.InternalCompassSession;
@@ -244,6 +246,17 @@ public abstract class LuceneHelper {
      */
     public static Directory getDirectory(Compass compass, String subIndex) {
         return ((LuceneSearchEngineIndexManager) ((InternalCompass) compass).getSearchEngineIndexManager()).getStore().openDirectory(subIndex);
+    }
+
+    /**
+     * Returns the lucene {@link Directory} used for spell checking associtaed with the given sub index.
+     */
+    public static Directory getSpellCheckDirectory(Compass compass, String subIndex) {
+        InternalLuceneSearchEngineSpellCheckManager spellCheckManager = ((InternalLuceneSearchEngineSpellCheckManager) ((InternalCompass) compass).getSpellCheckManager());
+        if (spellCheckManager == null) {
+            throw new CompassException("Spell check is not enabled");
+        }
+        return spellCheckManager.getStore().openDirectory(spellCheckManager.getStoreSubContext(), subIndex);
     }
 
     /**

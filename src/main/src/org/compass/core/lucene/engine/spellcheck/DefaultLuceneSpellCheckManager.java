@@ -319,6 +319,14 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
         return searchEngineFactory.getMapping();
     }
 
+    public LuceneSearchEngineStore getStore() {
+        return spellCheckStore;
+    }
+
+    public String getStoreSubContext() {
+        return spellIndexSubContext;        
+    }
+
     public void concurrentRefresh() throws SearchEngineException {
         checkIfStarted();
         if (searchEngineFactory.getExecutorManager().isDisabled()) {
