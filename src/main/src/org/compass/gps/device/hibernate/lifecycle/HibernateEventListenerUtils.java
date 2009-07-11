@@ -39,6 +39,7 @@ import org.hibernate.engine.SessionFactoryImplementor;
 import org.hibernate.event.EventSource;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.persister.entity.EntityPersister;
+import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.type.CollectionType;
 import org.hibernate.type.Type;
 
@@ -134,6 +135,12 @@ public abstract class HibernateEventListenerUtils {
             for (int j = 0, jlen = idMappings.length; j < jlen; j++) {
                 ClassPropertyMetaDataMapping idMapping = (ClassPropertyMetaDataMapping) idMappings[j];
                 try {
+                    // initiaize the value in case it is lazy (and only for the first time)
+                    if (j == 0) {
+                        if (propertyValue instanceof HibernateProxy) {
+                            propertyValue = ((HibernateProxy) propertyValue).getHibernateLazyInitializer().getImplementation();
+                        }
+                    }
                     if (collection) {
                         for (Iterator iter = ((Collection) propertyValue).iterator(); iter.hasNext();) {
                             Object obj = iter.next();
