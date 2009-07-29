@@ -62,7 +62,7 @@ public class DatanucleusJpaEntitiesLocator implements JpaEntitiesLocator {
 
             ClassMapping classMapping = (ClassMapping) gps.getMappingForEntityForIndex(entityname);
             // we use FQN of the class for the query since by entity name does not seem to work...
-            EntityInformation entityInformation = new EntityInformation(classMapping.getClazz(), entityname, new DefaultJpaQueryProvider("select x from " + classMapping.getClazz().getName()), classMapping.getSubIndexHash().getSubIndexes());
+            EntityInformation entityInformation = new EntityInformation(classMapping.getClazz(), entityname, new DefaultJpaQueryProvider("select x from " + classMapping.getClazz().getName() + " x"), classMapping.getSubIndexHash().getSubIndexes());
             entitiesList.add(entityInformation);
             if (log.isDebugEnabled()) {
                 log.debug("Entity [" + entityname + "] will be indexed");
