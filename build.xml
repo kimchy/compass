@@ -37,7 +37,7 @@
 
     <condition property="coherence.exists">
         <and>
-            <available file="${lib.dir}/coherence/tangosol.jar"/>
+            <available file="${lib.dir}/coherence/coherence.jar"/>
         </and>
     </condition>
 
