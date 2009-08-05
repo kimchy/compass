@@ -59,12 +59,12 @@ public interface CompassGps {
     void stop() throws CompassGpsException;
 
     /**
-     * Return <code>true</code> is started.
+     * Returns <code>true</code> is started.
      */
     boolean isRunning();
 
     /**
-     * Retuns <code>true</code> if the devide performs the index operaiton.
+     * Retuns <code>true</code> if an index operation is in progress.
      */
     boolean isPerformingIndexOperation();
 
