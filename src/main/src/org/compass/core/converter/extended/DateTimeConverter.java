@@ -36,7 +36,7 @@ import org.joda.time.format.ISODateTimeFormat;
  *
  * @author kimchy
  */
-public class DataTimeConverter extends AbstractFormatConverter {
+public class DateTimeConverter extends AbstractFormatConverter {
 
     public static final String DEFAULT_NOW_PREFIX = "now";
 

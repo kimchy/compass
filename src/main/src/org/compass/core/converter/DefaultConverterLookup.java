@@ -51,7 +51,7 @@ import org.compass.core.converter.dynamic.JexlDynamicConverter;
 import org.compass.core.converter.dynamic.MVELDynamicConverter;
 import org.compass.core.converter.dynamic.OgnlDynamicConverter;
 import org.compass.core.converter.dynamic.VelocityDynamicConverter;
-import org.compass.core.converter.extended.DataTimeConverter;
+import org.compass.core.converter.extended.DateTimeConverter;
 import org.compass.core.converter.extended.FileConverter;
 import org.compass.core.converter.extended.InputStreamConverter;
 import org.compass.core.converter.extended.LocaleConverter;
@@ -235,7 +235,7 @@ public class DefaultConverterLookup implements ConverterLookup {
                 java.sql.Timestamp.class, new SqlTimestampConverter());
         try {
             addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Extendend.JODA_DATETIME,
-                    ClassUtils.forName("org.joda.time.DateTime", settings.getClassLoader()), new DataTimeConverter());
+                    ClassUtils.forName("org.joda.time.DateTime", settings.getClassLoader()), new DateTimeConverter());
             log.debug("JODA found in the class path, registering DataTime converter");
         } catch (Throwable t) {
             // do nothing
