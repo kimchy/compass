@@ -335,168 +335,210 @@
               <row>
                 <entry>java.lang.Boolean, boolean</entry>
                 <entry>boolean</entry>
-                <entry>org.compass.core.converter. simple.BooleanConveter</entry>
+                <entry>org.compass.core.converter.basic.BooleanConverter</entry>
                 <entry>boolean</entry>
+                <entry></entry>
+              </row>
+              <row>
+                <entry>java.util.concurrent.atomic.AtomicBoolean</entry>
+                <entry>atomicboolean</entry>
+                <entry>org.compass.core.converter.basic.atomic.AtomicBooleanConverter</entry>
+                <entry>atomicboolean</entry>
                 <entry></entry>
               </row>
               <row>
                 <entry>java.lang.Byte, byte</entry>
                 <entry>byte</entry>
-                <entry>org.compass.core.converter. simple.ByteConveter</entry>
+                <entry>org.compass.core.converter.basic.ByteConverter</entry>
                 <entry>byte</entry>
                 <entry></entry>
               </row>
               <row>
                 <entry>java.lang.Charecter, char</entry>
                 <entry>char</entry>
-                <entry>org.compass.core.converter. simple.CharConveter</entry>
+                <entry>org.compass.core.converter.basic.CharConverter</entry>
                 <entry>char</entry>
+                <entry></entry>
+              </row>
+              <row>
+                <entry>java.lang.Enum</entry>
+                <entry>enum</entry>
+                <entry>org.compass.core.converter.basic.EnumConverter</entry>
+                <entry>enum</entry>
                 <entry></entry>
               </row>
               <row>
                 <entry>java.lang.Float, float</entry>
                 <entry>float</entry>
-                <entry>org.compass.core.converter. simple.FloatConveter</entry>
+                <entry>org.compass.core.converter.basic.FloatConverter</entry>
                 <entry>float</entry>
                 <entry>Format-table converter</entry>
               </row>
               <row>
                 <entry>java.lang.Double, double</entry>
                 <entry>double</entry>
-                <entry>org.compass.core.converter. simple.DoubleConveter</entry>
+                <entry>org.compass.core.converter.basic.DoubleConverter</entry>
                 <entry>double</entry>
                 <entry>Format-table converter</entry>
               </row>
               <row>
                 <entry>java.lang.Short, short</entry>
                 <entry>short</entry>
-                <entry>org.compass.core.converter. simple.ShortConveter</entry>
+                <entry>org.compass.core.converter.basic.ShortConverter</entry>
                 <entry>short</entry>
                 <entry>Format-table converter</entry>
               </row>
               <row>
                 <entry>java.lang.Integer, int</entry>
                 <entry>int</entry>
-                <entry>org.compass.core.converter. simple.IntConveter</entry>
+                <entry>org.compass.core.converter.basic.IntConverter</entry>
                 <entry>int</entry>
                 <entry>Format-table converter</entry>
               </row>
               <row>
+                <entry>java.util.concurrent.atomic.AtomicInteger</entry>
+                <entry>atomicint</entry>
+                <entry>org.compass.core.converter.basic.atomic.AtomicIntConverter</entry>
+                <entry>atomicint</entry>
+                <entry></entry>
+              </row>
+              <row>
                 <entry>java.lang.Long, long</entry>
                 <entry>long</entry>
-                <entry>org.compass.core.converter. simple.LongConveter</entry>
+                <entry>org.compass.core.converter.basic.LongConverter</entry>
                 <entry>long</entry>
                 <entry>Format-table converter</entry>
               </row>
               <row>
+                <entry>java.util.concurrent.atomic.AtomicLong</entry>
+                <entry>atomiclong</entry>
+                <entry>org.compass.core.converter.basic.atomic.AtomicLongConverter</entry>
+                <entry>atomiclong</entry>
+                <entry></entry>
+              </row>
+              <row>
                 <entry>java.lang.Date</entry>
                 <entry>date</entry>
-                <entry>org.compass.core.converter. simple.DateConveter</entry>
+                <entry>org.compass.core.converter.basic.DateConverter</entry>
                 <entry>date</entry>
                 <entry>Format-table converter, defaults to <literal>yyyy-MM-dd-HH-mm-ss-S-a</literal></entry>
               </row>
               <row>
                 <entry>java.lang.Calendar</entry>
                 <entry>calendar</entry>
-                <entry>org.compass.core.converter. simple.CalendarConveter</entry>
+                <entry>org.compass.core.converter.basic.CalendarConverter</entry>
                 <entry>calendar</entry>
                 <entry>Format-table converter, defaults to <literal>yyyy-MM-dd-HH-mm-ss-S-a</literal></entry>
               </row>
               <row>
                 <entry>java.lang.String</entry>
                 <entry>string</entry>
-                <entry>org.compass.core.converter. simple.StringConveter</entry>
+                <entry>org.compass.core.converter.basic.StringConverter</entry>
                 <entry>string</entry>
                 <entry></entry>
               </row>
               <row>
                 <entry>java.lang.StringBuffer</entry>
                 <entry>stringbuffer</entry>
-                <entry>org.compass.core.converter. simple.StringBufferConveter</entry>
+                <entry>org.compass.core.converter.basic.StringBufferConverter</entry>
                 <entry>stringbuffer</entry>
+                <entry></entry>
+              </row>
+              <row>
+                <entry>java.lang.StringBuilder</entry>
+                <entry>stringbuilder</entry>
+                <entry>org.compass.core.converter.basic.StringBuilderConverter</entry>
+                <entry>stringbuilder</entry>
                 <entry></entry>
               </row>
               <row>
                 <entry>java.math.BigDecimal</entry>
                 <entry>bigdecimal</entry>
-                <entry>org.compass.core.converter. simple.BigDecimalConveter</entry>
+                <entry>org.compass.core.converter.basic.BigDecimalConverter</entry>
                 <entry>bigdecimal</entry>
                 <entry></entry>
               </row>
               <row>
                 <entry>java.math.BigInteger</entry>
                 <entry>biginteger</entry>
-                <entry>org.compass.core.converter. simple.BigIntegerConveter</entry>
+                <entry>org.compass.core.converter.basic.BigIntegerConverter</entry>
                 <entry>biginteger</entry>
+                <entry></entry>
+              </row>
+              <row>
+                <entry>java.util.UUID</entry>
+                <entry>uuid</entry>
+                <entry>org.compass.core.converter.basic.UUIDConverter</entry>
+                <entry>uuid</entry>
                 <entry></entry>
               </row>
               <row>
                 <entry>java.net.URL</entry>
                 <entry>url</entry>
-                <entry>org.compass.core.converter. simple.URLConveter</entry>
+                <entry>org.compass.core.converter.basic.URLConverter</entry>
                 <entry>url</entry>
                 <entry>Uses the <literal>URL#toString</literal></entry>
               </row>
               <row>
                 <entry>java.io.File</entry>
                 <entry>file</entry>
-                <entry>org.compass.core.converter. extended.FileConveter</entry>
+                <entry>org.compass.core.converter.extended.FileConverter</entry>
                 <entry>file</entry>
                 <entry>Uses the file name</entry>
               </row>
               <row>
                 <entry>java.io.InputStream</entry>
                 <entry>inputstream</entry>
-                <entry>org.compass.core.converter. extended.InputStreamConveter</entry>
+                <entry>org.compass.core.converter.extended.InputStreamConverter</entry>
                 <entry>inputstream</entry>
                 <entry>Stores the content of the <literal>InputStream</literal> without performing any other search related operations.</entry>
               </row>
               <row>
                 <entry>java.io.Reader</entry>
                 <entry>reader</entry>
-                <entry>org.compass.core.converter. extended.ReaderConverter</entry>
+                <entry>org.compass.core.converter.extended.ReaderConverter</entry>
                 <entry>reader</entry>
                 <entry></entry>
               </row>
               <row>
                 <entry>java.util.Locale</entry>
                 <entry>locale</entry>
-                <entry>org.compass.core.converter. extended.LocaleConveter</entry>
+                <entry>org.compass.core.converter.extended.LocaleConverter</entry>
                 <entry>locale</entry>
                 <entry></entry>
               </row>
               <row>
                 <entry>java.sql.Date</entry>
                 <entry>sqldate</entry>
-                <entry>org.compass.core.converter. extended.SqlDateConveter</entry>
+                <entry>org.compass.core.converter.extended.SqlDateConverter</entry>
                 <entry>sqldate</entry>
                 <entry></entry>
               </row>
               <row>
                 <entry>java.sql.Time</entry>
                 <entry>sqltime</entry>
-                <entry>org.compass.core.converter. extended.SqlTimeConveter</entry>
+                <entry>org.compass.core.converter.extended.SqlTimeConverter</entry>
                 <entry>sqltime</entry>
                 <entry></entry>
               </row>
               <row>
                 <entry>java.sql.Timestamp</entry>
                 <entry>sqltimestamp</entry>
-                <entry>org.compass.core.converter. extended.SqlTimestampConveter</entry>
+                <entry>org.compass.core.converter.extended.SqlTimestampConverter</entry>
                 <entry>sqltimestamp</entry>
                 <entry></entry>
               </row>
               <row>
                 <entry>byte[]</entry>
                 <entry>primitivebytearray</entry>
-                <entry>org.compass.core.converter. extended.PrimitiveByteArrayConverter</entry>
+                <entry>org.compass.core.converter.extended.PrimitiveByteArrayConverter</entry>
                 <entry>primitivebytearray</entry>
                 <entry>Stores the content of the byte array without performing any other search related operations.</entry>
               </row>
               <row>
                 <entry>Byte[]</entry>
                 <entry>objectbytearray</entry>
-                <entry>org.compass.core.converter. extended.ObjectByteArrayConverter</entry>
+                <entry>org.compass.core.converter.extended.ObjectByteArrayConverter</entry>
                 <entry>objectbytearray</entry>
                 <entry>Stores the content of the byte array without performing any other search related operations.</entry>
               </row>
@@ -516,57 +558,57 @@
             </thead>
             <tbody>
               <row>
-                <entry>org.compass.core.mapping. osem.ClassMapping</entry>
+                <entry>org.compass.core.mapping.osem.ClassMapping</entry>
                 <entry>classMapping</entry>
-                <entry>org.compass.core.converter. mapping.ClassMappingConverter</entry>
+                <entry>org.compass.core.converter.mapping.osem.ClassMappingConverter</entry>
                 <entry></entry>
               </row>
               <row>
-                <entry>org.compass.core.mapping. osem.ClassIdPropertyMapping</entry>
+                <entry>org.compass.core.mapping.osem.ClassIdPropertyMapping</entry>
                 <entry>classIdPropertyMapping</entry>
-                <entry>org.compass.core.converter. mapping.ClassPropertyMappingConverter</entry>
+                <entry>org.compass.core.converter.mapping.osem.ClassPropertyMappingConverter</entry>
                 <entry></entry>
               </row>
               <row>
-                <entry>org.compass.core.mapping. osem.ClassPropertyMapping</entry>
+                <entry>org.compass.core.mapping.osem.ClassPropertyMapping</entry>
                 <entry>classPropertyMapping</entry>
-                <entry>org.compass.core.converter. mapping.ClassPropertyMappingConverter</entry>
+                <entry>org.compass.core.converter.mapping.osem.ClassPropertyMappingConverter</entry>
                 <entry></entry>
               </row>
               <row>
-                <entry>org.compass.core.mapping. osem.ComponentMapping</entry>
+                <entry>org.compass.core.mapping.osem.ComponentMapping</entry>
                 <entry>componentMapping</entry>
-                <entry>org.compass.core.converter. mapping.ComponentMappingConverter</entry>
+                <entry>org.compass.core.converter.mapping.osem.ComponentMappingConverter</entry>
                 <entry></entry>
               </row>
               <row>
-                <entry>org.compass.core.mapping. osem.ReferenceMapping</entry>
+                <entry>org.compass.core.mapping.osem.ReferenceMapping</entry>
                 <entry>referenceMapping</entry>
-                <entry>org.compass.core.converter. mapping.ReferenceMappingConverter</entry>
+                <entry>org.compass.core.converter.mapping.osem.ReferenceMappingConverter</entry>
                 <entry></entry>
               </row>
               <row>
-                <entry>org.compass.core.mapping. osem.CollectionMapping</entry>
+                <entry>org.compass.core.mapping.osem.CollectionMapping</entry>
                 <entry>collectionMapping</entry>
-                <entry>org.compass.core.converter. mapping.CollectionMappingConverter</entry>
+                <entry>org.compass.core.converter.mapping.osem.CollectionMappingConverter</entry>
                 <entry></entry>
               </row>
               <row>
-                <entry>org.compass.core.mapping. osem.ArrayMapping</entry>
+                <entry>org.compass.core.mapping.osem.ArrayMapping</entry>
                 <entry>arrayMapping</entry>
-                <entry>org.compass.core.converter. mapping.ArrayMappingConverter</entry>
+                <entry>org.compass.core.converter.mapping.osem.ArrayMappingConverter</entry>
                 <entry></entry>
               </row>
               <row>
-                <entry>org.compass.core.mapping. osem.ConstantMapping</entry>
+                <entry>org.compass.core.mapping.osem.ConstantMetaDataMapping</entry>
                 <entry>constantMapping</entry>
-                <entry>org.compass.core.converter. mapping.ConstantMappingConverter</entry>
+                <entry>org.compass.core.converter.mapping.osem.ConstantMappingConverter</entry>
                 <entry></entry>
               </row>
               <row>
-                <entry>org.compass.core.mapping. osem.ParentMapping</entry>
+                <entry>org.compass.core.mapping.osem.ParentMapping</entry>
                 <entry>parentMapping</entry>
-                <entry>org.compass.core.converter. mapping.ParentMappingConverter</entry>
+                <entry>org.compass.core.converter.mapping.osem.ParentMappingConverter</entry>
                 <entry></entry>
               </row>
             </tbody>
@@ -902,15 +944,15 @@
               </thead>
               <tbody>
                 <row>
-                  <entry>compass.engine.store.jdbc. connection.driverClass</entry>
+                  <entry>compass.engine.store.jdbc.connection.driverClass</entry>
                   <entry>The Jdbc driver class.</entry>
                 </row>
                 <row>
-                  <entry>compass.engine.store.jdbc. connection.username</entry>
+                  <entry>compass.engine.store.jdbc.connection.username</entry>
                   <entry>The Jdbc connection user name.</entry>
                 </row>
                 <row>
-                  <entry>compass.engine.store.jdbc. connection.password</entry>
+                  <entry>compass.engine.store.jdbc.connection.password</entry>
                   <entry>The Jdbc connection password.</entry>
                 </row>
               </tbody>
