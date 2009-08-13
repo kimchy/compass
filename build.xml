@@ -378,7 +378,7 @@
          Run test suite. However it's possible to run specific tests by passing in
          the "test.includes" and (optionally) "test.excludes" properties through the
          command line, as below:
-             ant tests -Dtest.includes=org/compass/core/**/*Tests
+             ant tests -Dtest.includes=org/compass/core/**/*Tests.class
      -->
     <target name="tests" depends="maintests" description="Run tests"/>
 
