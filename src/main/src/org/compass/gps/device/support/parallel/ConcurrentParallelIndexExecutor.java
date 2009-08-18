@@ -52,6 +52,8 @@ public class ConcurrentParallelIndexExecutor implements ParallelIndexExecutor {
 
     private int maxThreads = -1;
 
+    private boolean ignoreNoEtities = false;
+
     /**
      * Constructs a new concurrent index executor with <code>maxThreads</code>
      * defaults to -1.
@@ -73,6 +75,14 @@ public class ConcurrentParallelIndexExecutor implements ParallelIndexExecutor {
     }
 
     /**
+     * Allows to ignore cases where there are no entities to index.
+     */
+    public ConcurrentParallelIndexExecutor setIgnoreNoEntities(boolean ignoreNoEtities) {
+        this.ignoreNoEtities = ignoreNoEtities;
+        return this;
+    }
+
+    /**
      * Performs the indexing process using the provided index entities indexer. Creates a pool of N
      * threads (if <code>maxThreads</code> is set to -1, N is the numer of entities groups, otherwise
      * N is the number of <code>maxThreads</code>).
@@ -85,6 +95,9 @@ public class ConcurrentParallelIndexExecutor implements ParallelIndexExecutor {
                              final CompassGpsInterfaceDevice compassGps) {
 
         if (entities.length <= 0) {
+            if (ignoreNoEtities) {
+                return;
+            }
             throw new IllegalArgumentException("No entities listed to be indexed, have you defined your entities correctly?");
         }
         int maxThreads = this.maxThreads;
