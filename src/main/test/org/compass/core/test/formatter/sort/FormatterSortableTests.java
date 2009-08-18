@@ -16,11 +16,8 @@
 
 package org.compass.core.test.formatter.sort;
 
-import java.util.Locale;
-
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
-import org.compass.core.config.CompassSettings;
 import org.compass.core.test.AbstractTestCase;
 
 /**
@@ -28,12 +25,9 @@ import org.compass.core.test.AbstractTestCase;
  */
 public class FormatterSortableTests extends AbstractTestCase {
 
+    @Override
     protected String[] getMappings() {
         return new String[]{"formatter/sort/mapping.cpm.xml"};
-    }
-
-    protected void addSettings(CompassSettings settings) {
-        Locale.setDefault(Locale.ENGLISH);
     }
 
     public void testSortableFormatters() {

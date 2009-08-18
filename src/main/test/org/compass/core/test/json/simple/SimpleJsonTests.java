@@ -28,6 +28,7 @@ import org.compass.core.test.AbstractTestCase;
  */
 public class SimpleJsonTests extends AbstractTestCase {
 
+    @Override
     protected String[] getMappings() {
         return new String[]{"json/simple/mapping.cpm.xml"};
     }

@@ -28,6 +28,7 @@ import org.compass.core.test.AbstractTestCase;
 
 public class SortTests extends AbstractTestCase {
 
+    @Override
     protected String[] getMappings() {
         return new String[] { "sort/sort.cpm.xml" };
     }
@@ -38,6 +39,7 @@ public class SortTests extends AbstractTestCase {
         settings.setBooleanSetting(LuceneEnvironment.Transaction.Processor.ReadCommitted.CONCURRENT_OPERATIONS, false);
     }
 
+    @Override
     protected void setUp() throws Exception {
         super.setUp();
         CompassSession session = openSession();

@@ -22,7 +22,6 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
@@ -37,12 +36,12 @@ import org.compass.core.test.AbstractTestCase;
  */
 public class FormatterTests extends AbstractTestCase {
 
+    @Override
     protected String[] getMappings() {
         return new String[]{"formatter/formatter.cpm.xml"};
     }
 
     protected void addSettings(CompassSettings settings) {
-        Locale.setDefault(Locale.ENGLISH);
         settings.setGroupSettings(CompassEnvironment.Converter.PREFIX,
                 "myint",
                 new String[]{CompassEnvironment.Converter.TYPE, CompassEnvironment.Converter.Format.FORMAT},

@@ -37,10 +37,12 @@ import org.compass.core.test.AbstractTestCase;
  */
 public class ResourceTests extends AbstractTestCase {
 
+    @Override
     protected String[] getMappings() {
         return new String[]{"resource/resource.cpm.xml"};
     }
 
+    @Override
     protected void addSettings(CompassSettings settings) {
         settings.setGroupSettings(CompassEnvironment.Converter.PREFIX,
                 "mydate",
@@ -348,7 +350,7 @@ public class ResourceTests extends AbstractTestCase {
         r = session.loadResource("g", 1);
         assertEquals("000001.00", r.getValue("value"));
 
-        tr.commit();
+        tr.commit();     
         session.close();
     }
 }

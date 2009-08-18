@@ -19,6 +19,7 @@ package org.compass.core.test;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Properties;
 
 import org.compass.core.Compass;
@@ -40,16 +41,32 @@ public abstract class AbstractTestCase extends ExtendedTestCase {
 
     private static FileHandlerMonitor fileHandlerMonitor;
 
+    private static Locale defaultLocale;
+
+    /**
+     * Set locale for test case. If not set by client then default value Locale.ENGLISH is used.
+     * <p>
+     * To set the Locale this method has to be called before the internal {@link Compass} instance is created.
+     * It is recomended to call this method in either {@link #addSettings(CompassSettings)} or {@link #addExtraConf(CompassConfiguration)} methods.
+     *
+     * @param locale Locale to be used during the test case
+     */
+    protected void setLocale(Locale locale) {
+        defaultLocale = locale;
+    }
+
     protected String[] getMappings() {
         return new String[0];
     }
 
+    @Override
     protected void beforeTestCase() throws Exception {
         compass = (InternalCompass) buildCompass();
         fileHandlerMonitor = FileHandlerMonitor.getFileHandlerMonitor(compass);
         fileHandlerMonitor.verifyNoHandlers();
     }
 
+    @Override
     protected void setUp() throws Exception {
         compass.getSearchEngineIndexManager().clearCache();
         try {
@@ -67,6 +84,7 @@ public abstract class AbstractTestCase extends ExtendedTestCase {
         compass.getSearchEngineIndexManager().verifyIndex();
     }
 
+    @Override
     protected void tearDown() throws Exception {
         compass.getSearchEngineIndexManager().clearCache();
         try {
@@ -84,6 +102,7 @@ public abstract class AbstractTestCase extends ExtendedTestCase {
     }
 
 
+    @Override
     protected void afterTestCase() throws Exception {
         compass.close();
         fileHandlerMonitor.verifyNoHandlers();
@@ -91,6 +110,10 @@ public abstract class AbstractTestCase extends ExtendedTestCase {
 
     protected Compass buildCompass() throws IOException {
         CompassConfiguration conf = buildConf();
+        if (defaultLocale == null) {
+            defaultLocale = Locale.ENGLISH;
+        }
+        Locale.setDefault(defaultLocale);
         return conf.buildCompass();
     }
 

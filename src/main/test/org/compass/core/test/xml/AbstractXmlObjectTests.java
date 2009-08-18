@@ -39,6 +39,7 @@ import org.compass.core.xml.XmlObject;
  */
 public abstract class AbstractXmlObjectTests extends AbstractTestCase {
 
+    @Override
     protected String[] getMappings() {
         return new String[]{"xml/xml.cpm.xml"};
     }
