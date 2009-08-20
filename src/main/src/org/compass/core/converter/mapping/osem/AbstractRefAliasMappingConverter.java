@@ -44,8 +44,12 @@ public abstract class AbstractRefAliasMappingConverter implements Converter {
             classMapping = extractClassMapping(context, root.getClass(), resource, refAliasMapping);
         }
         Object current = context.getAttribute(MarshallingEnvironment.ATTRIBUTE_CURRENT);
-        context.setAttribute(MarshallingEnvironment.ATTRIBUTE_PARENT, current);
-        return doMarshall(resource, root, refAliasMapping, classMapping, context);
+        Object parent = context.setAttribute(MarshallingEnvironment.ATTRIBUTE_PARENT, current);
+        try {
+            return doMarshall(resource, root, refAliasMapping, classMapping, context);
+        } finally {
+            context.setAttribute(MarshallingEnvironment.ATTRIBUTE_PARENT, parent);
+        }
     }
 
     protected abstract boolean doMarshall(Resource resource, Object root, RefAliasObjectMapping hasRefAliasMapping,
@@ -99,8 +103,12 @@ public abstract class AbstractRefAliasMappingConverter implements Converter {
             }
         }
         Object current = context.getAttribute(MarshallingEnvironment.ATTRIBUTE_CURRENT);
-        context.setAttribute(MarshallingEnvironment.ATTRIBUTE_PARENT, current);
-        return doUnmarshall(resource, hasRefAliasMapping, classMapping, context);
+        Object parent = context.setAttribute(MarshallingEnvironment.ATTRIBUTE_PARENT, current);
+        try {
+            return doUnmarshall(resource, hasRefAliasMapping, classMapping, context);
+        } finally {
+            context.setAttribute(MarshallingEnvironment.ATTRIBUTE_PARENT, parent);
+        }
     }
 
     /**
