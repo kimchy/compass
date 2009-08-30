@@ -120,11 +120,22 @@ public class TransIndex implements CompassConfigurable {
     }
 
     public void commit() throws IOException {
+        if (indexWriter == null) {
+            return;
+        }
         if (indexSearcher != null) {
-            indexSearcher.close();
+            try {
+                indexSearcher.close();
+            } finally {
+                indexSearcher = null;
+            }
         }
         if (indexReader != null) {
-            indexReader.close();
+            try {
+                indexReader.close();
+            } finally {
+                indexReader = null;
+            }
         }
         if (optimize) {
             indexWriter.optimize();
@@ -138,11 +149,22 @@ public class TransIndex implements CompassConfigurable {
     }
 
     public void rollback() throws IOException {
+        if (indexWriter == null) {
+            return;
+        }
         if (indexSearcher != null) {
-            indexSearcher.close();
+            try {
+                indexSearcher.close();
+            } finally {
+                indexSearcher = null;
+            }
         }
         if (indexReader != null) {
-            indexReader.close();
+            try {
+                indexReader.close();
+            } finally {
+                indexReader = null;
+            }
         }
         indexWriter.rollback();
         indexWriter = null;
