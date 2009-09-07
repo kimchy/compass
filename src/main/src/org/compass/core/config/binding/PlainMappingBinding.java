@@ -342,7 +342,7 @@ public abstract class PlainMappingBinding extends AbstractConfigurationHelperMap
         for (ConfigurationHelper obj : jsonObjectConf.getChildren("json-object")) {
             PlainJsonObjectMapping intenralJsonObjectMapping = new PlainJsonObjectMapping();
             bindJsonPlainObject(obj, intenralJsonObjectMapping, rootJsonObjectMapping);
-            jsonObjectMapping.addMapping(jsonObjectMapping);
+            jsonObjectMapping.addMapping(intenralJsonObjectMapping);
         }
 
         for (ConfigurationHelper arr : jsonObjectConf.getChildren("json-array")) {

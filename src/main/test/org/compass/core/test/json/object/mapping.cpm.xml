@@ -6,42 +6,57 @@
 <compass-core-mapping>
 
     <root-json-object alias="a">
-        <json-id name="id" />
-        <json-property name="value" />
+        <json-id name="id"/>
+        <json-property name="value"/>
         <json-object name="obj">
-            <json-property name="objValue1" value-converter="int" />
+            <json-property name="objValue1" value-converter="int"/>
             <json-array name="arr">
-                <json-property value-converter="int" />
+                <json-property value-converter="int"/>
             </json-array>
         </json-object>
     </root-json-object>
 
     <root-json-object alias="b">
-        <json-id name="id" />
-        <json-property name="value" />
+        <json-id name="id"/>
+        <json-property name="value"/>
         <json-object name="obj">
-            <json-property name="objValue1" value-converter="int" />
+            <json-property name="objValue1" value-converter="int"/>
             <json-array name="arr">
-                <json-property value-converter="int" />
+                <json-property value-converter="int"/>
             </json-array>
         </json-object>
         <json-object name="obj">
-            <json-property name="objValue1" value-converter="int" />
+            <json-property name="objValue1" value-converter="int"/>
             <json-array name="arr">
-                <json-property value-converter="int" />
+                <json-property value-converter="int"/>
             </json-array>
         </json-object>
     </root-json-object>
 
     <root-json-object alias="c">
-        <json-id name="id" />
-        <json-property name="value" />
+        <json-id name="id"/>
+        <json-property name="value"/>
         <json-object name="obj">
-            <json-property name="objValue1" value-converter="int" naming-type="full" />
+            <json-property name="objValue1" value-converter="int" naming-type="full"/>
             <json-array name="arr">
-                <json-property value-converter="int" naming-type="full" />
+                <json-property value-converter="int" naming-type="full"/>
             </json-array>
         </json-object>
+    </root-json-object>
+
+    <root-json-object alias="d">
+        <json-id name="id"/>
+        <json-object name="employee">
+            <json-property name="guid"/>
+            <json-property name="version"/>
+            <json-property name="creationdate"/>
+            <json-object name="address">
+                <json-property name="street"/>
+            </json-object>
+            <json-property name="first_name"/>
+            <json-property name="last_name"/>
+        </json-object>
+        <json-content name="content"/>
     </root-json-object>
 
 </compass-core-mapping>
