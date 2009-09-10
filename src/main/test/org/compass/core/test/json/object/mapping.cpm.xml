@@ -47,14 +47,10 @@
     <root-json-object alias="d">
         <json-id name="id"/>
         <json-object name="employee">
-            <json-property name="guid"/>
-            <json-property name="version"/>
-            <json-property name="creationdate"/>
+            <json-property name="guid" naming-type="full"/>
             <json-object name="address">
-                <json-property name="street"/>
+                <json-property name="street" naming-type="full"/>
             </json-object>
-            <json-property name="first_name"/>
-            <json-property name="last_name"/>
         </json-object>
         <json-content name="content"/>
     </root-json-object>

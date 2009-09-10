@@ -51,5 +51,11 @@ public class SimpleJsonObjectBuilderTests extends SimpleJsonObjectTests {
                         .add(property("value"))
                         .add(object("obj").add(property("objValue1").namingType(Naming.FULL).valueConverter("int")).add(array("arr").element(property().namingType(Naming.FULL).valueConverter("int"))))
         );
+        conf.addMapping(
+                json("d")
+                        .add(id("id"))
+                        .add(object("employee").add(property("guid").namingType(Naming.FULL)).add(object("address").add(property("street").namingType(Naming.FULL))))
+                        .add(content("content"))
+        );
     }
 }
