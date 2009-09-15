@@ -8,7 +8,7 @@ import org.compass.core.engine.SearchEngineException;
  */
 public class InvocableCoherenceDirectoryStore extends AbstractCoherenceDirectoryStore {
 
-    public static final String PROTOCOL = "coherence";
+    public static final String PROTOCOL = "coherence://";
 
     protected String findConnection(String connection) {
         return connection.substring(PROTOCOL.length());

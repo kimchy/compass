@@ -8,7 +8,7 @@ import org.compass.core.engine.SearchEngineException;
  */
 public class DataGridCoherenceDirectoryStore extends AbstractCoherenceDirectoryStore {
 
-    public static final String PROTOCOL = "coherence-dg";
+    public static final String PROTOCOL = "coherence-dg://";
 
     protected String findConnection(String connection) {
         return connection.substring(PROTOCOL.length());
