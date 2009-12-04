@@ -144,12 +144,14 @@
 
     <target name="fulljar" depends="build,initdist" description="Create full JAR file with all Compass classes">
 
-        <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask" classpath="${basedir}/lib/jarjar/jarjar-1.0.jar"/>
+        <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask"
+                 classpath="${basedir}/lib/jarjar/jarjar-1.0.jar"/>
 
         <delete file="${dist.dir}/${compass-jarname}.jar"/>
-        <jarjar jarfile="${dist.dir}/${compass-jarname}.jar" basedir="${target.classes.dir}" includes="META-INF/**,org/apache/lucene/**,org/compass/**,org/springframework/**,**/*.xml">
-            <zipfileset src="${basedir}/lib//asm/asm-3.1.jar" />
-            <zipfileset src="${basedir}/lib//asm/asm-commons-3.1.jar" />
+        <jarjar jarfile="${dist.dir}/${compass-jarname}.jar" basedir="${target.classes.dir}"
+                includes="META-INF/**,org/apache/lucene/**,org/compass/**,org/springframework/**,**/*.xml">
+            <zipfileset src="${basedir}/lib//asm/asm-3.1.jar"/>
+            <zipfileset src="${basedir}/lib//asm/asm-commons-3.1.jar"/>
             <rule pattern="org.objectweb.asm.**" result="org.compass.core.asm.@1"/>
             <manifest>
                 <attribute name="Implementation-Title" value="${compass-title}"/>
@@ -250,7 +252,7 @@
             <packageset dir="${main.src.dir}">
                 <include name="org/apache/lucene/**"/>
                 <include name="org/compass/**"/>
-                <exclude name="org/compass/core/util/asm/**" />
+                <exclude name="org/compass/core/util/asm/**"/>
             </packageset>
             <link href="http://java.sun.com/j2se/1.5.0/docs/api"/>
             <link href="http://lucene.apache.org/java/2_4_0/api//"/>
@@ -351,7 +353,7 @@
 
 
     <target name="mvn" depends="maven.ant.tasks-check, fulljar, srczip, javadoc">
-        <mkdir dir="${maven.dist.dir}" />
+        <mkdir dir="${maven.dist.dir}"/>
 
         <copy file="pom.xml.template" tofile="${basedir}/target/pom.xml">
             <filterset begintoken="@" endtoken="@">
@@ -604,6 +606,7 @@
             <zipfileset refid="main" prefix="${release.path}"/>
             <zipfileset dir="." prefix="${release.path}">
                 <include name="lib/*.txt"/>
+                <include name="lib/asm/**"/>
                 <include name="lib/ant/**"/>
                 <include name="lib/antlr/**"/>
                 <include name="lib/c3p0/**"/>
@@ -650,7 +653,7 @@
             </zipfileset>
         </zip>
 
-        <delete file="${target.release.dir}/compass-${compass-version}-docs.zip" />
+        <delete file="${target.release.dir}/compass-${compass-version}-docs.zip"/>
         <zip zipfile="${target.release.dir}/compass-${compass-version}-docs.zip" basedir="${basedir}">
             <include name="docs/**"/>
             <exclude name="docs/reference/*"/>
