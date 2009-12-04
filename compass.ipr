@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project relativePaths="false" version="4">
+<project version="4">
   <component name="AntConfiguration">
     <defaultAnt bundledAnt="true" />
   </component>
@@ -95,7 +95,6 @@
   </component>
   <component name="CompilerConfiguration">
     <option name="DEFAULT_COMPILER" value="Javac" />
-    <option name="DEPLOY_AFTER_MAKE" value="0" />
     <resourceExtensions>
       <entry name=".+\.(properties|xml|html|dtd|tld)" />
       <entry name=".+\.(gif|png|jpeg|jpg)" />
@@ -116,6 +115,7 @@
       <entry name="?*.ProductDerivation" />
       <entry name="?*.json" />
     </wildcardResourcePatterns>
+    <annotationProcessing enabled="false" useClasspath="true" />
   </component>
   <component name="CopyrightManager" default="">
     <module2copyright />
@@ -200,14 +200,11 @@
   </component>
   <component name="IdProvider" IDEtalkID="E441679FD1D927792A7A75945B504C2F" />
   <component name="InspectionProjectProfileManager">
-    <option name="PROJECT_PROFILE" value="Project Default" />
-    <option name="USE_PROJECT_LEVEL_SETTINGS" value="true" />
-    <scopes />
     <profiles>
       <profile version="1.0" is_locked="false">
         <option name="myName" value="Project Default" />
         <option name="myLocal" value="false" />
-        <inspection_tool class="JavaDoc" level="WARNING" enabled="true">
+        <inspection_tool class="JavaDoc" enabled="true" level="WARNING" enabled_by_default="true">
           <option name="TOP_LEVEL_CLASS_OPTIONS">
             <value>
               <option name="ACCESS_JAVADOC_REQUIRED_FOR" value="none" />
@@ -238,11 +235,15 @@
         </inspection_tool>
       </profile>
     </profiles>
-    <list size="4">
+    <option name="PROJECT_PROFILE" value="Project Default" />
+    <option name="USE_PROJECT_PROFILE" value="true" />
+    <version value="1.0" />
+    <list size="5">
       <item index="0" class="java.lang.String" itemvalue="SERVER PROBLEM" />
       <item index="1" class="java.lang.String" itemvalue="INFO" />
-      <item index="2" class="java.lang.String" itemvalue="WARNING" />
-      <item index="3" class="java.lang.String" itemvalue="ERROR" />
+      <item index="2" class="java.lang.String" itemvalue="TYPO" />
+      <item index="3" class="java.lang.String" itemvalue="WARNING" />
+      <item index="4" class="java.lang.String" itemvalue="ERROR" />
     </list>
   </component>
   <component name="IssueNavigationConfiguration">
@@ -417,7 +418,6 @@
   <component name="ProjectDetails">
     <option name="projectName" value="compass" />
   </component>
-  <component name="ProjectFileVersion" converted="true" />
   <component name="ProjectKey">
     <option name="state" value="https://svn.compass-project.org/svn/compass/trunk/compass.ipr" />
   </component>
@@ -429,9 +429,11 @@
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_5" assert-keyword="true" jdk-15="true" project-jdk-name="1.5" project-jdk-type="JavaSDK" />
   <component name="ProjectRunConfigurationManager">
-    <configuration default="false" name="LoadTester - Terracotta" type="Application" factoryName="Application" enabled="false" merge="false" sample_coverage="true" runner="emma">
+    <configuration default="false" name="LoadTester - Terracotta" type="Application" factoryName="Application">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="emma" />
+      <extension name="snapshooter" />
       <option name="MAIN_CLASS_NAME" value="org.compass.core.load.simple.LoadTester" />
-      <option name="VM_PARAMETERS" value="-Xmx512m -Xbootclasspath/p:/Users/kimchy/opt/terracotta/2.7.3/lib/dso-boot/dso-boot-hotspot_osx_150_16.jar  -Dtc.install-root=/Users/kimchy/opt/terracotta/2.7.3  -Dtc.config=src/main/test/org/compass/needle/terracotta/tc-config.xml" />
+      <option name="VM_PARAMETERS" value="-Xmx512m -Xbootclasspath/p:$PROJECT_DIR$/../../../opt/terracotta/2.7.3/lib/dso-boot/dso-boot-hotspot_osx_150_16.jar  -Dtc.install-root=$PROJECT_DIR$/../../../opt/terracotta/2.7.3  -Dtc.config=src/main/test/org/compass/needle/terracotta/tc-config.xml" />
       <option name="PROGRAM_PARAMETERS" value="" />
       <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
@@ -457,11 +459,11 @@
       <RunnerSettings RunnerId="Run" />
       <ConfigurationWrapper RunnerId="Debug" />
       <ConfigurationWrapper RunnerId="Run" />
-      <method>
-        <option name="Make" value="true" />
-      </method>
+      <method />
     </configuration>
-    <configuration default="false" name="LoadTester" type="Application" factoryName="Application" enabled="false" merge="false" sample_coverage="true" runner="emma">
+    <configuration default="false" name="LoadTester" type="Application" factoryName="Application">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="emma" />
+      <extension name="snapshooter" />
       <option name="MAIN_CLASS_NAME" value="org.compass.core.load.simple.LoadTester" />
       <option name="VM_PARAMETERS" value="-Xmx512m" />
       <option name="PROGRAM_PARAMETERS" value="" />
@@ -490,13 +492,13 @@
       <ConfigurationWrapper RunnerId="Debug" />
       <ConfigurationWrapper RunnerId="Profile " />
       <ConfigurationWrapper RunnerId="Run" />
-      <method>
-        <option name="Make" value="true" />
-      </method>
+      <method />
     </configuration>
-    <configuration default="false" name="Processor - Terracotta" type="Application" factoryName="Application" enabled="false" merge="false" sample_coverage="true" runner="emma">
+    <configuration default="false" name="Processor - Terracotta" type="Application" factoryName="Application">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="emma" />
+      <extension name="snapshooter" />
       <option name="MAIN_CLASS_NAME" value="org.compass.core.load.simple.Processor" />
-      <option name="VM_PARAMETERS" value="-Xbootclasspath/p:/Users/kimchy/opt/terracotta/2.7.3/lib/dso-boot/dso-boot-hotspot_osx_150_16.jar  -Dtc.install-root=/Users/kimchy/opt/terracotta/2.7.3  -Dtc.config=src/main/test/org/compass/needle/terracotta/tc-config.xml" />
+      <option name="VM_PARAMETERS" value="-Xbootclasspath/p:$PROJECT_DIR$/../../../opt/terracotta/2.7.3/lib/dso-boot/dso-boot-hotspot_osx_150_16.jar  -Dtc.install-root=$PROJECT_DIR$/../../../opt/terracotta/2.7.3  -Dtc.config=src/main/test/org/compass/needle/terracotta/tc-config.xml" />
       <option name="PROGRAM_PARAMETERS" value="" />
       <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
@@ -522,11 +524,11 @@
       <RunnerSettings RunnerId="Run" />
       <ConfigurationWrapper RunnerId="Debug" />
       <ConfigurationWrapper RunnerId="Run" />
-      <method>
-        <option name="Make" value="true" />
-      </method>
+      <method />
     </configuration>
-    <configuration default="false" name="Compass Tests - Terracotta" type="JUnit" factoryName="JUnit" enabled="false" merge="false" sample_coverage="true" runner="emma">
+    <configuration default="false" name="Compass Tests - Terracotta" type="JUnit" factoryName="JUnit">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="emma" />
+      <extension name="snapshooter" />
       <module name="compass" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" value="" />
@@ -534,12 +536,11 @@
       <option name="MAIN_CLASS_NAME" value="" />
       <option name="METHOD_NAME" value="" />
       <option name="TEST_OBJECT" value="package" />
-      <option name="VM_PARAMETERS" value="-Xbootclasspath/p:/Users/kimchy/opt/terracotta/2.7.3/lib/dso-boot/dso-boot-hotspot_osx_150_16.jar  -Dtc.install-root=/Users/kimchy/opt/terracotta/2.7.3  -Dtc.config=src/main/test/org/compass/needle/terracotta/tc-config.xml" />
+      <option name="VM_PARAMETERS" value="-Xbootclasspath/p:$PROJECT_DIR$/../../../opt/terracotta/2.7.3/lib/dso-boot/dso-boot-hotspot_osx_150_16.jar  -Dtc.install-root=$PROJECT_DIR$/../../../opt/terracotta/2.7.3  -Dtc.config=src/main/test/org/compass/needle/terracotta/tc-config.xml" />
       <option name="PARAMETERS" value="" />
       <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
       <option name="ENV_VARIABLES" />
       <option name="PASS_PARENT_ENVS" value="true" />
-      <option name="ADDITIONAL_CLASS_PATH" />
       <option name="TEST_SEARCH_SCOPE">
         <value defaultName="wholeProject" />
       </option>
@@ -560,11 +561,11 @@
       <RunnerSettings RunnerId="Run" />
       <ConfigurationWrapper RunnerId="Debug" />
       <ConfigurationWrapper RunnerId="Run" />
-      <method>
-        <option name="Make" value="true" />
-      </method>
+      <method />
     </configuration>
-    <configuration default="false" name="CompassTests" type="JUnit" factoryName="JUnit" enabled="false" merge="false" sample_coverage="true" runner="emma">
+    <configuration default="false" name="CompassTests" type="JUnit" factoryName="JUnit">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="emma" />
+      <extension name="snapshooter" />
       <module name="compass" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" value="" />
@@ -577,7 +578,6 @@
       <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
       <option name="ENV_VARIABLES" />
       <option name="PASS_PARENT_ENVS" value="true" />
-      <option name="ADDITIONAL_CLASS_PATH" />
       <option name="TEST_SEARCH_SCOPE">
         <value defaultName="wholeProject" />
       </option>
@@ -598,9 +598,7 @@
       <RunnerSettings RunnerId="Run" />
       <ConfigurationWrapper RunnerId="Debug" />
       <ConfigurationWrapper RunnerId="Run" />
-      <method>
-        <option name="Make" value="true" />
-      </method>
+      <method />
     </configuration>
   </component>
   <component name="ResourceManagerContainer">
@@ -814,7 +812,7 @@
       </CLASSES>
       <JAVADOC />
       <SOURCES>
-        <root url="file:///Users/kimchy/opt/lucene/2.4.1/src/java" />
+        <root url="file://$PROJECT_DIR$/../../../opt/lucene/2.4.1/src/java" />
       </SOURCES>
     </library>
     <library name="Ant">
@@ -867,7 +865,7 @@
       </CLASSES>
       <JAVADOC />
       <SOURCES>
-        <root url="jar:///Users/kimchy/opt/eclipselink/1.1.0/jlib/eclipselink-src.zip!/" />
+        <root url="jar://$PROJECT_DIR$/../../../opt/eclipselink/1.1.0/jlib/eclipselink-src.zip!/" />
       </SOURCES>
     </library>
     <library name="ehcache">
@@ -910,7 +908,7 @@
       </CLASSES>
       <JAVADOC />
       <SOURCES>
-        <root url="file:///Users/kimchy/opt/hibernate/3.2.6/src" />
+        <root url="file://$PROJECT_DIR$/../../../opt/hibernate/3.2.6/src" />
       </SOURCES>
     </library>
     <library name="hsqldb">
