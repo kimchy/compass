@@ -504,7 +504,7 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
     public synchronized void createIndex(String subContext, String subIndex) throws SearchEngineException {
         Directory dir = openDirectory(subContext, subIndex);
         try {
-            IndexWriter indexWriter = new IndexWriter(dir, new StandardAnalyzer(), true);
+            IndexWriter indexWriter = new IndexWriter(dir, new StandardAnalyzer(), true, IndexWriter.MaxFieldLength.UNLIMITED);
             indexWriter.close();
         } catch (IOException e) {
             throw new SearchEngineException("Failed to create index for sub index [" + subIndex + "]", e);
