@@ -267,6 +267,17 @@ public class CompassSessionCustomizer implements SessionCustomizer {
             }
             index = sessionName.indexOf('-', index + 1);
         }
+
+        if (log.isDebugEnabled()) {
+            log.debug("Trying to find PersistenceInfo using [" + sessionName + "]");
+        }
+        EntityManagerSetupImpl emSetup = EntityManagerFactoryProvider.getEntityManagerSetupImpl(sessionName);
+        if (emSetup != null) {
+            if (log.isDebugEnabled()) {
+                log.debug("Found PersistenceInfo using [" + sessionName + "]");
+            }
+            return emSetup.getPersistenceUnitInfo();
+        }
         return null;
     }
 }
