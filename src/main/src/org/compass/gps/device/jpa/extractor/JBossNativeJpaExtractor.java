@@ -16,20 +16,23 @@
 
 package org.compass.gps.device.jpa.extractor;
 
+import java.lang.reflect.Method;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
 import org.compass.gps.device.jpa.JpaGpsDeviceException;
-import org.jboss.ejb3.entity.InjectedEntityManagerFactory;
 
 /**
  * @author kimchy
  */
 public class JBossNativeJpaExtractor implements NativeJpaExtractor {
 
+    private final static String JBOSS4_FACTORY_CLASS_NAME = "org.jboss.ejb3.entity.InjectedEntityManagerFactory";
+    private final static String JBOSS5_FACTORY_CLASS_NAME = "org.jboss.jpa.injection.InjectedEntityManagerFactory";
+
     /**
-     * Extracts the native entity manager factory from a managed JBoss one. If JBoss
-     * has not wrapped the factory, will return it as is.
+     * Extracts the native entity manager factory from a managed JBoss one. If
+     * JBoss has not wrapped the factory, will return it as is.
      *
      * @param entityManagerFactory The (possibly) managed JBoss entity manager factory
      * @return The native entity manager factory
@@ -37,8 +40,14 @@ public class JBossNativeJpaExtractor implements NativeJpaExtractor {
      *
      */
     public EntityManagerFactory extractNative(EntityManagerFactory entityManagerFactory) throws JpaGpsDeviceException {
-        if (entityManagerFactory instanceof InjectedEntityManagerFactory) {
-            return ((InjectedEntityManagerFactory) entityManagerFactory).getDelegate();
+        if (entityManagerFactory.getClass().getName().equals(JBOSS4_FACTORY_CLASS_NAME)
+                || entityManagerFactory.getClass().getName().equals(JBOSS5_FACTORY_CLASS_NAME)) {
+            try {
+                Method method = entityManagerFactory.getClass().getMethod("getDelegate", null);
+                return (EntityManagerFactory) method.invoke(entityManagerFactory, (Object[]) null);
+            } catch (Exception e) {
+                return entityManagerFactory;
+            }
         }
         return entityManagerFactory;
     }
@@ -46,4 +55,5 @@ public class JBossNativeJpaExtractor implements NativeJpaExtractor {
     public EntityManager extractNative(EntityManager entityManager) throws JpaGpsDeviceException {
         return entityManager;
     }
+
 }
