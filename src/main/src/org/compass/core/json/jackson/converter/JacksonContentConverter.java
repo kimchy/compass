@@ -29,7 +29,6 @@ import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.JsonToken;
-import org.codehaus.jackson.map.BaseMapper;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.compass.core.converter.ConversionException;
 import org.compass.core.converter.json.JsonContentConverter;
@@ -50,7 +49,7 @@ public class JacksonContentConverter implements JsonContentConverter {
 
     private static JsonFactory jsonFactory = new JsonFactory();
 
-    private static ContentMapper mapper = new ContentMapper(jsonFactory);
+    private static ContentMapper mapper = new ContentMapper();
 
 
     public String toJSON(JsonObject jsonObject) throws ConversionException {
@@ -139,15 +138,11 @@ public class JacksonContentConverter implements JsonContentConverter {
     /**
      * A mapper from Json content (a String for example) to a {@link org.compass.core.json.jackson.JacksonJsonObject}.
      */
-    public static class ContentMapper extends BaseMapper {
-
-        public ContentMapper(JsonFactory jsonFactory) {
-            super(jsonFactory);
-        }
+    public static class ContentMapper {
 
         public JacksonJsonObject readTree(String jsonContent)
                 throws IOException, JsonParseException {
-            return _readMapAndClose(_jsonFactory.createJsonParser(jsonContent));
+            return _readMapAndClose(jsonFactory.createJsonParser(jsonContent));
         }
 
         protected JacksonJsonObject _readMapAndClose(JsonParser jp)
@@ -197,24 +192,11 @@ public class JacksonContentConverter implements JsonContentConverter {
                     Map<String, Object> nodes = new HashMap<String, Object>();
                     while ((currToken = jp.nextToken()) != JsonToken.END_OBJECT) {
                         if (currToken != JsonToken.FIELD_NAME) {
-                            _reportProblem(jp, "Unexpected token (" + currToken + "), expected FIELD_NAME");
+                            throw new ConversionException("Unexpected token (" + currToken + "), expected FIELD_NAME");
                         }
                         String fieldName = jp.getText();
                         Object value = readAndMap(jp, jp.nextToken());
-
-                        if (_cfgDupFields == BaseMapper.DupFields.ERROR) {
-                            Object old = nodes.put(fieldName, value);
-                            if (old != null) {
-                                _reportProblem(jp, "Duplicate value for field '" + fieldName + "', when dup fields mode is " + _cfgDupFields);
-                            }
-                        } else if (_cfgDupFields == BaseMapper.DupFields.USE_LAST) {
-                            // Easy, just add
-                            nodes.put(fieldName, value);
-                        } else { // use first; need to ensure we don't yet have it
-                            if (nodes.get(fieldName) == null) {
-                                nodes.put(fieldName, value);
-                            }
-                        }
+                        nodes.put(fieldName, value);
                     }
                     return new JacksonJsonObject(nodes);
                 }
@@ -250,11 +232,10 @@ public class JacksonContentConverter implements JsonContentConverter {
                 case FIELD_NAME:
                 case END_OBJECT:
                 case END_ARRAY:
-                    _reportProblem(jp, "Can not map token " + currToken + ": stream off by a token or two?");
+                    throw new ConversionException("Can not map token " + currToken + ": stream off by a token or two?");
 
                 default: // sanity check, should never happen
-                    _throwInternal("Unrecognized event type: " + currToken);
-                    return null; // never gets this far
+                    throw new ConversionException("Unrecognized event type: " + currToken);
             }
         }
 

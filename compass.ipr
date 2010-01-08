@@ -1157,8 +1157,8 @@
     </library>
     <library name="jackson">
       <CLASSES>
-        <root url="jar://$PROJECT_DIR$/lib/jackson/jackson-mapper-asl-0.9.6.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/jackson/jackson-core-asl-0.9.6.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/jackson/jackson-core-asl-1.4.0.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/jackson/jackson-mapper-asl-1.4.0.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />
