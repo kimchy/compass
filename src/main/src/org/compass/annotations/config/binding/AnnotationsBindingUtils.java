@@ -52,7 +52,12 @@ public abstract class AnnotationsBindingUtils {
                 ParameterizedType paramType = (ParameterizedType) type;
                 Type[] actualTypeArguments = paramType.getActualTypeArguments();
                 if (actualTypeArguments != null && actualTypeArguments.length == 1) {
-                    return (Class) actualTypeArguments[0];
+                    Type actualType = actualTypeArguments[0];
+                    if (actualType instanceof Class) {
+                        return (Class) actualTypeArguments[0];
+                    } else if (actualType instanceof ParameterizedType) {
+                        return (Class) ((ParameterizedType) actualType).getRawType();
+                    }
                 }
             }
         }
