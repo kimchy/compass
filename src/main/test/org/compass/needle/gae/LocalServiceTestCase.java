@@ -43,7 +43,8 @@ public class LocalServiceTestCase extends TestCase {
     @Override
     public void tearDown() throws Exception {
         ApiProxyLocalImpl proxy = (ApiProxyLocalImpl) ApiProxy.getDelegate();
-        LocalDatastoreService datastoreService = (LocalDatastoreService) proxy.getService("datastore_v3");
+        LocalDatastoreService datastoreService =
+                (LocalDatastoreService) proxy.getService(LocalDatastoreService.PACKAGE);
         datastoreService.clearProfiles();
 
         // not strictly necessary to null these out but there's no harm either

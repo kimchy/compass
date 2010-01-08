@@ -22,7 +22,9 @@ import java.util.List;
 
 import com.google.appengine.api.datastore.Blob;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.Transaction;
 import org.apache.lucene.store.IndexOutput;
+import org.compass.needle.gae.GoogleAppEngineDirectory.Callable;
 
 /**
  * @author kimchy
@@ -96,25 +98,29 @@ public class FlushOnCloseGoogleAppEngineIndexOutput extends IndexOutput {
     }
 
     public void close() throws IOException {
+
         if (!open) {
             return;
         }
+
         open = false;
+
         // flush any buffer we might have
         flush();
 
+        final List<Entity> entities = new ArrayList<Entity>(buckets.size() + 1);
+        final Entity metaDataEntity = new Entity(GoogleAppEngineDirectory.META_KEY_KIND, fileName, dir.getIndexKey());
 
-        List<Entity> entities = new ArrayList<Entity>(buckets.size() + 1);
-
-        Entity metaDataEntity = new Entity(GoogleAppEngineDirectory.META_KEY_KIND, fileName, dir.getIndexKey());
         metaDataEntity.setProperty("size", length);
         metaDataEntity.setProperty("modified", System.currentTimeMillis());
         entities.add(metaDataEntity);
 
         for (int i = 0; i < (buckets.size()); i++) {
-            Entity contentEntity = new Entity(GoogleAppEngineDirectory.CONTENT_KEY_KIND, fileName + i, metaDataEntity.getKey());
+            Entity contentEntity = new Entity(GoogleAppEngineDirectory.CONTENT_KEY_KIND, fileName + i, metaDataEntity
+                    .getKey());
             if (i == (buckets.size() - 1)) {
-                // the last buffer is (probably) smaller than the bucket size, make sure we use only the part that has data
+                // the last buffer is (probably) smaller than the bucket size,
+                // make sure we use only the part that has data
                 byte[] buff = new byte[(int) (length - (bucketSize * i))];
                 System.arraycopy(buckets.get(i), 0, buff, 0, buff.length);
                 contentEntity.setProperty("data", new Blob(buff));
@@ -123,13 +129,21 @@ public class FlushOnCloseGoogleAppEngineIndexOutput extends IndexOutput {
             }
             entities.add(contentEntity);
         }
+
         try {
-            dir.getDatastoreService().put(entities);
-            dir.addMetaData(metaDataEntity);
+            dir.doInTransaction(new Callable<Void>() {
+
+                @Override
+                public Void call(Transaction transaction) throws Exception {
+                    dir.getDatastoreService().put(transaction, entities);
+                    dir.addMetaData(metaDataEntity);
+                    return null;
+                }
+
+            });
         } finally {
             dir.getOnGoingIndexOutputs().remove(fileName);
         }
-
 
         currentBuffer = null;
     }

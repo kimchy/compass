@@ -30,8 +30,8 @@ import org.compass.core.lucene.engine.store.CopyFromHolder;
 import org.compass.core.util.StringUtils;
 
 /**
- * A plugin lucene store for Compass. Uses {@link GoogleAppEngineDirectory}
- * as Lucene directory implementation.
+ * A plugin lucene store for Compass. Uses {@link GoogleAppEngineDirectory} as
+ * Lucene directory implementation.
  *
  * @author kimchy
  */
@@ -44,14 +44,22 @@ public class GoogleAppEngineDirectoryStore extends AbstractDirectoryStore implem
     public static final String FLUSH_RATE_PROP = "compass.engine.store.gae.flushRate";
 
     /**
-     * Should the directory cache file meta data instead of fetching it from GAE each time. Defatuls to
-     * <code>true</code>.
+     * The GAE documentation recommends retrying transactions several times when
+     * attempting to maniuplate the datastore. Where appropraite, the directory
+     * story will attempt transactions this many times. Defaults to 3.
+     */
+    public static final String TRANSACTION_RETRY_COUNT_PROP = "compass.engine.store.gae.transactionRetryCount";
+
+    /**
+     * Should the directory cache file meta data instead of fetching it from GAE
+     * each time. Defatuls to <code>true</code>.
      */
     public static final String CACHE_META_DATA_PROP = "compass.engine.store.gae.cacheMetaData";
 
     /**
-     * File names based patterns to use in order to choose which Lucene files to store in memcahe and which not.
-     * Lucene files are explained here: http://lucene.apache.org/java/2_4_1/fileformats.html.
+     * File names based patterns to use in order to choose which Lucene files to
+     * store in memcahe and which not. Lucene files are explained here:
+     * http://lucene.apache.org/java/2_4_1/fileformats.html.
      */
     public static final String MEMCACHE_REGEX_PATTERNS_PROP = "compass.engine.store.gae.memcacheRegexPatterns";
 
@@ -63,23 +71,30 @@ public class GoogleAppEngineDirectoryStore extends AbstractDirectoryStore implem
 
     private boolean cacheMetaData;
 
+    private int transactionRetryCount;
+
     private String[] memcaheRegexPatterns;
 
     public void configure(CompassSettings settings) throws CompassException {
         this.indexName = settings.getSetting(CompassEnvironment.CONNECTION).substring(PROTOCOL.length());
+
         bucketSize = (int) settings.getSettingAsBytes(BUCKET_SIZE_PROP, GoogleAppEngineDirectory.DEFAULT_BUCKET_SIZE);
         flushRate = settings.getSettingAsInt(FLUSH_RATE_PROP, GoogleAppEngineDirectory.DEFAULT_FLUSH_RATE);
         cacheMetaData = settings.getSettingAsBoolean(CACHE_META_DATA_PROP, GoogleAppEngineDirectory.DEFAULT_CACHE_META_DATA);
+        transactionRetryCount = settings.getSettingAsInt(TRANSACTION_RETRY_COUNT_PROP, GoogleAppEngineDirectory.DEFAULT_TRANSACTION_RETRY_COUNT);
+
         String memcaheRegexPatternsConf = settings.getSetting(MEMCACHE_REGEX_PATTERNS_PROP);
+
         if (memcaheRegexPatternsConf != null) {
             memcaheRegexPatterns = StringUtils.commaDelimitedListToStringArray(memcaheRegexPatternsConf);
         } else {
             memcaheRegexPatterns = new String[0];
         }
+
     }
 
     public Directory open(String subContext, String subIndex) throws SearchEngineException {
-        return new GoogleAppEngineDirectory(buildFullIndexName(subContext, subIndex), bucketSize, flushRate, cacheMetaData, memcaheRegexPatterns);
+        return new GoogleAppEngineDirectory(buildFullIndexName(subContext, subIndex), bucketSize, flushRate, cacheMetaData, transactionRetryCount, memcaheRegexPatterns);
     }
 
     @Override
@@ -89,20 +104,25 @@ public class GoogleAppEngineDirectoryStore extends AbstractDirectoryStore implem
 
     @Override
     public void cleanIndex(Directory dir, String subContext, String subIndex) throws SearchEngineException {
+
         try {
             ((GoogleAppEngineDirectory) dir).deleteContent();
         } catch (IOException e) {
             throw new SearchEngineException("Failed to delete index for sub context [" + subContext + "] and sub index [" + subIndex + "]", e);
         }
+
     }
 
     @Override
-    public CopyFromHolder beforeCopyFrom(String subContext, String subIndex, Directory dir) throws SearchEngineException {
+    public CopyFromHolder beforeCopyFrom(String subContext, String subIndex, Directory dir)
+            throws SearchEngineException {
+
         try {
             ((GoogleAppEngineDirectory) dir).deleteContent();
         } catch (IOException e) {
             throw new SearchEngineException("Failed to delete context before copy from", e);
         }
+
         return new CopyFromHolder();
     }
 
@@ -114,4 +134,5 @@ public class GoogleAppEngineDirectoryStore extends AbstractDirectoryStore implem
     public String suggestedIndexDeletionPolicy() {
         return LuceneEnvironment.IndexDeletionPolicy.ExpirationTime.NAME;
     }
+
 }

@@ -23,8 +23,10 @@ import java.util.Collections;
 import com.google.appengine.api.datastore.Blob;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.Transaction;
 import org.apache.lucene.index.LuceneFileNames;
 import org.apache.lucene.store.IndexOutput;
+import org.compass.needle.gae.GoogleAppEngineDirectory.Callable;
 
 /**
  * @author kimchy
@@ -72,7 +74,8 @@ class GoogleAppEngineMemIndexOutput extends IndexOutput {
     public void writeByte(byte b) throws IOException {
         if (bufferPosition == dir.getBucketSize()) {
             if (seekOccured) {
-                throw new GoogleAppEngineDirectoryException(dir.getIndexName(), fileName, "Seek occured and overflowed first bucket");
+                throw new GoogleAppEngineDirectoryException(dir.getIndexName(), fileName,
+                        "Seek occured and overflowed first bucket");
             }
             flushBucket();
         }
@@ -91,7 +94,8 @@ class GoogleAppEngineMemIndexOutput extends IndexOutput {
         while (len > 0) {
             if (bufferPosition == dir.getBucketSize()) {
                 if (seekOccured) {
-                    throw new GoogleAppEngineDirectoryException(dir.getIndexName(), fileName, "Seek occured and overflowed first bucket");
+                    throw new GoogleAppEngineDirectoryException(dir.getIndexName(), fileName,
+                            "Seek occured and overflowed first bucket");
                 }
                 flushBucket();
             }
@@ -137,7 +141,8 @@ class GoogleAppEngineMemIndexOutput extends IndexOutput {
 
     public void seek(long pos) throws IOException {
         if (pos >= dir.getBucketSize()) {
-            throw new GoogleAppEngineDirectoryException(dir.getIndexName(), fileName, "seek called outside of first bucket boundries");
+            throw new GoogleAppEngineDirectoryException(dir.getIndexName(), fileName,
+                    "seek called outside of first bucket boundries");
         }
         // create the first bucket if still not created
         if (firstBucketEntity == null) {
@@ -183,25 +188,36 @@ class GoogleAppEngineMemIndexOutput extends IndexOutput {
     }
 
     private void flushBucket(long bucketIndex, byte[] buffer, int length) throws IOException {
-        Entity fileBucketEntity = new Entity(GoogleAppEngineDirectory.CONTENT_KEY_KIND, fileName + bucketIndex, metaDataKey);
+        Entity fileBucketEntity = new Entity(GoogleAppEngineDirectory.CONTENT_KEY_KIND, fileName + bucketIndex,
+                metaDataKey);
         byte[] data = new byte[length];
         System.arraycopy(buffer, 0, data, 0, length);
         fileBucketEntity.setProperty("data", new Blob(data));
         flushEntities.add(fileBucketEntity);
         if (flushEntities.size() >= dir.getFlushRate()) {
+            //What's going on here?
             forceFlushBuckets();
         }
     }
 
     private void forceFlushBuckets(Entity... additionalEntities) throws IOException {
+
         if (flushEntities.size() == 0 && additionalEntities == null) {
             return;
         }
+
         Collections.addAll(flushEntities, additionalEntities);
+
         try {
-            dir.getDatastoreService().put(flushEntities);
-        } catch (Exception e) {
-            throw new GoogleAppEngineDirectoryException(dir.getIndexName(), fileName, "Failed to write buckets", e);
+            dir.doInTransaction(new Callable<Void>() {
+
+                @Override
+                public Void call(Transaction transaction) throws Exception {
+                    dir.getDatastoreService().put(transaction, flushEntities);
+                    return null;
+                }
+
+            });
         } finally {
             flushEntities.clear();
         }

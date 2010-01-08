@@ -20,7 +20,6 @@ import java.io.IOException;
 
 import com.google.appengine.api.datastore.Blob;
 import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import org.apache.lucene.store.IndexInput;
@@ -82,8 +81,7 @@ public class GoogleAppEngineIndexInput extends IndexInput {
     }
 
     /**
-     * Reads a specified number of bytes into an array at the specified
-     * offset.
+     * Reads a specified number of bytes into an array at the specified offset.
      *
      * @param b      the array to read bytes into
      * @param offset the offset in the array to start storing bytes
@@ -135,26 +133,21 @@ public class GoogleAppEngineIndexInput extends IndexInput {
         if (bucketIndex == currentBucketIndex) {
             return;
         }
-        // reuse the current bucket entry as the template
-        try {
-            Key key = KeyFactory.createKey(metaDataEntity.getKey(), GoogleAppEngineDirectory.CONTENT_KEY_KIND, metaDataEntity.getKey().getName() + bucketIndex);
-            if (useMemcache) {
-                currentBucketData = (byte[]) dir.getMemcacheService().get(key);
-                if (currentBucketData == null) {
-                    Entity bucketEntity = dir.getDatastoreService().get(key);
-                    currentBucketData = ((Blob) bucketEntity.getProperty("data")).getBytes();
-                    dir.getMemcacheService().put(key, currentBucketData);
-                } else {
-                    // hit
-                }
-            } else {
-                Entity bucketEntity = dir.getDatastoreService().get(key);
+
+        Key key = KeyFactory.createKey(metaDataEntity.getKey(), GoogleAppEngineDirectory.CONTENT_KEY_KIND,
+                metaDataEntity.getKey().getName() + bucketIndex);
+        if (useMemcache) {
+            currentBucketData = (byte[]) dir.getMemcacheService().get(key);
+            if (currentBucketData == null) {
+                Entity bucketEntity = dir.getEntity(key);
                 currentBucketData = ((Blob) bucketEntity.getProperty("data")).getBytes();
+                dir.getMemcacheService().put(key, currentBucketData);
             }
-            currentBucketIndex = bucketIndex;
-        } catch (EntityNotFoundException e) {
-            throw new GoogleAppEngineDirectoryException(dir.getIndexName(), metaDataEntity.getKey().getName(), "bucket [" + bucketIndex + "] not found");
+        } else {
+            Entity bucketEntity = dir.getEntity(key);
+            currentBucketData = ((Blob) bucketEntity.getProperty("data")).getBytes();
         }
+        currentBucketIndex = bucketIndex;
     }
 
     public Object clone() {

@@ -16,45 +16,48 @@
 
 package org.compass.needle.gae;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.google.apphosting.api.ApiProxy;
 
 /**
  * @author kimchy
  */
 public class GAETestEnvironment implements ApiProxy.Environment {
+
     public String getAppId() {
-        return "Unit Tests";
+        return "test";
     }
 
     public String getVersionId() {
         return "1.0";
     }
 
-    public void setDefaultNamespace(String s) {
-    }
-
-    public String getRequestNamespace() {
-        return null;
-    }
-
-    public String getDefaultNamespace() {
-        return null;
-    }
-
-    public String getAuthDomain() {
-        return null;
+    public String getEmail() {
+        throw new UnsupportedOperationException();
     }
 
     public boolean isLoggedIn() {
-        return false;
-    }
-
-    public String getEmail() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     public boolean isAdmin() {
-        return false;
+        throw new UnsupportedOperationException();
+    }
+
+    public String getAuthDomain() {
+        throw new UnsupportedOperationException();
+    }
+
+    public String getRequestNamespace() {
+        return "";
+    }
+
+    public Map<String, Object> getAttributes() {
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("com.google.appengine.server_url_key", "http://localhost:8080");
+        return map;
     }
 }
 
