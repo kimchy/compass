@@ -146,7 +146,7 @@ public abstract class MappingProcessorUtils {
     public static Converter resolveConverterByClass(ClassPropertyMapping classPropertyMapping, ConverterLookup converterLookup) {
         return resolveConverterByClass(classPropertyMapping.getClassName(), classPropertyMapping.getGetter(), converterLookup);
     }
-    
+
     public static Converter resolveConverterByClass(String className, Class type, ConverterLookup converterLookup) {
         Class clazz = null;
 
@@ -212,7 +212,7 @@ public abstract class MappingProcessorUtils {
         }
 
         if (converter == null) {
-            throw new MappingException("No converter defined for type [" + getter.getReturnType().getName() + "]");
+            throw new MappingException("No converter defined for type [" + getter.getReturnType().getName() + "] and getter " + getter);
         }
         return converter;
     }
