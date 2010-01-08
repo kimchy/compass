@@ -18,7 +18,6 @@ package org.compass.core.json.jackson;
 
 import java.util.Map;
 
-import org.codehaus.groovy.grails.web.json.JSONException;
 import org.compass.core.json.AliasedJsonObject;
 
 /**
@@ -31,7 +30,7 @@ public class JacksonAliasedJsonObject extends JacksonJsonObject implements Alias
 
     private final String alias;
 
-    public JacksonAliasedJsonObject(String alias, Map<String, Object> nodes) throws JSONException {
+    public JacksonAliasedJsonObject(String alias, Map<String, Object> nodes) {
         super(nodes);
         this.alias = alias;
     }
