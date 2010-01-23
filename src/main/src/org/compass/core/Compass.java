@@ -17,7 +17,6 @@
 package org.compass.core;
 
 import java.io.Serializable;
-import javax.naming.Referenceable;
 
 import org.compass.core.config.CompassConfiguration;
 import org.compass.core.config.CompassSettings;
@@ -43,7 +42,7 @@ import org.compass.core.engine.spellcheck.SearchEngineSpellCheckManager;
  * @see CompassSession
  * @see org.compass.core.config.CompassConfiguration
  */
-public interface Compass extends Referenceable, Serializable {
+public interface Compass extends Serializable {
 
     /**
      * If there is a transaction bound session, will return it. Otherwise
@@ -144,7 +143,7 @@ public interface Compass extends Referenceable, Serializable {
      * that can later be added to {@link org.compass.core.CompassQuery#setFilter(CompassQueryFilter)}.
      */
     CompassQueryFilterBuilder queryFilterBuilder() throws CompassException;
-    
+
     /**
      * Returns a resource factory allowing to create resources and properties.
      */

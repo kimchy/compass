@@ -2,8 +2,6 @@ package org.compass.core.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.naming.NamingException;
-import javax.naming.Reference;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -200,10 +198,6 @@ public class RefreshableCompass implements InternalCompass {
 
     public boolean isClosed() {
         return compass.isClosed();
-    }
-
-    public Reference getReference() throws NamingException {
-        return compass.getReference();
     }
 
     private class CloseCompassRunnable implements Runnable {

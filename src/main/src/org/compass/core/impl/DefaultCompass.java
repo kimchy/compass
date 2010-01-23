@@ -20,6 +20,7 @@ import java.lang.ref.WeakReference;
 import java.security.AccessControlException;
 import javax.naming.NamingException;
 import javax.naming.Reference;
+import javax.naming.Referenceable;
 import javax.naming.StringRefAddr;
 
 import org.apache.commons.logging.Log;
@@ -70,7 +71,7 @@ import org.compass.core.transaction.context.TransactionContextCallbackWithTr;
 /**
  * @author kimchy
  */
-public class DefaultCompass implements InternalCompass {
+public class DefaultCompass implements InternalCompass, Referenceable {
 
     private static final Log logger = LogFactory.getLog(DefaultCompass.class);
 
@@ -316,6 +317,7 @@ public class DefaultCompass implements InternalCompass {
     }
 
     // from javax.naming.Referenceable
+
     public Reference getReference() throws NamingException {
         return new Reference(DefaultCompass.class.getName(), new StringRefAddr("uuid", uuid),
                 CompassObjectFactory.class.getName(), null);
