@@ -107,6 +107,8 @@ public class DialectResolver {
         }
         mappers.add(new DatabaseNameToDialectMapper("HSQL Database Engine", HSQLDialect.class));
         mappers.add(new DatabaseNameToDialectMapper("DB2/NT", DB2Dialect.class));
+        mappers.add(new DatabaseNameToDialectMapper("DB2/LINUX", DB2Dialect.class));
+        mappers.add(new DatabaseNameToDialectMapper("DB2/LINUXX8664", DB2Dialect.class));
         mappers.add(new DatabaseNameToDialectMapper("MySQL", MySQLDialect.class));
         mappers.add(new DatabaseNameToDialectMapper("PostgreSQL", PostgreSQLDialect.class));
         mappers.add(new DatabaseNameStartsWithToDialectMapper("Microsoft SQL Server", SQLServerDialect.class));

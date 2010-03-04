@@ -66,7 +66,7 @@ public class JdbcTable {
     private JdbcColumn deletedColumn;
 
     public JdbcTable(JdbcDirectorySettings settings, Dialect dialect, String name) {
-        this(settings, dialect, name, null, null);
+        this(settings, dialect, name, settings.getTableCatalog(), settings.getTableSchema());
     }
 
     public JdbcTable(JdbcDirectorySettings settings, Dialect dialect, String name, String catalog, String schema) {
@@ -90,7 +90,7 @@ public class JdbcTable {
                 .append(lastModifiedColumn.getName()).append(' ').append(lastModifiedColumn.getType()).append(" , ")
                 .append(deletedColumn.getName()).append(' ').append(deletedColumn.getType())
                 .append(", " + "primary key (").append(nameColumn.getName()).append(") ) ")
-                .append(dialect.getTableTypeString()).toString();
+                .append(getTableTypeString(dialect)).toString();
 
         sb.setLength(0);
         sb.append("drop table ");
@@ -177,6 +177,14 @@ public class JdbcTable {
         sqlDeletaAll = sb.append("delete from ").append(getQualifiedName())
                 .append(" where ").append(nameColumn.getQuotedName()).append(" <> '").append(IndexWriter.WRITE_LOCK_NAME).append("'")
                 .toString();
+    }
+
+    private String getTableTypeString(Dialect dialect) {
+        String tableType = settings.getTableType();
+
+        if (tableType == null || tableType.length() == 0)
+            tableType = dialect.getTableTypeString();
+        return tableType;
     }
 
     public void setName(String name) {

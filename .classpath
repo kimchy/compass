@@ -99,5 +99,12 @@
 	<classpathentry kind="lib" path="lib/jackson/jackson-mapper-asl-1.4.0.jar"/>
 	<classpathentry kind="lib" path="lib/openejb/openejb-core-3.1.jar"/>
 	<classpathentry kind="lib" path="lib/terracotta/tim-concurrent-collections-1.0.2.jar"/>
+	<classpathentry kind="lib" path="lib/datanucleus/datanucleus-core-1.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/datanucleus/datanucleus-jpa-1.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/jdo/jdo2-api-2.3-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="lib/gae/appengine-api.jar"/>
+	<classpathentry kind="lib" path="lib/gae/appengine-api-labs.jar"/>
+	<classpathentry kind="lib" path="lib/gae/appengine-api-stubs.jar"/>
+	<classpathentry kind="lib" path="lib/gae/appengine-local-runtime.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

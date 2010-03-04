@@ -141,6 +141,10 @@ public class JdbcDirectoryStore extends AbstractDirectoryStore implements Compas
         jdbcSettings.setNameColumnLength(settings.getSettingAsInt(LuceneEnvironment.JdbcStore.DDL.NAME_LENGTH, jdbcSettings.getNameColumnLength()));
         jdbcSettings.setValueColumnLengthInK(settings.getSettingAsInt(LuceneEnvironment.JdbcStore.DDL.VALUE_LENGTH, jdbcSettings.getValueColumnLengthInK()));
 
+        jdbcSettings.setTableCatalog(settings.getSetting(LuceneEnvironment.JdbcStore.DDL.TABLE_CATALOG, jdbcSettings.getTableCatalog()));
+        jdbcSettings.setTableSchema(settings.getSetting(LuceneEnvironment.JdbcStore.DDL.TABLE_SCHEME, jdbcSettings.getTableSchema()));
+        jdbcSettings.setTableType(settings.getSetting(LuceneEnvironment.JdbcStore.DDL.TABLE_TYPE, jdbcSettings.getTableType()));
+
         jdbcSettings.setDeleteMarkDeletedDelta(settings.getSettingAsLong(LuceneEnvironment.JdbcStore.DELETE_MARK_DELETED_DELTA, jdbcSettings.getDeleteMarkDeletedDelta()));
         if (log.isDebugEnabled()) {
             log.debug("Using delete mark deleted older than [" + jdbcSettings.getDeleteMarkDeletedDelta() + "ms]");

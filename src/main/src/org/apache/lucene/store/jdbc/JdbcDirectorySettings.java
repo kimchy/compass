@@ -76,6 +76,12 @@ public class JdbcDirectorySettings {
 
     private Class lockClass = PhantomReadLock.class;
 
+    private String tableCatalog = null;
+
+    private String tableSchema = null;
+
+    private String tableType = "";
+
     /**
      * Creates a new instance of the Jdbc directory settings with it's default values initialized.
      */
@@ -301,5 +307,29 @@ public class JdbcDirectorySettings {
      */
     public void setLockClass(Class lockClass) {
         this.lockClass = lockClass;
+    }
+
+    public String getTableCatalog() {
+        return tableCatalog;
+    }
+
+    public void setTableCatalog(String tableCatalog) {
+        this.tableCatalog = tableCatalog;
+    }
+
+    public String getTableSchema() {
+        return tableSchema;
+    }
+
+    public void setTableSchema(String tableSchema) {
+        this.tableSchema = tableSchema;
+    }
+
+    public String getTableType() {
+        return tableType;
+    }
+
+    public void setTableType(String tableType) {
+        this.tableType = tableType;
     }
 }

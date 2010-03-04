@@ -1228,6 +1228,21 @@ public class LuceneEnvironment {
              * The name of the deleted column. Defaults to deleted_.
              */
             public static final String DELETED_NAME = "compass.engine.store.jdbc.ddl.deleted.name";
+
+            /**
+             * The name of the database catalog. Defaults to null.
+             */
+            public static final String TABLE_CATALOG = "compass.engine.store.jdbc.ddl.table.catalog";
+
+            /**
+             * The name of the database schema. Defaults to null.
+             */
+            public static final String TABLE_SCHEME = "compass.engine.store.jdbc.ddl.table.schema";
+
+            /**
+             * The table type for database dialect. Defaults to "".
+             */
+            public static final String TABLE_TYPE = "compass.engine.store.jdbc.ddl.table.type";
         }
 
         public abstract class FileEntry {
