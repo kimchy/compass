@@ -37,6 +37,7 @@ import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.mapping.osem.ClassMapping;
+import org.compass.core.mapping.osem.ClassIdPropertyMapping;
 import org.compass.core.mapping.osem.ObjectMapping;
 import org.compass.core.mapping.osem.OsemMapping;
 import org.compass.core.marshall.MarshallingContext;
@@ -261,6 +262,16 @@ public class ClassMappingConverter implements ResourceMappingConverter, CompassC
                 // if it is cached, return the cached object
                 Object cached = context.getUnmarshalled(resourceKey);
                 if (cached != null) {
+                    if (resource instanceof CollectionResourceWrapper) {
+                        // we read the id, so we need to increment the property counters as well
+                        for (Iterator mappingsIt = classMapping.mappingsIt(); mappingsIt.hasNext();) {
+                            OsemMapping m = (OsemMapping) mappingsIt.next();
+                            if (!(m instanceof ClassIdPropertyMapping)) {
+                                CollectionResourceWrapper colWrapper = (CollectionResourceWrapper) resource;
+                                colWrapper.getProperty(m.getName());
+                            }
+                        }
+                    }
                     return cached;
                 }
                 // if we do have values in the ids, but all of them are null, it means that we

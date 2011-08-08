@@ -1,0 +1,19 @@
+<!DOCTYPE compass-core-mapping PUBLIC
+        "-//Compass/Compass Core Mapping DTD 2.2//EN"
+        "http://www.compass-project.org/dtd/compass-core-mapping-2.2.dtd">
+
+<compass-core-mapping package="org.compass.core.test.component.deephierarchy4">
+
+    <class name="A" alias="a">
+        <id name="id" accessor="field"/>
+        <component name="bList" ref-alias="b" accessor="field"/>
+    </class>
+
+    <class name="B" alias="b" root="false">
+        <id name="id" accessor="field"/>
+        <property name="name" accessor="field">
+            <meta-data>name</meta-data>
+        </property>
+    </class>
+
+</compass-core-mapping>
