@@ -90,7 +90,7 @@ public interface ResourceMapping extends AliasMapping {
     String getUIDPath();
 
     /**
-     * Returns all the id mappigns for the low level resource mapping.
+     * Returns all the id mappings for the low level resource mapping.
      */
     ResourcePropertyMapping[] getResourceIdMappings();
 

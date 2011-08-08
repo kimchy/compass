@@ -72,7 +72,7 @@ public class CompassSearchController extends AbstractCompassCommandController {
             throw new IllegalArgumentException("Must set the searchView property");
         }
         if (searchResultsView == null) {
-            throw new IllegalArgumentException("Must set the serachResultsView property");
+            throw new IllegalArgumentException("Must set the searchResultsView property");
         }
         if (searchHelper == null) {
             searchHelper = new CompassSearchHelper(getCompass(), getPageSize());
