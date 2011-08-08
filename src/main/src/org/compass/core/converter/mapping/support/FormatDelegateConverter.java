@@ -28,7 +28,7 @@ import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.marshall.MarshallingContext;
 
 /**
- * A format delegate converter, that creates its own intenral format converter based on the format
+ * A format delegate converter, that creates its own internal format converter based on the format
  * that it is initalized with.
  *
  * @author kimchy

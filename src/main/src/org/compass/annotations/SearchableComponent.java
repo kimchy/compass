@@ -85,7 +85,7 @@ public @interface SearchableComponent {
 
     /**
      * The conveter lookup name that will convert the {@link org.compass.core.mapping.osem.ComponentMapping}.
-     * Defaults to compass own intenral {@link org.compass.core.converter.mapping.osem.ComponentMappingConverter}.
+     * Defaults to compass own internal {@link org.compass.core.converter.mapping.osem.ComponentMappingConverter}.
      */
     String converter() default "";
 

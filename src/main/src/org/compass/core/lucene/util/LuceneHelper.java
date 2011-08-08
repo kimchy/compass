@@ -160,7 +160,7 @@ public abstract class LuceneHelper {
      * {@link LuceneSearchEngineInternalSearch} which allows to access Lucene
      * {@link org.apache.lucene.index.IndexReader} and {@link org.apache.lucene.search.Searcher}.
      * <p/>
-     * The search intenrals will be ones that are executed against the whole index. In order to search on
+     * The search internals will be ones that are executed against the whole index. In order to search on
      * specific aliases or sub indexes, please use {@link #getLuceneInternalSearch(org.compass.core.CompassSession,String[],String[])} .
      *
      * @param session A compass session within a transaction

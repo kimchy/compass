@@ -33,7 +33,7 @@ public @interface SearchableCascading {
 
     /**
      * The conveter lookup name that will convert the {@link org.compass.core.mapping.osem.PlainCascadeMapping}.
-     * Defaults to compass own intenral {@link org.compass.core.converter.mapping.osem.PlainCascadeMappingConverter}.
+     * Defaults to compass own internal {@link org.compass.core.converter.mapping.osem.PlainCascadeMappingConverter}.
      */
     public abstract String converter() default "";
 

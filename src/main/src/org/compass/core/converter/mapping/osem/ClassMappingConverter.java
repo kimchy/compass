@@ -218,7 +218,7 @@ public class ClassMappingConverter implements ResourceMappingConverter, CompassC
             ((InternalResource) resource).addUID();
         }
 
-        // resotore the disable intenral mappings flag
+        // resotore the disable internal mappings flag
         context.setAttribute(DISABLE_INTERNAL_MAPPINGS, disableInternalMapings);
 
         return store;

@@ -171,7 +171,7 @@
             <xsd:element name="allProperty" minOccurs="0">
                 <xsd:annotation>
                     <xsd:documentation>
-                        Controls the all property settings. The all property is an intenral Compass property for each
+                        Controls the all property settings. The all property is an internal Compass property for each
                         resource that holds all the content of a Resource (except for the exceluded ones).
                     </xsd:documentation>
                 </xsd:annotation>
@@ -957,7 +957,7 @@
                         <xsd:annotation>
                             <xsd:documentation>
                                 The name of the Property Accessor. Will be used as the property accessor lookup name.
-                                Can also have the value deafult, which will be used as teh deafult property accessor
+                                Can also have the value default, which will be used as the default property accessor
                                 when nothing is set in the mapping definitions.
                             </xsd:documentation>
                         </xsd:annotation>
@@ -2349,7 +2349,7 @@
         <xsd:attribute name="dialect" use="optional">
             <xsd:annotation>
                 <xsd:documentation>
-                    A dialect allows to work with a specific database. One of Compass intenral provided dialects.
+                    A dialect allows to work with a specific database. One of Compass internal provided dialects.
                 </xsd:documentation>
             </xsd:annotation>
             <xsd:simpleType>

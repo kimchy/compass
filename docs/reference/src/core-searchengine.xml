@@ -746,7 +746,7 @@ compass.engine.optimizer.maxNumberOfSegments=20
 		<title>Merge Scheduler</title>
 		
 		<para>
-			Merge scheduler controls how merge operations happen once a merge is needed. Lucene comes with built in <literal>ConcurrentMergeSchduler</literal> (executes merges concurrently on newly created threads) and <literal>SerialMergeScheduler</literal> that executes the merge operations on the same therad. Compass extends Lucene and provide <literal>ExecutorMergeScheduler</literal> allowing to utlize Compass internal exdecutor pool (either concurrent or work manager backed) with no overhead of creating new threads. This is the default merge scheduler that comes with Compass.
+			Merge scheduler controls how merge operations happen once a merge is needed. Lucene comes with built in <literal>ConcurrentMergeSchduler</literal> (executes merges concurrently on newly created threads) and <literal>SerialMergeScheduler</literal> that executes the merge operations on the same thread. Compass extends Lucene and provide <literal>ExecutorMergeScheduler</literal> allowing to utlize Compass internal exdecutor pool (either concurrent or work manager backed) with no overhead of creating new threads. This is the default merge scheduler that comes with Compass.
 		</para>
 		
 		<para>

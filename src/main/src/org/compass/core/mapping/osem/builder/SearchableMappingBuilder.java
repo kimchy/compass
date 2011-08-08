@@ -37,7 +37,7 @@ import org.compass.core.util.ClassUtils;
  *
  * <p>The searchable class is associated with an alias, which can be used to
  * reference the class when performing search operations, or for other
- * mappings to extend it. By default, teh alias name will be the class short
+ * mappings to extend it. By default, the alias name will be the class short
  * name.
  *
  * <p>Note, a root searchable must be associated with at least one {@link SearchableIdMappingBuilder}.

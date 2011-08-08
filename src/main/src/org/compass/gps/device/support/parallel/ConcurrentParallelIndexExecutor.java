@@ -40,7 +40,7 @@ import org.compass.gps.spi.CompassGpsInterfaceDevice;
  *
  * <p>By default (with <code>maxThreads</code> set to <code>-1</code>) creates N threads
  * during the indexing process where N is the number of partitioned index entities
- * groups (one therad per group). If <code>maxThreads<code> is set to a positive integer
+ * groups (one thread per group). If <code>maxThreads<code> is set to a positive integer
  * number, the index executor will use it as the number of threads to create, regardless
  * of the number of partitioned entities groups.
  *

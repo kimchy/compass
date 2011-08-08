@@ -29,7 +29,7 @@ import org.compass.core.xml.XmlObject;
 
 /**
  * A simple converter which uses the String value of {@link org.compass.core.xml.XmlObject#getValue()}.
- * It is the deafult converter associated with the value converter of {@link XmlPropertyMapping} if none
+ * It is the default converter associated with the value converter of {@link XmlPropertyMapping} if none
  * is specified. It can also be used as a base class for more specialized converters.
  *
  * @author kimchy

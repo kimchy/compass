@@ -96,7 +96,7 @@ public class ReflectionFactory {
 
     private static boolean canGenerateAsm(Member member) {
         // we can only generate for members that are not private (so we can set them)
-        // and that the class is public and not static (i.e. not intenral class within another class)
+        // and that the class is public and not static (i.e. not internal class within another class)
         return !Modifier.isPrivate(member.getModifiers());
     }
 }

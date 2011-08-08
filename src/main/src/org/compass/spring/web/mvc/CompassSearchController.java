@@ -157,7 +157,7 @@ public class CompassSearchController extends AbstractCompassCommandController {
     }
 
     /**
-     * <p>The search helper is used to execute teh actual search. By default (if not set)
+     * <p>The search helper is used to execute the actual search. By default (if not set)
      * the search controller will create a new search helper. If provided, the search
      * controller will use it to perform the search.
      *
