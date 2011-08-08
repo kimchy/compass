@@ -306,15 +306,15 @@ public abstract class PlainMappingBinding extends AbstractConfigurationHelperMap
 
         conf = jsonArrayConf.getChild("json-array", false);
         if (conf != null) {
-            JsonArrayMapping intenralJsonArrayMapping = new JsonArrayMapping();
-            bindJsonArray(conf, intenralJsonArrayMapping, rootJsonObjectMapping);
-            if (intenralJsonArrayMapping.getName() == null) {
-                intenralJsonArrayMapping.setName(jsonArrayMapping.getName());
+            JsonArrayMapping internalJsonArrayMapping = new JsonArrayMapping();
+            bindJsonArray(conf, internalJsonArrayMapping, rootJsonObjectMapping);
+            if (internalJsonArrayMapping.getName() == null) {
+                internalJsonArrayMapping.setName(jsonArrayMapping.getName());
             }
-            if (intenralJsonArrayMapping.getPath() == null) {
-                intenralJsonArrayMapping.setPath(jsonArrayMapping.getPath());
+            if (internalJsonArrayMapping.getPath() == null) {
+                internalJsonArrayMapping.setPath(jsonArrayMapping.getPath());
             }
-            jsonArrayMapping.setElementMapping(intenralJsonArrayMapping);
+            jsonArrayMapping.setElementMapping(internalJsonArrayMapping);
         }
     }
 
@@ -340,8 +340,8 @@ public abstract class PlainMappingBinding extends AbstractConfigurationHelperMap
         }
 
         for (ConfigurationHelper obj : jsonObjectConf.getChildren("json-object")) {
-            PlainJsonObjectMapping intenralJsonObjectMapping = new PlainJsonObjectMapping();
-            bindJsonPlainObject(obj, intenralJsonObjectMapping, rootJsonObjectMapping);
+            PlainJsonObjectMapping internalJsonObjectMapping = new PlainJsonObjectMapping();
+            bindJsonPlainObject(obj, internalJsonObjectMapping, rootJsonObjectMapping);
             jsonObjectMapping.addMapping(jsonObjectMapping);
         }
 

@@ -36,7 +36,7 @@ public @interface SearchableParent {
 
     /**
      * The conveter lookup name that will convert the {@link org.compass.core.mapping.osem.ParentMapping}.
-     * Defaults to compass own intenral {@link org.compass.core.converter.mapping.osem.ParentMappingConverter}.
+     * Defaults to compass own internal {@link org.compass.core.converter.mapping.osem.ParentMappingConverter}.
      */
     String converter() default "";
 

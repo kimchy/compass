@@ -48,7 +48,7 @@ import org.compass.core.spi.ResourceKey;
  * {@link org.compass.core.executor.ExecutorManager}). A {@link org.compass.core.lucene.engine.transaction.support.AbstractConcurrentTransactionProcessor.Processor}
  * is assigned for each thread responsible for processing dirty operations.
  *
- * <p>Extedning classes should implement teh required operations and provide indication as to if search/read operations
+ * <p>Extedning classes should implement the required operations and provide indication as to if search/read operations
  * should block until all dirty operations have been processed, and if concurrent operations are even allowed. In case
  * concurrent operations are not allowed, all dirty operations will be perfomed in a sync manner.
  *

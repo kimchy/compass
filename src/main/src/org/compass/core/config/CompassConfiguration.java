@@ -147,7 +147,7 @@ public class CompassConfiguration {
 
     /**
      * Returns the class loader that will be used to load classes and resources. If directly
-     * set, will return it. If not, will return the therad local context class loader.
+     * set, will return it. If not, will return the thread local context class loader.
      */
     public ClassLoader getClassLoader() {
         if (this.classLoader == null) {

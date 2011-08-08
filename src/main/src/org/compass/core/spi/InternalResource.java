@@ -21,7 +21,7 @@ import org.compass.core.engine.SearchEngineFactory;
 import org.compass.core.mapping.ResourceMapping;
 
 /**
- * An intenral SPI of Resource.
+ * An internal SPI of Resource.
  *
  * @author kimchy
  */

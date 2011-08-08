@@ -37,7 +37,7 @@ import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.mapping.CompassMapping;
 
 /**
- * The deafult Lucene query parser. Uses {@link org.compass.core.lucene.LuceneEnvironment.QueryParser#DEFAULT_PARSER_ALLOW_LEADING_WILDCARD}
+ * The default Lucene query parser. Uses {@link org.compass.core.lucene.LuceneEnvironment.QueryParser#DEFAULT_PARSER_ALLOW_LEADING_WILDCARD}
  *
  * @author kimchy
  */

@@ -92,7 +92,7 @@ public @interface SearchAnalyzer {
     String[] filters() default {};
 
     /**
-     * A set of stop words that will be added/replace the stop words that comes with Compass intenral
+     * A set of stop words that will be added/replace the stop words that comes with Compass internal
      * analyzers.
      *
      * <p>Only applies when using one of Compass internal analyzer types, and not the {@link AnalyzerType#CustomAnalyzer}.

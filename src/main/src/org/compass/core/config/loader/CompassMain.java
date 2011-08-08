@@ -9,7 +9,7 @@ import org.compass.core.config.CompassConfiguration;
  * Compass main allowin to run a Compass instance.
  *
  * <p>Accepts optional configuration location paramter (the last one), and one or more
- * key=value pairs to be replaced in teh configuration file.
+ * key=value pairs to be replaced in the configuration file.
  *
  * @author kimchy
  */

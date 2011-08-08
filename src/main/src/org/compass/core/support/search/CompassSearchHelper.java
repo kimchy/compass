@@ -29,7 +29,7 @@ import org.compass.core.util.StringUtils;
 
 /**
  * <p>A general Search Controller that perform the search operations. The seardch controller is
- * therad safe.
+ * thread safe.
  *
  * <p>Will perform the search operation on the <code>Compass</code> instance using the query
  * supplied by the {@link org.compass.core.support.search.CompassSearchCommand}.

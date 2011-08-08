@@ -28,7 +28,7 @@ import org.compass.core.CompassException;
 public interface CascadeMapping {
 
     /**
-     * Returns the value that should be cascaded basde on the root object.
+     * Returns the value that should be cascaded based on the root object.
      *
      * @param root The root object to extract the cascaded value from
      * @return The cascaded value to cascade

@@ -333,7 +333,7 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
 
         /**
          * <p>Since we did not process duplicate mappings, we need to replace them with the original mappings that
-         * were processed (for example, we added intenral ids to it where needed).
+         * were processed (for example, we added internal ids to it where needed).
          */
         protected void onDuplicateMapping(ClassMapping classMapping, ObjectMapping actualMapping, ObjectMapping duplicateMapping) {
             Assert.isTrue(actualMapping.getPropertyName().equals(duplicateMapping.getPropertyName()), "Internal Error in Compass, Original[" +

@@ -39,7 +39,7 @@ public interface PropertyNamingStrategy {
     /**
      * Returns the root path for hidden properties.
      *
-     * @return The root path for intenral properties.
+     * @return The root path for internal properties.
      */
     PropertyPath getRootPath();
 

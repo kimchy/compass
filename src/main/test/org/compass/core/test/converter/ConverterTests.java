@@ -76,7 +76,7 @@ public class ConverterTests extends AbstractTestCase {
     }
 
     /**
-     * Here we test teh Sample Converter as one that was registered.
+     * Here we test the Sample Converter as one that was registered.
      */
     public void testConverterYYY() {
         CompassSession session = openSession();

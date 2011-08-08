@@ -71,7 +71,7 @@ public @interface SearchableAllMetaData {
      * mappings if it was added programtically to the resource.
      *
      * <p>See {@link org.compass.core.config.CompassEnvironment.All#INCLUDE_UNMAPPED_PROPERTIES} for system wide
-     * setting and teh defult value if this is set to <code>NA</code>.
+     * setting and the default value if this is set to <code>NA</code>.
      */
     NABoolean includePropertiesWithNoMappings() default NABoolean.NA;
     

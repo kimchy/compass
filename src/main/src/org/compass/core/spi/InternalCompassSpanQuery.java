@@ -19,7 +19,7 @@ package org.compass.core.spi;
 import org.compass.core.CompassQuery;
 
 /**
- * An intenral interface of Compass Span Query.
+ * An internal interface of Compass Span Query.
  *
  * @author kimchy
  */

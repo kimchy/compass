@@ -70,7 +70,7 @@ public @interface SearchableReference {
 
     /**
      * The conveter lookup name that will convert the {@link org.compass.core.mapping.osem.ReferenceMapping}.
-     * Defaults to compass own intenral {@link org.compass.core.converter.mapping.osem.ReferenceMappingConverter}.
+     * Defaults to compass own internal {@link org.compass.core.converter.mapping.osem.ReferenceMappingConverter}.
      */
     String converter() default "";
 

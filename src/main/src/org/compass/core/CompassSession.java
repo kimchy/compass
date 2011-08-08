@@ -134,8 +134,8 @@ public interface CompassSession extends CompassOperations, CompassSearchSession,
     /**
      * Begins a unit of work using a Compass local transaction. Very handy when using
      * transaction strategy other than local transaction factory but still wish to use
-     * a local one for example to perform serach (which will be faster as it won't start
-     * and externa transaction).
+     * a local one for example to perform search (which will be faster as it won't start
+     * and external transaction).
      */
     CompassTransaction beginLocalTransaction() throws CompassException;
 
