@@ -199,7 +199,7 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
 
             ClassMapping refClass = (ClassMapping) pointerClass.copy();
             refClass.setPath(namingStrategy.buildPath(referenceMapping.getPath(), referenceMapping.getRefCompAlias()));
-            // we do not want to create intenral ids, since we will never unmarshall it
+            // we do not want to create internal ids, since we will never unmarshall it
             managedId = ManagedId.FALSE;
             secondPass(refClass, false, false);
             managedId = null;
@@ -418,7 +418,7 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
             if (classMapping == rootClassMapping) {
                 // only apply the path for class properties that belong to the class mapping we started with
                 // and not onces we iterate through recuresivly. This is because then we override (by mistake)
-                // intenral ids of other class mappings.
+                // internal ids of other class mappings.
                 PropertyPath aliasedPath = namingStrategy.buildPath(compassMapping.getPath(), classPropertyMapping.getDefinedInAlias());
                 classPropertyMapping.setPath(namingStrategy.buildPath(aliasedPath, classPropertyMapping.getName()));
             } else if (idComponents.contains(classMapping)) {

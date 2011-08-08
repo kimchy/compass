@@ -22,7 +22,7 @@ package org.compass.annotations;
  * value that match the property and preform proper unmarshalling.
  * Compass can create this internal meta-data automatcially by analyzing all the properties
  * in the class using the {@link #AUTO} option. It can also not create the internal
- * meta-data using {@link #FALSE} and use the first meta-data as the intenral id,
+ * meta-data using {@link #FALSE} and use the first meta-data as the internal id,
  * or always create the intenal meta-data using {@link #TRUE}.
  * The other options allow to not create an interanl id and never unmarshalling that
  * property ({@link #NO}), and not creating an internal id in case there all the meta
@@ -45,7 +45,7 @@ public enum ManagedId {
     AUTO,
 
     /**
-     * Compass will always create an intenral meta-data for the property.
+     * Compass will always create an internal meta-data for the property.
      */
     TRUE,
     

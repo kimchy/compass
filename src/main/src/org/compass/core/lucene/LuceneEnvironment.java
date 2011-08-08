@@ -1003,7 +1003,7 @@ public class LuceneEnvironment {
 
         /**
          * Should concurrent operations be performed during a transaction against the search engine
-         * index store. Defualts to the direcoty used {@link org.compass.core.lucene.engine.store.DirectoryStore#supportsConcurrentOperations()}.
+         * index store. Defualts to the directory used {@link org.compass.core.lucene.engine.store.DirectoryStore#supportsConcurrentOperations()}.
          */
         public static final String USE_CONCURRENT_OPERATIONS = "compass.engine.useConcurrentOperations";
 

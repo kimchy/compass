@@ -202,7 +202,7 @@ public interface SearchEngineIndexManager {
     void checkAndClearIfNotifiedAllToClearCache() throws SearchEngineException;
 
     /**
-     * Performs scheduled tasks that are usually derived basde on the actual index storage used.
+     * Performs scheduled tasks that are usually derived based on the actual index storage used.
      *
      * <p>This API will be called when disabling the automatic scheduler that comes built in with
      * Compass.

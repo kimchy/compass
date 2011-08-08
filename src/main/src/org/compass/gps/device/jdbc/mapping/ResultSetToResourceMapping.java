@@ -80,7 +80,7 @@ public class ResultSetToResourceMapping {
      * @param alias
      *            The alias of the mapped <code>Resource</code>.
      * @param selectQuery
-     *            The select query that generates teh <code>ResultSet</code>.
+     *            The select query that generates the <code>ResultSet</code>.
      */
     public ResultSetToResourceMapping(String alias, String selectQuery) {
         this(alias, selectQuery, null);
@@ -98,7 +98,7 @@ public class ResultSetToResourceMapping {
      * @param alias
      *            The alias of the mapped <code>Resource</code>.
      * @param selectQuery
-     *            The select query that generates teh <code>ResultSet</code>.
+     *            The select query that generates the <code>ResultSet</code>.
      * @param idMapping
      *            Id mapping used to map an id column.
      */

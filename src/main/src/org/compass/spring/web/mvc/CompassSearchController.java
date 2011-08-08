@@ -72,7 +72,7 @@ public class CompassSearchController extends AbstractCompassCommandController {
             throw new IllegalArgumentException("Must set the searchView property");
         }
         if (searchResultsView == null) {
-            throw new IllegalArgumentException("Must set the serachResultsView property");
+            throw new IllegalArgumentException("Must set the searchResultsView property");
         }
         if (searchHelper == null) {
             searchHelper = new CompassSearchHelper(getCompass(), getPageSize());
@@ -157,7 +157,7 @@ public class CompassSearchController extends AbstractCompassCommandController {
     }
 
     /**
-     * <p>The search helper is used to execute teh actual search. By default (if not set)
+     * <p>The search helper is used to execute the actual search. By default (if not set)
      * the search controller will create a new search helper. If provided, the search
      * controller will use it to perform the search.
      *

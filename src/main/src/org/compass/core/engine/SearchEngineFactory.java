@@ -71,7 +71,7 @@ public interface SearchEngineFactory {
     PropertyNamingStrategy getPropertyNamingStrategy();
 
     /**
-     * Returns the serach engine optimizer that was created by the factory.
+     * Returns the search engine optimizer that was created by the factory.
      * 
      * @return The search engine optimizer
      */

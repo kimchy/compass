@@ -24,7 +24,7 @@ package org.compass.gps.device.support.parallel;
  * <p>A typical implementation can be an ORM based device that has a
  * Class as the Index Entity (with a simple select associated with it).
  * In such a case, the index entity represents all the data that can
- * be fetched basde on the Class type.
+ * be fetched based on the Class type.
  *
  * @author kimchy
  */

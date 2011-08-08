@@ -8,7 +8,7 @@
     
         <id name="id" accessor="field" />
 
-        <!-- Have the same meta data name so an intenral id will be created -->
+        <!-- Have the same meta data name so an internal id will be created -->
         <property name="value1" managed-id-converter="simple" accessor="field">
             <meta-data>value</meta-data>
         </property>

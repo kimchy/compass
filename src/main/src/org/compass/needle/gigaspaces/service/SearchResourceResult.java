@@ -24,7 +24,7 @@ import java.io.ObjectOutput;
 import org.compass.core.Resource;
 
 /**
- * A serach result for a {@link org.compass.core.Resource} hit.
+ * A search result for a {@link org.compass.core.Resource} hit.
  *
  * @author kimchy
  */

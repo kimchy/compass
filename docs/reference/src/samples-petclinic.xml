@@ -235,7 +235,7 @@
         </para>
 
         <para>
-            The only thing required when using the Compass and Spring mvc integration is writing the view layer for the search / index operations. These are the <literal>index.jsp</literal>, <literal>search.jsp</literal> and <literal>serachResource.jsp</literal> Jstl view based files.
+            The only thing required when using the Compass and Spring mvc integration is writing the view layer for the search / index operations. These are the <literal>index.jsp</literal>, <literal>search.jsp</literal> and <literal>searchResource.jsp</literal> Jstl view based files.
         </para>
 
         <para>

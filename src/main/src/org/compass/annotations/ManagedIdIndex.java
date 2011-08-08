@@ -11,7 +11,7 @@ package org.compass.annotations;
  */
 public enum ManagedIdIndex {
     /**
-     * Lets Compass control it. Uses compass deafult, or the external setting for it.
+     * Lets Compass control it. Uses compass default, or the external setting for it.
      */
     NA,
 

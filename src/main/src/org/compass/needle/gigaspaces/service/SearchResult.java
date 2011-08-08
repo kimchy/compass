@@ -22,7 +22,7 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
 /**
- * A serach result for an object hit.
+ * A search result for an object hit.
  *
  * @author kimchy
  */
