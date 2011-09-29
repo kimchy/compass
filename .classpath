@@ -8,7 +8,6 @@
 	<classpathentry kind="lib" path="lib/ant/ant-junit.jar"/>
 	<classpathentry kind="lib" path="lib/ant/ant.jar"/>
 	<classpathentry kind="lib" path="lib/c3p0/c3p0-0.9.0.2.jar"/>
-	<classpathentry kind="lib" path="lib/cglib/cglib-nodep-2.1_3.jar"/>
 	<classpathentry kind="lib" path="lib/dom4j/dom4j-1.6.1.jar"/>
 	<classpathentry kind="lib" path="lib/j2ee/xml-apis.jar"/>
 	<classpathentry kind="lib" path="lib/j2ee/servlet-api.jar"/>
@@ -62,7 +61,6 @@
 	<classpathentry kind="lib" path="lib/jboss/jboss-ejb3.jar"/>
 	<classpathentry kind="lib" path="lib/lucene/lucene-queries.jar"/>
 	<classpathentry kind="lib" path="lib/openjpa/serp-1.13.1.jar"/>
-	<classpathentry kind="lib" path="lib/coherence/coherence.jar"/>
 	<classpathentry kind="lib" path="lib/eclipselink/eclipselink.jar"/>
 	<classpathentry kind="lib" path="lib/gigaspaces/gs-boot.jar"/>
 	<classpathentry kind="lib" path="lib/gigaspaces/gs-lib.jar"/>
@@ -72,20 +70,20 @@
 	<classpathentry kind="lib" path="lib/gigaspaces/openspaces.jar"/>
 	<classpathentry kind="lib" path="lib/gigaspaces/reggie.jar"/>
 	<classpathentry kind="lib" path="lib/gigaspaces/start.jar"/>
-	<classpathentry kind="lib" path="lib/asm/asm-2.2.3.jar"/>
-	<classpathentry kind="lib" path="lib/asm/asm-commons-2.2.3.jar"/>
-	<classpathentry kind="lib" path="lib/asm/asm-util-2.2.3.jar"/>
 	<classpathentry kind="lib" path="lib/grails/grails-web-1.0.2.jar"/>
 	<classpathentry kind="lib" path="lib/jaxen/jaxen-1.1.1.jar"/>
 	<classpathentry kind="lib" path="lib/jdom/jdom.jar"/>
 	<classpathentry kind="lib" path="lib/jettison/jettison-1.0.1.jar"/>
-	<classpathentry kind="lib" path="lib/joda/joda-time-1.5.2.jar"/>
 	<classpathentry kind="lib" path="lib/jsr223/js.jar"/>
 	<classpathentry kind="lib" path="lib/jsr223/script-api.jar"/>
 	<classpathentry kind="lib" path="lib/jsr223/script-js.jar"/>
 	<classpathentry kind="lib" path="lib/lucene/lucene-spellchecker.jar"/>
 	<classpathentry kind="lib" path="lib/stax/stax-api-1.0.1.jar"/>
 	<classpathentry kind="lib" path="lib/woodstox/wstx-asl-3.2.4.jar"/>
+	<classpathentry kind="lib" path="lib/cglib/cglib-nodep-2.2.jar"/>
+	<classpathentry kind="lib" path="lib/asm/asm-3.1.jar"/>
+	<classpathentry kind="lib" path="lib/asm/asm-commons-3.1.jar"/>
+	<classpathentry kind="lib" path="lib/joda/joda-time-1.6.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/openjpa/openjpa-1.1.0.jar"/>
 	<classpathentry kind="lib" path="lib/spring/spring-test.jar"/>
