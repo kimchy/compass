@@ -19,6 +19,7 @@ package org.compass.gps.device.jpa.embedded.eclipselink;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.spi.PersistenceUnitInfo;
 import javax.persistence.spi.PersistenceUnitTransactionType;
@@ -39,6 +40,7 @@ import org.compass.gps.device.jpa.JtaEntityManagerWrapper;
 import org.compass.gps.device.jpa.ResourceLocalEntityManagerWrapper;
 import org.compass.gps.device.jpa.embedded.DefaultJpaCompassGps;
 import org.compass.gps.device.jpa.lifecycle.EclipseLinkJpaEntityLifecycleInjector;
+import org.eclipse.persistence.Version;
 import org.eclipse.persistence.config.SessionCustomizer;
 import org.eclipse.persistence.descriptors.ClassDescriptor;
 import org.eclipse.persistence.internal.jpa.EntityManagerFactoryImpl;
@@ -252,20 +254,31 @@ public class CompassSessionCustomizer implements SessionCustomizer {
 
     protected PersistenceUnitInfo findPersistenceUnitInfo(Session session) {
         String sessionName = session.getName();
-        int index = sessionName.indexOf('-');
-        while (index != -1) {
-            String urlAndName = sessionName.substring(0, index) + sessionName.substring(index + 1);
-            if (log.isDebugEnabled()) {
-                log.debug("Trying to find PersistenceInfo using [" + urlAndName + "]");
+        if (Version.getVersion().compareTo("2.3.0") <= 0) {
+            int index = sessionName.indexOf('-');
+            while (index != -1) {
+                String urlAndName = sessionName.substring(0, index) + sessionName.substring(index + 1);
+                if (log.isDebugEnabled()) {
+                    log.debug("Trying to find PersistenceInfo using [" + urlAndName + "]");
+                }
+                EntityManagerSetupImpl emSetup = EntityManagerFactoryProvider.getEntityManagerSetupImpl(urlAndName);
+                if (emSetup != null) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Found PersistenceInfo using [" + urlAndName + "]");
+                    }
+                    return emSetup.getPersistenceUnitInfo();
+                }
+                index = sessionName.indexOf('-', index + 1);
             }
-            EntityManagerSetupImpl emSetup = EntityManagerFactoryProvider.getEntityManagerSetupImpl(urlAndName);
+        } else {
+            EntityManagerSetupImpl emSetup = EntityManagerFactoryProvider
+                    .getEntityManagerSetupImpl(sessionName);
             if (emSetup != null) {
                 if (log.isDebugEnabled()) {
-                    log.debug("Found PersistenceInfo using [" + urlAndName + "]");
+                    log.debug("Found PersistenceInfo using [" + sessionName + "]");
                 }
                 return emSetup.getPersistenceUnitInfo();
             }
-            index = sessionName.indexOf('-', index + 1);
         }
         return null;
     }

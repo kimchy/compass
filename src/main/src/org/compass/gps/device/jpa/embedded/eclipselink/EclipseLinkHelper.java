@@ -16,8 +16,9 @@
 
 package org.compass.gps.device.jpa.embedded.eclipselink;
 
+import java.util.List;
 import java.util.Properties;
-import java.util.Vector;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
@@ -152,7 +153,7 @@ public abstract class EclipseLinkHelper {
     }
 
     private static CompassSessionEventListener findCompassSessionEventListener(Session session) throws CompassException {
-        Vector listeners = session.getEventManager().getListeners();
+        List listeners = session.getEventManager().getListeners();
         for (Object o : listeners) {
             if (o instanceof CompassSessionEventListener) {
                 return (CompassSessionEventListener) o;
